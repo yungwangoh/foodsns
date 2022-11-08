@@ -1,5 +1,6 @@
 package sejong.foodsns.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
+import static sejong.foodsns.domain.member.MemberNumberOfCount.*;
 
 @Entity
 @Getter
@@ -25,10 +27,9 @@ public class ReportMember extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "black_list_id")
+    @JsonIgnore
     private BlackList blackList;
-
-    @Column(name = "report_count")
-    private int reportCount;
 
     @OneToMany
     @JoinColumn(name = "comment_id")
@@ -38,14 +39,56 @@ public class ReportMember extends BaseEntity {
     @JoinColumn(name = "reply_id")
     private List<Reply> replies;
 
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public ReportMember(BlackList blackList, int reportCount, List<Comment> comment, List<Reply> replies) {
+    public ReportMember(BlackList blackList, List<Comment> comment, List<Reply> replies) {
         this.blackList = blackList;
-        this.reportCount = reportCount;
         this.comment = comment;
         this.replies = replies;
     }
 
-    // 비즈니스 로직
+    // 회원의 신고 수가 10개 넘으면 회원 신고 리포트에 저장.
+    public void memberReport(Member member) {
+        int reportCount = member.getReportCount();
 
+        reportSave(member, reportCount);
+    }
+
+    public static int blackListPenaltyCount(Member member) {
+
+        return penaltyCalculate(member);
+    }
+
+    private void reportSave(Member member, int reportCount) {
+        if(reportCount >= numOfReportFirst) {
+            this.member = member;
+        }
+    }
+
+    private static int penaltyCalculate(Member member) {
+        if(penaltyFirst(member)) {
+            member.penaltyCount();
+        } else if (penaltySecond(member)) {
+            member.penaltyCount();
+        } else if (penaltyThird(member)) {
+            member.penaltyCount();
+        }
+
+        return member.getPenalty();
+    }
+
+    private static boolean penaltyThird(Member member) {
+        return member.getReportCount() >= numOfReportThird && member.getPenalty() >= 2;
+    }
+
+    private static boolean penaltySecond(Member member) {
+        return (member.getReportCount() >= numOfReportSecond && member.getReportCount() < numOfReportThird) && member.getPenalty() == 1;
+    }
+
+    private static boolean penaltyFirst(Member member) {
+        return (member.getReportCount() >= numOfReportFirst && member.getReportCount() < numOfReportSecond) && member.getPenalty() == 0;
+    }
 }

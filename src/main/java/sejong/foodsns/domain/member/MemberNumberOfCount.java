@@ -2,7 +2,6 @@ package sejong.foodsns.domain.member;
 
 public interface MemberNumberOfCount {
 
-    int normalNumOfRecommend = 0;
     int bronzeNumOfRecommend = 10;
     int silverNumOfRecommend = 30;
     int goldNumOfRecommend = 50;
@@ -10,6 +9,8 @@ public interface MemberNumberOfCount {
     int diamondNumOfRecommend = 100;
     int vipNumOfRecommend = 150;
 
-    int numOfReport = 30;
+    int numOfReportFirst = 10;
+    int numOfReportSecond = 20;
+    int numOfReportThird = 30;
     int penalty = 3;
 }
