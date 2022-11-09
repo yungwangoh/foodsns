@@ -7,10 +7,10 @@ import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.board.Board;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 import static sejong.foodsns.domain.member.MemberNumberOfCount.*;
 import static sejong.foodsns.domain.member.MemberRank.*;
@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
     private String password;
 
     @Column(name = "report_count")
-    private int reportCount;
+    private Long reportCount;
 
     @Enumerated(value = STRING)
     @Column(name = "member_rank")
@@ -46,10 +46,6 @@ public class Member extends BaseEntity {
 
     @Column(name = "penalty")
     private int penalty;
-
-    @OneToMany
-    @JoinColumn(name = "board_id")
-    private List<Board> boards;
 
     @Builder
     public Member(String username, String email, String password) {

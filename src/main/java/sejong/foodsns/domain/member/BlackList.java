@@ -30,12 +30,20 @@ public class BlackList extends BaseEntity {
     @JoinColumn(name = "report_id")
     private ReportMember reportMember;
 
+    @OneToMany
+    @JoinColumn(name = "board_id")
+    private List<Board> boards;
+
     @Builder
     public BlackList(String reason) {
         this.reason = reason;
     }
 
     // 비즈니스 로직 -> 블랙리스트 회원 추가.
+
+    /**
+     * @param reportMember
+     */
     public void blackListMember(ReportMember reportMember) {
         int penalty = reportMember.getMember().getPenalty();
         if(penalty >= MemberNumberOfCount.penalty) {
@@ -44,13 +52,17 @@ public class BlackList extends BaseEntity {
         }
     }
 
+    /**
+     * @param reportMember
+     */
     // 블랙 리스트에 오른 사람은 게시물 + 댓글 + 대댓글 삭제
     private void blackListProcess(ReportMember reportMember) {
-        List<Board> boards = reportMember.getMember().getBoards();
+        List<Board> boards = getBoards();
         boards.clear();
     }
 
-    private void blackListMemberDelete() {
+    private void blackListMemberDelete(ReportMember reportMember) {
+        Member member = reportMember.getMember();
 
     }
 }

@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import java.util.List;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -18,10 +19,6 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id")
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "reply_id")
-    private List<Reply> replies;
-
     @Column(name = "content")
     @Lob
     private String content;
@@ -32,9 +29,12 @@ public class Comment extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "board_id")
+    private Board board;
+
     @Builder
-    public Comment(List<Reply> replies, String content, int recommCount, int reportCount) {
-        this.replies = replies;
+    public Comment(String content, int recommCount, int reportCount) {
         this.content = content;
         this.recommCount = recommCount;
         this.reportCount = reportCount;

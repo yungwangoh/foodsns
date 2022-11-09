@@ -11,6 +11,7 @@ import sejong.foodsns.domain.board.Reply;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.*;
@@ -33,11 +34,11 @@ public class ReportMember extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name = "comment_id")
-    private List<Comment> comment;
+    private List<Comment> comment = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "reply_id")
-    private List<Reply> replies;
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -52,7 +53,7 @@ public class ReportMember extends BaseEntity {
 
     // 회원의 신고 수가 10개 넘으면 회원 신고 리포트에 저장.
     public void memberReport(Member member) {
-        int reportCount = member.getReportCount();
+        Long reportCount = member.getReportCount();
 
         reportSave(member, reportCount);
     }
@@ -62,8 +63,8 @@ public class ReportMember extends BaseEntity {
         return penaltyCalculate(member);
     }
 
-    private void reportSave(Member member, int reportCount) {
-        if(reportCount >= numOfReportFirst) {
+    private void reportSave(Member member, Long reportCount) {
+        if(reportCount >= numOfReportFirst) { // 신고 수가 10개 이상
             this.member = member;
         }
     }

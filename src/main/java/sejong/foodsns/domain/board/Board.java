@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.foodsns.domain.BaseEntity;
+import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 
@@ -41,10 +42,6 @@ public class Board extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommCount;
 
-    @OneToMany
-    @JoinColumn(name = "comment_id")
-    private List<Comment> comments;
-
     @ManyToOne
     @JoinColumn(name = "food_id")
     private FoodTag foodTag;
@@ -53,16 +50,19 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany
+    @JoinColumn(name = "file_id")
+    private List<BoardFile> boardFiles;
+
     @Builder
     public Board(Member member, String title, String content, MemberRank memberRank, Long check,
-                 int recommCount, List<Comment> comments, FoodTag foodTag) {
+                 int recommCount, FoodTag foodTag) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.memberRank = memberRank;
         this.check = check;
         this.recommCount = recommCount;
-        this.comments = comments;
         this.foodTag = foodTag;
     }
 

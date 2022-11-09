@@ -8,6 +8,7 @@ import sejong.foodsns.domain.BaseEntity;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -28,6 +29,10 @@ public class Reply extends BaseEntity {
 
     @Column(name = "report_count")
     private int reportCount;
+
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @Builder
     public Reply(String content, int recommCount, int reportCount) {
