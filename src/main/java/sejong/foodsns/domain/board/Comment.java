@@ -34,9 +34,10 @@ public class Comment extends BaseEntity {
     private Board board;
 
     @Builder
-    public Comment(String content, int recommCount, int reportCount) {
+    public Comment(String content, int recommCount, int reportCount, Board board) {
         this.content = content;
         this.recommCount = recommCount;
         this.reportCount = reportCount;
+        this.board = board;
     }
 }

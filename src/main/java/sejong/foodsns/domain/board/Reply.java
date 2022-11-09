@@ -35,9 +35,10 @@ public class Reply extends BaseEntity {
     private Comment comment;
 
     @Builder
-    public Reply(String content, int recommCount, int reportCount) {
+    public Reply(String content, int recommCount, int reportCount, Comment comment) {
         this.content = content;
         this.recommCount = recommCount;
         this.reportCount = reportCount;
+        this.comment = comment;
     }
 }

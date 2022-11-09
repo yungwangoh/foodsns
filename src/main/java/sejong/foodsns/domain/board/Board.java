@@ -50,20 +50,26 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "comment_id")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "board_file")
     @JoinColumn(name = "file_id")
     private List<BoardFile> boardFiles;
 
     @Builder
-    public Board(Member member, String title, String content, MemberRank memberRank, Long check,
-                 int recommCount, FoodTag foodTag) {
-        this.member = member;
+    public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
+                 FoodTag foodTag, Member member, List<Comment> comments, List<BoardFile> boardFiles) {
         this.title = title;
         this.content = content;
         this.memberRank = memberRank;
         this.check = check;
         this.recommCount = recommCount;
         this.foodTag = foodTag;
+        this.member = member;
+        this.comments = comments;
+        this.boardFiles = boardFiles;
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드

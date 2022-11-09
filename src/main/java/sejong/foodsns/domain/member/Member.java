@@ -44,6 +44,10 @@ public class Member extends BaseEntity {
     @Column(name = "member_type")
     private MemberType memberType;
 
+    @OneToMany
+    @JoinColumn(name = "board_id")
+    private List<Board> boards;
+
     @Column(name = "penalty")
     private int penalty;
 
