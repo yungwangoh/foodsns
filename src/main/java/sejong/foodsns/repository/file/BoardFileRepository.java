@@ -1,4 +1,4 @@
-package sejong.foodsns.repository;
+package sejong.foodsns.repository.file;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import sejong.foodsns.domain.file.BoardFile;

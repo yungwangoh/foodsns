@@ -1,5 +1,6 @@
 package sejong.foodsns.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.board.Board;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +27,15 @@ public class Member extends BaseEntity {
     private Long id;
 
     @Column(name = "username")
+    @NotEmpty
     private String username;
 
     @Column(name = "email")
+    @NotEmpty
     private String email;
 
     @Column(name = "password")
+    @NotEmpty
     private String password;
 
     @Column(name = "report_count")
@@ -44,23 +49,28 @@ public class Member extends BaseEntity {
     @Column(name = "member_type")
     private MemberType memberType;
 
-    @OneToMany
-    @JoinColumn(name = "board_id")
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Board> boards;
 
     @Column(name = "penalty")
     private int penalty;
 
     @Builder
-    public Member(String username, String email, String password) {
+    public Member(String username, String email, String password, MemberType memberType) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.memberType = memberType;
     }
 
     // 연관 관계 편의 메서드, 비즈니스 로직
 
     // 추천 수 -> 회원 등급
+
+    /**
+     * @param recommendCount
+     */
     public void memberRecommendUp(int recommendCount) {
         if(bronzeRank(recommendCount)) {
             this.memberRank = BRONZE;
@@ -87,26 +97,50 @@ public class Member extends BaseEntity {
         this.penalty++;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean bronzeRank(int recommendCount) {
         return recommendCount >= bronzeNumOfRecommend && recommendCount < silverNumOfRecommend;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean silverRank(int recommendCount) {
         return recommendCount >= silverNumOfRecommend && recommendCount < goldNumOfRecommend;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean goldRank(int recommendCount) {
         return recommendCount >= goldNumOfRecommend && recommendCount < platinumNumOfRecommend;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean platinumRank(int recommendCount) {
         return recommendCount >= platinumNumOfRecommend && recommendCount < diamondNumOfRecommend;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean diamondRank(int recommendCount) {
         return recommendCount >= diamondNumOfRecommend && recommendCount < vipNumOfRecommend;
     }
 
+    /**
+     * @param recommendCount
+     * @return
+     */
     private boolean vipRank(int recommendCount) {
         return recommendCount >= vipNumOfRecommend;
     }

@@ -30,7 +30,7 @@ public class Reply extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 

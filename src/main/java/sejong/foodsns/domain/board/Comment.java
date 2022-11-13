@@ -1,5 +1,6 @@
 package sejong.foodsns.domain.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import sejong.foodsns.domain.BaseEntity;
 
@@ -29,15 +30,20 @@ public class Comment extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "comment")
+    @JsonIgnore
+    private List<Reply> reply;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder
-    public Comment(String content, int recommCount, int reportCount, Board board) {
+    public Comment(String content, int recommCount, int reportCount, List<Reply> reply, Board board) {
         this.content = content;
         this.recommCount = recommCount;
         this.reportCount = reportCount;
+        this.reply = reply;
         this.board = board;
     }
 }

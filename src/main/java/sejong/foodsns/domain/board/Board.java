@@ -1,5 +1,6 @@
 package sejong.foodsns.domain.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -42,20 +44,20 @@ public class Board extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "food_id")
     private FoodTag foodTag;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "comment_id")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "board_file")
-    @JoinColumn(name = "file_id")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<BoardFile> boardFiles;
 
     @Builder
