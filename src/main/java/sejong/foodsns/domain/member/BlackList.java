@@ -26,10 +26,6 @@ public class BlackList extends BaseEntity {
     @Column(name = "penalty_reason")
     private String reason;
 
-    @OneToOne
-    @JoinColumn(name = "report_id")
-    private ReportMember reportMember;
-
     @Builder
     public BlackList(String reason) {
         this.reason = reason;
@@ -38,24 +34,20 @@ public class BlackList extends BaseEntity {
     // 비즈니스 로직 -> 블랙리스트 회원 추가.
 
     /**
+     * 유저 패널티가 3개 이상이면 유저의 관한 모든 정보 삭제, 회원 탈퇴
      * @param reportMember
      */
     public void blackListMember(ReportMember reportMember) {
         int penalty = reportMember.getMember().getPenalty();
         if(penalty >= MemberNumberOfCount.penalty) {
-            penaltyMemberProcess(reportMember);
+            blackListProcess(reportMember);
         }
     }
 
-    private void penaltyMemberProcess(ReportMember reportMember) {
-        this.reportMember = reportMember;
-        blackListProcess(reportMember);
-    }
-
     /**
+     * 블랙 리스트에 오른 사람은 게시물 + 댓글 + 대댓글 삭제
      * @param reportMember
      */
-    // 블랙 리스트에 오른 사람은 게시물 + 댓글 + 대댓글 삭제
     private void blackListProcess(ReportMember reportMember) {
         List<Board> boards = reportMember.getMember().getBoards();
         boards.clear();

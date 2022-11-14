@@ -51,7 +51,7 @@ public class ReportMember extends BaseEntity {
         this.replies = replies;
     }
 
-    // 회원의 신고 수가 10개 넘으면 회원 신고 리포트에 저장.
+    // 회원의 신고 수가 10개 이상이면 회원 신고 리포트에 저장.
     public void memberReport(Member member) {
         Long reportCount = member.getReportCount();
 

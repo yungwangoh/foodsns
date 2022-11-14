@@ -89,6 +89,27 @@ public class Member extends BaseEntity {
         }
     }
 
+    /**
+     * @param username
+     */
+    public void memberNameUpdate(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @param email
+     */
+    public void memberEmailUpdate(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @param password
+     */
+    public void memberPasswordUpdate(String password) {
+        this.password = password;
+    }
+
     public void reportCount() {
         this.reportCount++;
     }
