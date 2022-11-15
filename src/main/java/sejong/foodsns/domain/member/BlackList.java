@@ -26,6 +26,10 @@ public class BlackList extends BaseEntity {
     @Column(name = "penalty_reason")
     private String reason;
 
+    @OneToOne
+    @JoinColumn(name = "report_id")
+    private ReportMember reportMember;
+
     @Builder
     public BlackList(String reason) {
         this.reason = reason;

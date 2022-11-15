@@ -26,20 +26,24 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "username")
-    @NotEmpty
+    // 유저 이름 20자
+    @Column(name = "username", length = 20, nullable = false)
+    @NotEmpty(message = "이름은 필수 입니다.")
     private String username;
 
-    @Column(name = "email")
-    @NotEmpty
+    // 유저 이메일 100자
+    @Column(name = "email", length = 100, nullable = false, unique = true)
+    @NotEmpty(message = "이메일은 필수 입니다.")
     private String email;
 
-    @Column(name = "password")
-    @NotEmpty
+    // 유저 비밀번호 20자
+
+    @Column(name = "password", length = 20, nullable = false, unique = true)
+    @NotEmpty(message = "비밀번호는 필수 입니다.")
     private String password;
 
     @Column(name = "report_count")
-    private Long reportCount;
+    private Long reportCount = 0L;
 
     @Enumerated(value = STRING)
     @Column(name = "member_rank")
@@ -54,7 +58,7 @@ public class Member extends BaseEntity {
     private List<Board> boards;
 
     @Column(name = "penalty")
-    private int penalty;
+    private int penalty = 0;
 
     @Builder
     public Member(String username, String email, String password, MemberType memberType) {
@@ -69,6 +73,7 @@ public class Member extends BaseEntity {
     // 추천 수 -> 회원 등급
 
     /**
+     * 유저 회원 등급
      * @param recommendCount
      */
     public void memberRecommendUp(int recommendCount) {
@@ -90,6 +95,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 이름 수정
      * @param username
      */
     public void memberNameUpdate(String username) {
@@ -97,6 +103,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 이메일 수정
      * @param email
      */
     public void memberEmailUpdate(String email) {
@@ -104,21 +111,29 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 비밀번호 수정
      * @param password
      */
     public void memberPasswordUpdate(String password) {
         this.password = password;
     }
 
+    /**
+     * 유저 신고 리포트 수 증가
+     */
     public void reportCount() {
         this.reportCount++;
     }
 
+    /**
+     * 유저 패널티 수 증가
+     */
     public void penaltyCount() {
         this.penalty++;
     }
 
     /**
+     * 유저 브론즈 등급 추천 수 10 ~ 29
      * @param recommendCount
      * @return
      */
@@ -127,6 +142,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 실버 등급 추천 수 30 ~ 49
      * @param recommendCount
      * @return
      */
@@ -135,6 +151,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 골드 등급 추천 수 50 ~ 79
      * @param recommendCount
      * @return
      */
@@ -143,6 +160,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 플래티넘 등급 추천 수 80 ~ 99
      * @param recommendCount
      * @return
      */
@@ -151,6 +169,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 다이아몬드 등급 추천 수 100 ~ 149
      * @param recommendCount
      * @return
      */
@@ -159,6 +178,7 @@ public class Member extends BaseEntity {
     }
 
     /**
+     * 유저 VIP 등급 추천 수 150 ~ inf
      * @param recommendCount
      * @return
      */

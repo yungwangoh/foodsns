@@ -1,7 +1,6 @@
 package sejong.foodsns.domain.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,23 +31,13 @@ public class ReportMember extends BaseEntity {
     @JsonIgnore
     private BlackList blackList;
 
-    @OneToMany
-    @JoinColumn(name = "comment_id")
-    private List<Comment> comment = new ArrayList<>();
-
-    @OneToMany
-    @JoinColumn(name = "reply_id")
-    private List<Reply> replies = new ArrayList<>();
-
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public ReportMember(BlackList blackList, List<Comment> comment, List<Reply> replies) {
+    public ReportMember(BlackList blackList) {
         this.blackList = blackList;
-        this.comment = comment;
-        this.replies = replies;
     }
 
     // 회원의 신고 수가 10개 이상이면 회원 신고 리포트에 저장.
@@ -58,7 +47,7 @@ public class ReportMember extends BaseEntity {
         reportSave(member, reportCount);
     }
 
-    public static int blackListPenaltyCount(Member member) {
+    public int blackListPenaltyCount(Member member) {
 
         return penaltyCalculate(member);
     }
@@ -69,7 +58,7 @@ public class ReportMember extends BaseEntity {
         }
     }
 
-    private static int penaltyCalculate(Member member) {
+    private int penaltyCalculate(Member member) {
         if(penaltyFirst(member)) {
             member.penaltyCount();
         } else if (penaltySecond(member)) {
@@ -81,15 +70,15 @@ public class ReportMember extends BaseEntity {
         return member.getPenalty();
     }
 
-    private static boolean penaltyThird(Member member) {
+    private boolean penaltyThird(Member member) {
         return member.getReportCount() >= numOfReportThird && member.getPenalty() >= 2;
     }
 
-    private static boolean penaltySecond(Member member) {
+    private boolean penaltySecond(Member member) {
         return (member.getReportCount() >= numOfReportSecond && member.getReportCount() < numOfReportThird) && member.getPenalty() == 1;
     }
 
-    private static boolean penaltyFirst(Member member) {
+    private boolean penaltyFirst(Member member) {
         return (member.getReportCount() >= numOfReportFirst && member.getReportCount() < numOfReportSecond) && member.getPenalty() == 0;
     }
 }
