@@ -43,7 +43,7 @@ class ReportMemberRepositoryTest {
     @DisplayName("신고 리포트 저장")
     void saveReport() {
         // given
-        ReportMember reportMember = initReportMember();
+        ReportMember reportMember = initReportMember(save);
 
         // when
         ReportMember reportMemberSave = reportMemberRepository.save(reportMember);
@@ -58,7 +58,7 @@ class ReportMemberRepositoryTest {
     @DisplayName("신고 리포트 조회")
     void findReport() {
         // given
-        ReportMember reportMember = initReportMember();
+        ReportMember reportMember = initReportMember(save);
         ReportMember reportMemberSave = reportMemberRepository.save(reportMember);
 
         // when
@@ -73,7 +73,7 @@ class ReportMemberRepositoryTest {
     @DisplayName("신고 리포트 삭제")
     void deleteReport() {
         // given
-        ReportMember reportMember = initReportMember();
+        ReportMember reportMember = initReportMember(save);
         ReportMember reportMemberSave = reportMemberRepository.save(reportMember);
 
         // when
@@ -88,7 +88,7 @@ class ReportMemberRepositoryTest {
     @DisplayName("유저 패널티 수")
     void userPenaltyTest() {
         // given
-        ReportMember reportMember = initReportMember();
+        ReportMember reportMember = initReportMember(save);
 
         // when
         int penaltyCountOne = getInitPenaltyCount(reportMember);
@@ -105,10 +105,8 @@ class ReportMemberRepositoryTest {
      * 테스트 용 초기화 프로세스 (신고 리포트 생성자 초기화)
      * @return
      */
-    private ReportMember initReportMember() {
-        ReportMember reportMember = ReportMember.builder().build();
-        reportMember.memberReport(save);
-
+    private ReportMember initReportMember(Member member) {
+        ReportMember reportMember = new ReportMember(member);
         return reportMember;
     }
 
@@ -117,7 +115,7 @@ class ReportMemberRepositoryTest {
      * @return
      */
     private Member initProcess() {
-        Member member = new Member("윤광오", "swager253@naver.com", "1234", MemberType.NORMAL);
+        Member member = new Member("윤광오", "swager253@naver.com", "rhkddh77@A", MemberType.NORMAL);
         for(int i = 0; i <= reportTestOne; i++) {
             member.reportCount();
         }

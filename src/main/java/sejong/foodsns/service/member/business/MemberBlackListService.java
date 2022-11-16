@@ -1,4 +1,4 @@
-package sejong.foodsns.service.member.crud;
+package sejong.foodsns.service.member.business;
 
 import org.springframework.stereotype.Service;
 

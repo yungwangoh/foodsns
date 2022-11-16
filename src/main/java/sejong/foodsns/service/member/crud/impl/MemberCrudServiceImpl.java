@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.foodsns.config.security.WebSecurityConfig;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
@@ -47,6 +46,12 @@ public class MemberCrudServiceImpl implements MemberCrudService {
         return new ResponseEntity<>(new MemberResponseDto(save), CREATED);
     }
 
+    /**
+     * 회원 비밀번호 수정 -> 성공 200, 실패 404
+     * @param memberRequestDto
+     * @param password
+     * @return
+     */
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {

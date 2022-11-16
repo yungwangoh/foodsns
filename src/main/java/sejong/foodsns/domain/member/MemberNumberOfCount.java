@@ -9,8 +9,8 @@ public interface MemberNumberOfCount {
     int diamondNumOfRecommend = 100;
     int vipNumOfRecommend = 150;
 
-    int numOfReportFirst = 10;
-    int numOfReportSecond = 20;
-    int numOfReportThird = 30;
+    Long numOfReportFirst = 10L;
+    Long numOfReportSecond = 20L;
+    Long numOfReportThird = 30L;
     int penalty = 3;
 }
