@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.board.Board;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -27,19 +29,22 @@ public class Member extends BaseEntity {
     private Long id;
 
     // 유저 이름 20자
-    @Column(name = "username", length = 20, nullable = false)
-    @NotEmpty(message = "이름은 필수 입니다.")
+    @Column(name = "username")
+    @NotBlank
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", message = "닉네임은 특수문자를 제외한 2 ~ 10자리여야 합니다.")
     private String username;
 
     // 유저 이메일 100자
-    @Column(name = "email", length = 100, nullable = false, unique = true)
-    @NotEmpty(message = "이메일은 필수 입니다.")
+    @Column(name = "email", length = 50, unique = true)
+    @NotBlank
+    @Email
     private String email;
 
     // 유저 비밀번호 20자
-
-    @Column(name = "password", length = 20, nullable = false, unique = true)
-    @NotEmpty(message = "비밀번호는 필수 입니다.")
+    @Column(name = "password", unique = true)
+    @NotBlank
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,16}$",
+            message = "비밀번호는 8 ~ 16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
     @Column(name = "report_count")
@@ -94,28 +99,35 @@ public class Member extends BaseEntity {
         }
     }
 
+
     /**
      * 유저 이름 수정
      * @param username
+     * @return
      */
-    public void memberNameUpdate(String username) {
+    public Member memberNameUpdate(String username) {
         this.username = username;
+        return this;
     }
 
     /**
      * 유저 이메일 수정
      * @param email
+     * @return
      */
-    public void memberEmailUpdate(String email) {
+    public Member memberEmailUpdate(String email) {
         this.email = email;
+        return this;
     }
 
     /**
      * 유저 비밀번호 수정
      * @param password
+     * @return
      */
-    public void memberPasswordUpdate(String password) {
+    public Member memberPasswordUpdate(String password) {
         this.password = password;
+        return this;
     }
 
     /**

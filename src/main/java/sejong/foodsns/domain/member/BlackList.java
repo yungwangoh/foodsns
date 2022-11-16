@@ -40,19 +40,29 @@ public class BlackList extends BaseEntity {
     /**
      * 유저 패널티가 3개 이상이면 유저의 관한 모든 정보 삭제, 회원 탈퇴
      * @param reportMember
+     * @return
      */
-    public void blackListMember(ReportMember reportMember) {
+    public static ReportMember blackListMember(ReportMember reportMember) {
         int penalty = reportMember.getMember().getPenalty();
         if(penalty >= MemberNumberOfCount.penalty) {
             blackListProcess(reportMember);
         }
+        return reportMember;
+    }
+
+    /**
+     * 블랙리스트 유저 등록
+     * @param reportMember
+     */
+    public void blackListMemberCreate(ReportMember reportMember) {
+        this.reportMember = reportMember;
     }
 
     /**
      * 블랙 리스트에 오른 사람은 게시물 + 댓글 + 대댓글 삭제
      * @param reportMember
      */
-    private void blackListProcess(ReportMember reportMember) {
+    private static void blackListProcess(ReportMember reportMember) {
         List<Board> boards = reportMember.getMember().getBoards();
         boards.clear();
     }

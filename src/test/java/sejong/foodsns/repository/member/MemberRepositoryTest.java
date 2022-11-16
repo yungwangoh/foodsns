@@ -198,7 +198,7 @@ class MemberRepositoryTest {
 
 
     /**
-     *
+     * 중복 회원 예외 테스트 메서드
      * @param findMember
      */
     private void memberEqualCheck(Member findMember) {
@@ -206,7 +206,7 @@ class MemberRepositoryTest {
     }
 
     /**
-     *
+     * 회원들을 담는 초기화 테스트 메서드
      * @return
      */
     private List<Member> getMembers() {
@@ -228,7 +228,7 @@ class MemberRepositoryTest {
     }
 
     /**
-     *
+     * 찾은 회원을 리턴하는 테스트 메서드
      * @param save
      * @return
      */
