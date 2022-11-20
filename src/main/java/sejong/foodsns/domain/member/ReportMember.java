@@ -13,7 +13,7 @@ import static sejong.foodsns.domain.member.MemberNumberOfCount.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class ReportMember extends BaseEntity {
 
     @Id @GeneratedValue

@@ -31,7 +31,8 @@ public class BlackList extends BaseEntity {
     private ReportMember reportMember;
 
     @Builder
-    public BlackList(String reason) {
+    public BlackList(String reason, ReportMember reportMember) {
+        this.reportMember = reportMember;
         this.reason = reason;
     }
 
@@ -42,7 +43,7 @@ public class BlackList extends BaseEntity {
      * @param reportMember
      * @return
      */
-    public static ReportMember blackListMember(ReportMember reportMember) {
+    public ReportMember blackListMember(ReportMember reportMember) {
         int penalty = reportMember.getMember().getPenalty();
         if(penalty >= MemberNumberOfCount.penalty) {
             blackListProcess(reportMember);
@@ -51,18 +52,10 @@ public class BlackList extends BaseEntity {
     }
 
     /**
-     * 블랙리스트 유저 등록
-     * @param reportMember
-     */
-    public void blackListMemberCreate(ReportMember reportMember) {
-        this.reportMember = reportMember;
-    }
-
-    /**
      * 블랙 리스트에 오른 사람은 게시물 + 댓글 + 대댓글 삭제
      * @param reportMember
      */
-    private static void blackListProcess(ReportMember reportMember) {
+    private void blackListProcess(ReportMember reportMember) {
         List<Board> boards = reportMember.getMember().getBoards();
         boards.clear();
     }

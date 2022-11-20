@@ -9,4 +9,10 @@ import sejong.foodsns.dto.member.MemberResponseDto;
 public interface MemberBusinessService {
 
     ResponseEntity<MemberResponseDto> memberRankService(MemberRequestDto memberRequestDto);
+
+    ResponseEntity<MemberResponseDto> memberReportCount();
+
+    ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount();
+
+
 }

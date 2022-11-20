@@ -7,16 +7,10 @@ import sejong.foodsns.domain.member.ReportMember;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberBlackListResponseDto {
+@Builder
+public class MemberBlackListRequestDto {
 
     private Long id;
     private String reason;
     private ReportMember reportMember;
-
-    @Builder
-    public MemberBlackListResponseDto(BlackList blackList) {
-        this.id = blackList.getId();
-        this.reason = blackList.getReason();
-        this.reportMember = blackList.getReportMember();
-    }
 }

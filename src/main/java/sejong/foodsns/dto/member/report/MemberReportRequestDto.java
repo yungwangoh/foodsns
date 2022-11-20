@@ -7,14 +7,9 @@ import sejong.foodsns.domain.member.ReportMember;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberReportResponseDto {
+@Builder
+public class MemberReportRequestDto {
 
     private Long id;
     private Member member;
-
-    @Builder
-    public MemberReportResponseDto(ReportMember reportMember) {
-        this.id = reportMember.getId();
-        this.member = reportMember.getMember();
-    }
 }
