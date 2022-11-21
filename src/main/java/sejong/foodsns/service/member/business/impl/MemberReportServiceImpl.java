@@ -15,6 +15,7 @@ import sejong.foodsns.service.member.business.MemberReportService;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberNumberOfCount.numOfReportFirst;
@@ -36,8 +37,8 @@ public class MemberReportServiceImpl implements MemberReportService {
     @Transactional
     public ResponseEntity<MemberReportResponseDto> reportMemberCreate(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = memberRepository.findById(memberRequestDto.getId());
-        member.orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));
 
@@ -57,8 +58,8 @@ public class MemberReportServiceImpl implements MemberReportService {
     @Override
     public ResponseEntity<MemberReportResponseDto> reportMemberFindOne(MemberReportRequestDto memberReportRequestDto) {
 
-        Optional<ReportMember> reportMember = reportMemberRepository.findById(reportMemberGetId(memberReportRequestDto));
-        reportMember.orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다."));
+        Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(reportMemberGetId(memberReportRequestDto))
+                .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
 
         MemberReportResponseDto memberReportResponseDto = MemberReportResponseDto.builder()
                 .reportMember(getReportMember(reportMember))

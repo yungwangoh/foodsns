@@ -28,20 +28,20 @@ public class Member extends BaseEntity {
     private Long id;
 
     // 유저 이름 20자
-    @Column(name = "username")
-    @NotBlank
+    @Column(name = "username", unique = true)
+    @NotBlank(message = "닉네임을 입력해주세요.")
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$", message = "닉네임은 특수문자를 제외한 2 ~ 10자리여야 합니다.")
     private String username;
 
     // 유저 이메일 100자
     @Column(name = "email", length = 50, unique = true)
-    @NotBlank
-    @Email
+    @NotBlank(message = "이메일 주소를 입력해주세요.")
+    @Email(message = "올바른 이메일 주소를 입력해주세요.")
     private String email;
 
     // 유저 비밀번호 20자
-    @Column(name = "password", unique = true)
-    @NotBlank
+    @Column(name = "password")
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,16}$",
             message = "비밀번호는 8 ~ 16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;

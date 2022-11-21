@@ -48,8 +48,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
 
         if(TheNumberOfPenaltyIsThreeOrMore(reportMember)) {
 
-            blackList.blackListMember(getReportMember(reportMember));
-            BlackList save = blackListRepository.save(blackList);
+            BlackList save = blackListProcessAndSave(reportMember, blackList);
 
             return new ResponseEntity<>(new MemberBlackListResponseDto(save), CREATED);
         }
@@ -124,6 +123,23 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
         return reportMember.get();
     }
 
+    /**
+     * 블랙 리스트 처리와 저장
+     * @param reportMember 신고 회원
+     * @param blackList 블랙 리스트 회원
+     * @return 블랙 리스트 회원 저장
+     */
+    private BlackList blackListProcessAndSave(Optional<ReportMember> reportMember, BlackList blackList) {
+        blackList.blackListMember(getReportMember(reportMember));
+        BlackList save = blackListRepository.save(blackList);
+        return save;
+    }
+
+    /**
+     * 블랙리스트 회원이 NULL이면 예외, NULL 아니면 회원 Return
+     * @param blackListMemberFindOne Response
+     * @return
+     */
     private Member getMember(ResponseEntity<MemberBlackListResponseDto> blackListMemberFindOne) {
         return Objects.requireNonNull(blackListMemberFindOne.getBody()).getReportMember().getMember();
     }
