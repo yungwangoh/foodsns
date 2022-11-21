@@ -15,7 +15,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Data
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
-@Builder
 public class MemberResponseDto {
 
     private Long id;
@@ -28,6 +27,7 @@ public class MemberResponseDto {
 
     private MemberType memberType;
 
+    @Builder
     public MemberResponseDto(Member member) {
         this.id = member.getId();
         this.username = member.getUsername();

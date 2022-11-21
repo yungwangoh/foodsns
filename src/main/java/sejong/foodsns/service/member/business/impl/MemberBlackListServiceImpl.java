@@ -47,6 +47,8 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
         BlackList blackList = new BlackList(reason, getReportMember(reportMember));
 
         if(TheNumberOfPenaltyIsThreeOrMore(reportMember)) {
+
+            blackList.blackListMember(getReportMember(reportMember));
             BlackList save = blackListRepository.save(blackList);
 
             return new ResponseEntity<>(new MemberBlackListResponseDto(save), CREATED);

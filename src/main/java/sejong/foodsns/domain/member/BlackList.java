@@ -43,12 +43,11 @@ public class BlackList extends BaseEntity {
      * @param reportMember
      * @return
      */
-    public ReportMember blackListMember(ReportMember reportMember) {
+    public void blackListMember(ReportMember reportMember) {
         int penalty = reportMember.getMember().getPenalty();
         if(penalty >= MemberNumberOfCount.penalty) {
             blackListProcess(reportMember);
         }
-        return reportMember;
     }
 
     /**

@@ -2,17 +2,21 @@ package sejong.foodsns.service.member.business;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;
+import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
 
 @Service
 public interface MemberBusinessService {
 
     ResponseEntity<MemberResponseDto> memberRankService(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<MemberResponseDto> memberReportCount();
+    ResponseEntity<MemberResponseDto> memberReportCount(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount();
+    ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto);
 
-
+    // 게시판이 구현되면 구현할 예정.
+    ResponseEntity<MemberResponseDto> memberRecommendCount(int recommendCount);
 }

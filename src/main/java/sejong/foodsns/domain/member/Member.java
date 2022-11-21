@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.board.Board;
 
@@ -58,6 +57,9 @@ public class Member extends BaseEntity {
     @Column(name = "member_type")
     private MemberType memberType;
 
+    @Column(name = "recommend_count")
+    private int recommendCount;
+
     @OneToMany(mappedBy = "member")
     @JsonIgnore
     private List<Board> boards;
@@ -99,7 +101,6 @@ public class Member extends BaseEntity {
         }
     }
 
-
     /**
      * 유저 이름 수정
      * @param username
@@ -127,6 +128,16 @@ public class Member extends BaseEntity {
      */
     public Member memberPasswordUpdate(String password) {
         this.password = password;
+        return this;
+    }
+
+    /**
+     * 유저 추천 수
+     * @param recommendCount
+     * @return
+     */
+    public Member memberRecommendCount(int recommendCount) {
+        this.recommendCount = recommendCount;
         return this;
     }
 
