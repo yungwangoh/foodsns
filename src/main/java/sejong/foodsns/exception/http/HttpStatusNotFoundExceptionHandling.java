@@ -7,9 +7,9 @@ import static org.springframework.http.HttpStatus.*;
 
 @Component
 @ResponseStatus(value = NOT_FOUND)
-public class HttpStatusExceptionHandling extends IllegalArgumentException{
+public class HttpStatusNotFoundExceptionHandling extends IllegalArgumentException{
 
-    public HttpStatusExceptionHandling() {
+    public HttpStatusNotFoundExceptionHandling() {
         super();
     }
 }

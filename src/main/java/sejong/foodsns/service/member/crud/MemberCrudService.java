@@ -7,7 +7,6 @@ import sejong.foodsns.dto.member.MemberResponseDto;
 
 import java.util.List;
 
-@Service
 public interface MemberCrudService {
 
     ResponseEntity<MemberResponseDto> memberCreate(MemberRequestDto memberRequestDto);

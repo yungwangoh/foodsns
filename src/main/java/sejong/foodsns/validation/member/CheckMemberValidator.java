@@ -9,7 +9,7 @@ import sejong.foodsns.validation.AbstractValidator;
 
 @RequiredArgsConstructor
 @Component
-public class CheckUserNameValidator extends AbstractValidator<MemberRequestDto> {
+public class CheckMemberValidator extends AbstractValidator<MemberRequestDto> {
 
     private final MemberRepository memberRepository;
 

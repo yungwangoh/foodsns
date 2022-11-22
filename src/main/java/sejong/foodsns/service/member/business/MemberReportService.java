@@ -9,7 +9,6 @@ import sejong.foodsns.dto.member.report.MemberReportResponseDto;
 
 import java.util.List;
 
-@Service
 public interface MemberReportService {
 
     ResponseEntity<MemberReportResponseDto> reportMemberCreate(MemberRequestDto memberRequestDto);

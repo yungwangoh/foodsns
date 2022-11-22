@@ -2,6 +2,7 @@ package sejong.foodsns.service.member.business.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
@@ -20,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberNumberOfCount.numOfReportFirst;
 
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberReportServiceImpl implements MemberReportService {

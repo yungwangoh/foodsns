@@ -1,29 +1,23 @@
 package sejong.foodsns.service.member.business.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.foodsns.domain.member.BlackList;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
-import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
-import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;
-import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
 import sejong.foodsns.repository.member.BlackListRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.member.ReportMemberRepository;
-import sejong.foodsns.service.member.business.MemberBlackListService;
 import sejong.foodsns.service.member.business.MemberBusinessService;
 
 import java.util.Optional;
 
-import static java.util.Optional.*;
-import static org.springframework.http.HttpStatus.*;
-import static sejong.foodsns.domain.member.MemberType.*;
+import static java.util.Optional.ofNullable;
+import static org.springframework.http.HttpStatus.OK;
 
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberBusinessServiceImpl implements MemberBusinessService {
@@ -80,9 +74,8 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<MemberResponseDto> memberRecommendCount(int recommendCount) {
-
-
         return null;
     }
 

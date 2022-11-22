@@ -7,7 +7,6 @@ import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
 
 import java.util.List;
 
-@Service
 public interface MemberBlackListService {
 
     ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate(String reason, MemberBlackListRequestDto memberBlackListRequestDto);

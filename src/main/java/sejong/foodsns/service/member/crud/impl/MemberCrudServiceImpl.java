@@ -3,6 +3,7 @@ package sejong.foodsns.service.member.crud.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
@@ -19,6 +20,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberCrudServiceImpl implements MemberCrudService {

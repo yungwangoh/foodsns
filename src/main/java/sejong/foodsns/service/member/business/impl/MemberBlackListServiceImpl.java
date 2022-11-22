@@ -3,6 +3,7 @@ package sejong.foodsns.service.member.business.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.BlackList;
 import sejong.foodsns.domain.member.Member;
@@ -19,9 +20,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberBlackListServiceImpl implements MemberBlackListService {
@@ -41,8 +44,8 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
     @Transactional
     public ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate(@Nullable String reason, MemberBlackListRequestDto memberBlackListRequestDto) {
 
-        Optional<ReportMember> reportMember = reportMemberRepository.findById(memberBlackListRequestDto.getId());
-        reportMember.orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다."));
+        Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(memberBlackListRequestDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
 
         BlackList blackList = new BlackList(reason, getReportMember(reportMember));
 
@@ -81,8 +84,8 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
     @Override
     public ResponseEntity<MemberBlackListResponseDto> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto) {
 
-        Optional<BlackList> blackListMember = blackListRepository.findById(memberBlackListRequestDto.getId());
-        blackListMember.orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원이 존재하지 않습니다."));
+        Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(memberBlackListRequestDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원이 존재하지 않습니다.")));
 
         MemberBlackListResponseDto memberBlackListResponseDto = MemberBlackListResponseDto.builder()
                 .blackList(getBlackList(blackListMember))
