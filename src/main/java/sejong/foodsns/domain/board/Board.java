@@ -17,7 +17,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 
-//숨겨진커밋
+//숨겨진커밋(11.23)
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
