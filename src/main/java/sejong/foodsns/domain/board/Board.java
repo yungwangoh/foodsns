@@ -16,7 +16,7 @@ import java.util.List;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
-
+//
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
