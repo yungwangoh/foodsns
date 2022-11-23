@@ -23,6 +23,8 @@ public class MemberResponseDto {
 
     private String email;
 
+    private String password;
+
     private MemberRank memberRank;
 
     private MemberType memberType;
@@ -32,6 +34,7 @@ public class MemberResponseDto {
         this.id = member.getId();
         this.username = member.getUsername();
         this.email = member.getEmail();
+        this.password = member.getPassword();
         this.memberRank = member.getMemberRank();
         this.memberType = member.getMemberType();
     }

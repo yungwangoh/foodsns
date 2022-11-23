@@ -6,18 +6,19 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberCrudService {
 
-    ResponseEntity<MemberResponseDto> memberCreate(MemberRequestDto memberRequestDto);
+    ResponseEntity<Optional<MemberResponseDto>> memberCreate(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<MemberResponseDto> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password);
+    ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password);
 
-    ResponseEntity<MemberResponseDto> memberNameUpdate(MemberRequestDto memberRequestDto, String username);
+    ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username);
 
-    ResponseEntity<MemberResponseDto> memberDelete(MemberRequestDto memberRequestDto);
+    ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<MemberResponseDto> findMember(MemberRequestDto memberRequestDto);
+    ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<List<MemberResponseDto>> memberList();
+    ResponseEntity<Optional<List<MemberResponseDto>>> memberList();
 }

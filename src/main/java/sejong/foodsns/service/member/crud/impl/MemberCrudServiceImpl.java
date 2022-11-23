@@ -14,6 +14,7 @@ import sejong.foodsns.service.member.crud.MemberCrudService;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.*;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -35,7 +36,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberCreate(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberCreate(MemberRequestDto memberRequestDto) {
 
         Member member = Member.builder()
                 .username(memberRequestDto.getUsername())
@@ -45,7 +46,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
                 .build();
 
         Member save = memberRepository.save(member);
-        return new ResponseEntity<>(new MemberResponseDto(save), CREATED);
+        return new ResponseEntity<>(of(new MemberResponseDto(save)), CREATED);
     }
 
     /**
@@ -56,14 +57,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {
 
-        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")));
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
-        return new ResponseEntity<>(new MemberResponseDto(updateMember), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**
@@ -74,14 +74,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberNameUpdate(MemberRequestDto memberRequestDto, String username) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username) {
 
-        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")));
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
-        return new ResponseEntity<>(new MemberResponseDto(updateMember), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**
@@ -91,10 +90,9 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberDelete(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")));
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
 
         memberRepository.delete(getMember(member));
 
@@ -107,12 +105,11 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * @return
      */
     @Override
-    public ResponseEntity<MemberResponseDto> findMember(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")));
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
 
-        return new ResponseEntity<>(new MemberResponseDto(getMember(member)), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(getMember(member))), OK);
     }
 
     /**
@@ -120,13 +117,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * @return
      */
     @Override
-    public ResponseEntity<List<MemberResponseDto>> memberList() {
+    public ResponseEntity<Optional<List<MemberResponseDto>>> memberList() {
 
         List<Member> members = memberRepository.findAll();
 
-        List<MemberResponseDto> collect = members.stream()
+        Optional<List<MemberResponseDto>> collect = of(members.stream()
                 .map(MemberResponseDto::new)
-                .collect(toList());
+                .collect(toList()));
 
         return new ResponseEntity<>(collect, OK);
     }
@@ -138,5 +135,12 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     private Member getMember(Optional<Member> member) {
         return member.get();
+    }
+
+    private Optional<Member> getMemberReturnOptionalMember(MemberRequestDto memberRequestDto) {
+        Optional<Member> member = of(memberRepository.findMemberByEmail(memberRequestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+
+        return member;
     }
 }
