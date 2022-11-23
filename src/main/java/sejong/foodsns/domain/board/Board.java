@@ -19,6 +19,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 //숨겨진커밋(11.23)
 //push -> hayoon
+//push -> ygo
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
