@@ -75,5 +75,11 @@ public class Board extends BaseEntity {
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드
-
+    public void setMember(Member member) {
+        if(this.member != null) {
+            this.member.getBoards().remove(this);
+        }
+        this.member = member;
+        member.getBoards().add(this);
+    }
 }

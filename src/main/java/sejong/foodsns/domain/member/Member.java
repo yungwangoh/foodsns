@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -60,7 +61,7 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     @JsonIgnore
-    private List<Board> boards;
+    private List<Board> boards = new ArrayList<>();
 
     @Column(name = "penalty")
     private int penalty = 0;
@@ -74,7 +75,12 @@ public class Member extends BaseEntity {
     }
 
     // 연관 관계 편의 메서드, 비즈니스 로직
-
+    public void setBoards(Board boards) {
+        this.boards.add(boards);
+        if(boards.getMember() != this) {
+            boards.setMember(this);
+        }
+    }
     // 추천 수 -> 회원 등급
 
     /**
