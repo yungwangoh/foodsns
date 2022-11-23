@@ -1,6 +1,7 @@
 package sejong.foodsns.service.member.business.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import static sejong.foodsns.domain.member.MemberNumberOfCount.numOfReportFirst;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class MemberReportServiceImpl implements MemberReportService {
 
