@@ -18,6 +18,7 @@ import static javax.persistence.FetchType.*;
 import static lombok.AccessLevel.PROTECTED;
 
 //숨겨진커밋(11.23)
+//push -> hayoon
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
