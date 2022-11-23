@@ -1,6 +1,7 @@
 package sejong.foodsns.service.member.crud.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,7 @@ import sejong.foodsns.service.member.crud.MemberCrudService;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.*;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -23,6 +23,7 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class MemberCrudServiceImpl implements MemberCrudService {
 

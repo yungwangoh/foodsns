@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
-@Rollback(value = false)
 class MemberCrudServiceImplTest {
 
     @Autowired
@@ -34,12 +33,13 @@ class MemberCrudServiceImplTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private MemberRequestDto memberRequestDto;
+    private static MemberRequestDto memberRequestDto;
     private MemberResponseDto memberResponseDto;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("회원 요청 정보 초기화")
-    void memberRequestInit() {
+    static void memberRequestInit() {
+
         memberRequestDto = MemberRequestDto.builder()
                 .username("윤광오")
                 .email("swager253@naver.com")
@@ -57,8 +57,8 @@ class MemberCrudServiceImplTest {
     }
 
     @AfterEach
-    @DisplayName("DB 저장된 영속성 데이터 제거")
-    void persistDeleteInit() {
+    @DisplayName("DB 영속성 데이터 모두 삭제")
+    void persistAllDelete() {
         memberRepository.deleteAll();
     }
 
@@ -133,31 +133,14 @@ class MemberCrudServiceImplTest {
         @DisplayName("회원 목록")
         void memberList() {
             // given
-            List<MemberRequestDto> requestDtos = new ArrayList<>();
-            MemberRequestDto memberRequestDto1 = MemberRequestDto.builder()
-                    .username("하윤")
-                    .email("gkdbssla97@naver.com")
-                    .password("gkdbssla97@A")
-                    .build();
-
-            MemberRequestDto memberRequestDto2 = MemberRequestDto.builder()
-                    .username("김범수")
-                    .email("kim1234@naver.com")
-                    .password("kimonlyone@A")
-                    .build();
-
-            memberCrudService.memberCreate(memberRequestDto1);
-            memberCrudService.memberCreate(memberRequestDto2);
-            requestDtos.add(memberRequestDto);
-            requestDtos.add(memberRequestDto1);
-            requestDtos.add(memberRequestDto2);
 
             // when
             ResponseEntity<Optional<List<MemberResponseDto>>> memberList = memberCrudService.memberList();
+            long count = memberRepository.count();
 
             // then
             assertThat(memberList.getStatusCode()).isEqualTo(OK);
-            assertThat(getMemberList(memberList).size()).isEqualTo(requestDtos.size());
+            assertThat(getMemberList(memberList).size()).isEqualTo(count);
         }
 
         @Test
@@ -172,9 +155,12 @@ class MemberCrudServiceImplTest {
             memberCrudService.memberDelete(memberRequestDto);
 
             // then
-            ResponseEntity<Optional<MemberResponseDto>> deleteMember = memberCrudService.findMember(memberRequestDto);
-            assertThat(deleteMember.getStatusCode()).isEqualTo(OK);
-            assertFalse(getFindMemberBody(deleteMember).isPresent());
+            assertThatThrownBy(() -> {
+                ResponseEntity<Optional<MemberResponseDto>> deleteMember = memberCrudService.memberDelete(memberRequestDto);
+
+                assertThat(deleteMember.getStatusCode()).isEqualTo(OK);
+            }).isInstanceOf(IllegalArgumentException.class);
+
         }
     }
 
