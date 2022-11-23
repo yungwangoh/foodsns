@@ -13,6 +13,7 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,12 +133,31 @@ class MemberCrudServiceImplTest {
         @DisplayName("회원 목록")
         void memberList() {
             // given
+            List<MemberRequestDto> requestDtos = new ArrayList<>();
+            MemberRequestDto memberRequestDto1 = MemberRequestDto.builder()
+                    .username("하윤")
+                    .email("gkdbssla97@naver.com")
+                    .password("gkdbssla97@A")
+                    .build();
+
+            MemberRequestDto memberRequestDto2 = MemberRequestDto.builder()
+                    .username("김범수")
+                    .email("kim1234@naver.com")
+                    .password("kimonlyone@A")
+                    .build();
+
+            memberCrudService.memberCreate(memberRequestDto1);
+            memberCrudService.memberCreate(memberRequestDto2);
+            requestDtos.add(memberRequestDto);
+            requestDtos.add(memberRequestDto1);
+            requestDtos.add(memberRequestDto2);
 
             // when
             ResponseEntity<Optional<List<MemberResponseDto>>> memberList = memberCrudService.memberList();
 
             // then
-
+            assertThat(memberList.getStatusCode()).isEqualTo(OK);
+            assertThat(getMemberList(memberList).size()).isEqualTo(requestDtos.size());
         }
 
         @Test
@@ -162,6 +182,10 @@ class MemberCrudServiceImplTest {
     @DisplayName("실패")
     class serviceFail {
 
+    }
+
+    private List<MemberResponseDto> getMemberList(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
+        return memberList.getBody().get();
     }
 
     private MemberResponseDto getBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {
