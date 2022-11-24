@@ -12,4 +12,14 @@ public class MemberReportRequestDto {
 
     private Long id;
     private Member member;
+
+    public ReportMember toEntity(MemberReportRequestDto memberReportRequestDto) {
+        return ReportMember.builder()
+                .member(getMember(memberReportRequestDto))
+                .build();
+    }
+
+    private Member getMember(MemberReportRequestDto memberReportRequestDto) {
+        return memberReportRequestDto.getMember();
+    }
 }
