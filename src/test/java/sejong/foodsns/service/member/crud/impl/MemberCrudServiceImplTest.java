@@ -183,6 +183,20 @@ class MemberCrudServiceImplTest {
             assertTrue(memberEmailExistValidation);
         }
 
+        @Test
+        @DisplayName("찾으려는 회원이 존재하지 않을때 예외")
+        void memberFindException() {
+            // given
+            MemberRequestDto memberRequestDto = getMemberRequestDto();
+
+            // when
+            memberCrudService.memberCreate(memberRequestDto);
+
+            // then
+            assertThatThrownBy(() -> memberCrudService.findMember(getMemberRequestDtoTwo()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
         @AfterEach
         void deleteInit() {
             memberRepository.deleteAll();
