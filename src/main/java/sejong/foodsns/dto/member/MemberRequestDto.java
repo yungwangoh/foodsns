@@ -8,6 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import java.util.Optional;
+
 import static lombok.AccessLevel.*;
 import static sejong.foodsns.domain.member.MemberType.*;
 
@@ -32,24 +34,12 @@ public class MemberRequestDto {
             message = "비밀번호는 8 ~ 16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
-    public Member toEntity(MemberRequestDto memberRequestDto) {
+    public Member toEntity() {
         return Member.builder()
-                .username(getUsername(memberRequestDto))
-                .email(getEmail(memberRequestDto))
-                .password(getPassword(memberRequestDto))
+                .username(username)
+                .email(email)
+                .password(password)
                 .memberType(NORMAL)
                 .build();
-    }
-
-    private String getPassword(MemberRequestDto memberRequestDto) {
-        return memberRequestDto.getPassword();
-    }
-
-    private String getEmail(MemberRequestDto memberRequestDto) {
-        return memberRequestDto.getEmail();
-    }
-
-    private String getUsername(MemberRequestDto memberRequestDto) {
-        return memberRequestDto.getUsername();
     }
 }

@@ -130,6 +130,26 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     }
 
     /**
+     * 회원 이름 중복 검사
+     * @param memberRequestDto
+     * @return 중복 true, 아니면 false
+     */
+    @Override
+    public Boolean memberNameExistValidation(MemberRequestDto memberRequestDto) {
+        return memberRepository.existsMemberByUsername(memberRequestDto.getUsername());
+    }
+
+    /**
+     * 회원 이메일 중복 검사
+     * @param memberRequestDto
+     * @return 중복 true, 아니면 false
+     */
+    @Override
+    public Boolean memberEmailExistValidation(MemberRequestDto memberRequestDto) {
+        return memberRepository.existsMemberByEmail(memberRequestDto.getEmail());
+    }
+
+    /**
      * Optional Member -> return member
      * @param member
      * @return

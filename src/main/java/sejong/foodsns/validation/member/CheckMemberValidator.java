@@ -7,8 +7,8 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.validation.AbstractValidator;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CheckMemberValidator extends AbstractValidator<MemberRequestDto> {
 
     private final MemberRepository memberRepository;

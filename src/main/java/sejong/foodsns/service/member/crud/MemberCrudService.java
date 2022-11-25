@@ -21,4 +21,8 @@ public interface MemberCrudService {
     ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto);
 
     ResponseEntity<Optional<List<MemberResponseDto>>> memberList();
+
+    Boolean memberNameExistValidation(MemberRequestDto memberRequestDto);
+
+    Boolean memberEmailExistValidation(MemberRequestDto memberRequestDto);
 }

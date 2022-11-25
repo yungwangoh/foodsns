@@ -1,41 +1,34 @@
 package sejong.foodsns.service.member.crud.impl;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MemberCrudServiceImplTest {
 
-    @InjectMocks
+    @Autowired
     private MemberCrudServiceImpl memberCrudService;
-    @Mock
+    @Autowired
     private PasswordEncoder passwordEncoder;
-    @Mock
+    @Autowired
     private MemberRepository memberRepository;
 
     private MemberResponseDto memberResponseDto;
@@ -59,7 +52,6 @@ class MemberCrudServiceImplTest {
         void memberCreate() {
             //given
             MemberRequestDto memberRequestDto = getMemberRequestDto();
-            when(memberRepository.save(any())).thenReturn(memberRequestDto);
 
             //when
             ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
@@ -74,42 +66,11 @@ class MemberCrudServiceImplTest {
 
         @Test
         @Order(1)
-        @DisplayName("회원 비밀번호 수정")
-        void memberPasswordUpdate() {
-            // given
-            String tempPassword = "rhkddh77@A";
-            MemberRequestDto memberRequestDto = getMemberRequestDto();
-
-            // when
-            ResponseEntity<Optional<MemberResponseDto>> passwordUpdate = memberCrudService.memberPasswordUpdate(memberRequestDto, tempPassword);
-
-            // then
-            assertThat(passwordUpdate.getStatusCode()).isEqualTo(OK);
-            assertTrue(passwordEncoder.matches(tempPassword, getBody(passwordUpdate).getPassword()));
-        }
-
-        @Test
-        @Order(2)
-        @DisplayName("회원 닉네임 수정")
-        void memberNameUpdate() {
-            // given
-            String username = "하윤";
-            MemberRequestDto memberRequestDto = getMemberRequestDto();
-
-            // when
-            ResponseEntity<Optional<MemberResponseDto>> nameUpdate = memberCrudService.memberNameUpdate(memberRequestDto, "하윤");
-
-            //then
-            assertThat(nameUpdate.getStatusCode()).isEqualTo(OK);
-            assertThat(getBody(nameUpdate).getUsername()).isEqualTo(username);
-        }
-
-        @Test
-        @Order(3)
         @DisplayName("회원 찾기")
         void findMember() {
             // given
             MemberRequestDto memberRequestDto = getMemberRequestDto();
+            memberCrudService.memberCreate(memberRequestDto);
 
             // when
             ResponseEntity<Optional<MemberResponseDto>> findMember = memberCrudService.findMember(memberRequestDto);
@@ -120,18 +81,55 @@ class MemberCrudServiceImplTest {
         }
 
         @Test
-        @Order(4)
+        @Order(2)
         @DisplayName("회원 목록")
         void memberList() {
             // given
+            List<ResponseEntity<Optional<MemberResponseDto>>> list = new ArrayList<>();
+            list.add(memberCrudService.memberCreate(getMemberRequestDto()));
+            list.add(memberCrudService.memberCreate(getMemberRequestDtoTwo()));
+            list.add(memberCrudService.memberCreate(getMemberRequestDtoThree()));
 
             // when
             ResponseEntity<Optional<List<MemberResponseDto>>> memberList = memberCrudService.memberList();
-            long count = memberRepository.count();
 
             // then
             assertThat(memberList.getStatusCode()).isEqualTo(OK);
-            assertThat(getMemberList(memberList).size()).isEqualTo(count);
+            assertThat(list.size()).isEqualTo(getMemberResponseDtos(memberList).size());
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("회원 비밀번호 수정")
+        void memberPasswordUpdate() {
+            // given
+            String tempPassword = "alstngud77@A";
+            MemberRequestDto memberRequestDto = getMemberRequestDto();
+            memberCrudService.memberCreate(memberRequestDto);
+
+            // when
+            ResponseEntity<Optional<MemberResponseDto>> passwordUpdate = memberCrudService.memberPasswordUpdate(memberRequestDto, tempPassword);
+
+            // then
+            assertThat(passwordUpdate.getStatusCode()).isEqualTo(OK);
+            assertTrue(passwordEncoder.matches(tempPassword, getBody(passwordUpdate).getPassword()));
+        }
+
+        @Test
+        @Order(4)
+        @DisplayName("회원 닉네임 수정")
+        void memberNameUpdate() {
+            // given
+            String username = "하윤";
+            MemberRequestDto memberRequestDto = getMemberRequestDto();
+            memberCrudService.memberCreate(memberRequestDto);
+
+            // when
+            ResponseEntity<Optional<MemberResponseDto>> nameUpdate = memberCrudService.memberNameUpdate(memberRequestDto, "하윤");
+
+            //then
+            assertThat(nameUpdate.getStatusCode()).isEqualTo(OK);
+            assertThat(getBody(nameUpdate).getUsername()).isEqualTo(username);
         }
 
         @Test
@@ -140,19 +138,54 @@ class MemberCrudServiceImplTest {
         void memberDelete() {
             // given
             MemberRequestDto memberRequestDto = getMemberRequestDto();
-            ResponseEntity<Optional<MemberResponseDto>> findMember = memberCrudService.findMember(memberRequestDto);
-            assertTrue(getFindMemberBody(findMember).isPresent());
+            memberCrudService.memberCreate(memberRequestDto);
 
             // when
             memberCrudService.memberDelete(memberRequestDto);
 
             // then
+            // 찾으려는 회원이 없어야한다.
             assertThatThrownBy(() -> {
-                ResponseEntity<Optional<MemberResponseDto>> deleteMember = memberCrudService.memberDelete(memberRequestDto);
+                ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(memberRequestDto);
 
-                assertThat(deleteMember.getStatusCode()).isEqualTo(OK);
+                assertThat(member.getStatusCode()).isEqualTo(OK);
             }).isInstanceOf(IllegalArgumentException.class);
+        }
 
+        @AfterEach
+        void deleteInit() {
+            memberRepository.deleteAll();
+        }
+
+        private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
+            return memberList.getBody().get();
+        }
+    }
+
+    @Nested
+    @DisplayName("서비스 실패")
+    class serviceFail {
+
+        @Test
+        @DisplayName("이름, 이메일 중복 -> 회원 가입 실패")
+        void memberDuplicatedValidationFail() {
+            // given
+            MemberRequestDto memberRequestDto = getMemberRequestDto();
+            memberCrudService.memberCreate(memberRequestDto);
+
+            // when
+            Boolean memberNameExistValidation = memberCrudService.memberNameExistValidation(memberRequestDto);
+            Boolean memberEmailExistValidation = memberCrudService.memberEmailExistValidation(memberRequestDto);
+
+            // then
+            // true -> 중복
+            assertTrue(memberNameExistValidation);
+            assertTrue(memberEmailExistValidation);
+        }
+
+        @AfterEach
+        void deleteInit() {
+            memberRepository.deleteAll();
         }
     }
 
@@ -165,14 +198,22 @@ class MemberCrudServiceImplTest {
         return memberRequestDto;
     }
 
-    @Nested
-    @DisplayName("실패")
-    class serviceFail {
-
+    private MemberRequestDto getMemberRequestDtoTwo() {
+        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+                .username("하윤")
+                .email("qkfks1234@naver.com")
+                .password("rhkddh77@A")
+                .build();
+        return memberRequestDto;
     }
 
-    private List<MemberResponseDto> getMemberList(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
-        return memberList.getBody().get();
+    private MemberRequestDto getMemberRequestDtoThree() {
+        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+                .username("윤민수")
+                .email("alstngud77@naver.com")
+                .password("rhkddh77@A")
+                .build();
+        return memberRequestDto;
     }
 
     private MemberResponseDto getBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {

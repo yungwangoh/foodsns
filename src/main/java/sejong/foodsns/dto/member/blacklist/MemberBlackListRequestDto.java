@@ -5,6 +5,11 @@ import sejong.foodsns.domain.member.BlackList;
 import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 
+import java.util.Optional;
+
+import static java.util.Optional.*;
+import static java.util.Optional.of;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -15,18 +20,10 @@ public class MemberBlackListRequestDto {
     private String reason;
     private ReportMember reportMember;
 
-    public BlackList toEntity(MemberBlackListRequestDto memberBlackListRequestDto) {
+    public BlackList toEntity() {
         return BlackList.builder()
-                .reason(getReason(memberBlackListRequestDto))
-                .reportMember(getReportMember(memberBlackListRequestDto))
+                .reason(reason)
+                .reportMember(reportMember)
                 .build();
-    }
-
-    private ReportMember getReportMember(MemberBlackListRequestDto memberBlackListRequestDto) {
-        return memberBlackListRequestDto.getReportMember();
-    }
-
-    private String getReason(MemberBlackListRequestDto memberBlackListRequestDto) {
-        return memberBlackListRequestDto.getReason();
     }
 }

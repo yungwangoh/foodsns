@@ -4,6 +4,10 @@ import lombok.*;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
 
+import java.util.Optional;
+
+import static java.util.Optional.of;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -13,13 +17,9 @@ public class MemberReportRequestDto {
     private Long id;
     private Member member;
 
-    public ReportMember toEntity(MemberReportRequestDto memberReportRequestDto) {
+    public ReportMember toEntity() {
         return ReportMember.builder()
-                .member(getMember(memberReportRequestDto))
+                .member(member)
                 .build();
-    }
-
-    private Member getMember(MemberReportRequestDto memberReportRequestDto) {
-        return memberReportRequestDto.getMember();
     }
 }
