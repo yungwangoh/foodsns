@@ -41,7 +41,7 @@ public class MemberReportServiceImpl implements MemberReportService {
     @Transactional
     public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(MemberReportRequestDto memberReportRequestDto) {
 
-        Optional<Member> member = of(memberRepository.findById(getMember(memberReportRequestDto).getId())
+        Optional<Member> member = of(memberRepository.findMemberByEmail(getMember(memberReportRequestDto).getEmail())
                 .orElseThrow(() -> new  IllegalArgumentException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));
