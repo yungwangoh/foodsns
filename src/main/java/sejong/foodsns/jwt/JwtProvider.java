@@ -1,0 +1,76 @@
+package sejong.foodsns.jwt;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import sejong.foodsns.dto.member.login.MemberLoginDto;
+import sejong.foodsns.dto.token.TokenResponseDto;
+import sejong.foodsns.exception.http.ForbiddenException;
+import sejong.foodsns.service.redis.RedisService;
+
+import javax.annotation.PostConstruct;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.Date;
+
+@Component
+@RequiredArgsConstructor
+public class JwtProvider {
+
+    private final RedisService redisService;
+    private final ObjectMapper objectMapper;
+    
+    @Value("${spring.jwt.key}")
+    private String key;
+
+    @Value("${spring.jwt.expire_time.access}")
+    private Long accessTokenExpireTime;
+
+    @Value("${spring.jwt.expire_time.refresh}")
+    private Long refreshTokenExpireTime;
+
+    @PostConstruct
+    protected void init() {
+        key = Base64.getEncoder().encodeToString(key.getBytes());
+    }
+
+    public TokenResponseDto createTokenByLogin(MemberLoginDto memberLoginDto) throws JsonProcessingException{
+        String accessToken = createToken(memberLoginDto, accessTokenExpireTime);
+        String refreshToken = createToken(memberLoginDto, refreshTokenExpireTime);
+
+        redisService.setValues(memberLoginDto.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpireTime));
+        return new TokenResponseDto(accessToken);
+    }
+
+    public String createToken(MemberLoginDto memberLoginDto, Long expireTime) throws JsonProcessingException {
+        String objectCovertString = objectMapper.writeValueAsString(memberLoginDto);
+        Claims claims = Jwts.claims().setSubject(objectCovertString);
+        Date date = new Date();
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(date)
+                .setExpiration(new Date(date.getTime() + expireTime))
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+
+    public MemberLoginDto getLoginDto(String accessToken) throws JsonProcessingException {
+        String subject = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody().getSubject();
+        return objectMapper.readValue(subject, MemberLoginDto.class);
+    }
+
+    public TokenResponseDto reissueToken(MemberLoginDto memberLoginDto) throws JsonProcessingException, ForbiddenException {
+        String getRefreshToken = redisService.getValues(memberLoginDto.getEmail());
+        if(getRefreshToken.isEmpty())
+            throw new ForbiddenException("인증 정보가 만료되었습니다.");
+
+        String reissueAccessToken = createToken(memberLoginDto, accessTokenExpireTime);
+        return new TokenResponseDto(reissueAccessToken);
+    }
+}
