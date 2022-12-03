@@ -7,5 +7,8 @@
 - Redis
 - JWT
 - H2
+- Vue.js
+- Docker
+- MariaDB
 ## 팀원
 - 윤광오 (백엔드)
