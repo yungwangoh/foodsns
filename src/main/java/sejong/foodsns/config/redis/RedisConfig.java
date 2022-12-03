@@ -1,21 +1,15 @@
 package sejong.foodsns.config.redis;
 
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Component;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Configuration
-@EnableRedisRepositories
-@NoArgsConstructor(access = PROTECTED)
 public class RedisConfig {
 
     @Value("${spring.redis.host}")
@@ -30,11 +24,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate() {
+    @Primary
+    public RedisTemplate<String, String> redisTemplateConfig() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate().setKeySerializer(new StringRedisSerializer());
-        redisTemplate().setValueSerializer(new StringRedisSerializer());
-        redisTemplate().setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
 }

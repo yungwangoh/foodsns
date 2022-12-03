@@ -14,31 +14,31 @@ import java.time.Duration;
 @Transactional(readOnly = true)
 public class RedisServiceImpl implements RedisService {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> template;
 
     @Override
     @Transactional
     public void setValues(String key, String value) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = template.opsForValue();
         valueOperations.set(key, value);
     }
 
     @Override
     @Transactional
     public void setValues(String key, String value, Duration duration) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = template.opsForValue();
         valueOperations.set(key, value, duration);
     }
 
     @Override
     public String getValues(String key) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = template.opsForValue();
         return valueOperations.get(key);
     }
 
     @Override
     @Transactional
     public void deleteValues(String key) {
-        redisTemplate.delete(key);
+        template.delete(key);
     }
 }

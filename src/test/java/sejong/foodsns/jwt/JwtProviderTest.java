@@ -30,9 +30,6 @@ class JwtProviderTest {
     @Value("${spring.jwt.expire_time.refresh}")
     private Long refreshTokenExpireTime;
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
-
     @BeforeEach
     void memberLoginInit() {
         memberLoginDto = new MemberLoginDto("윤광오", "swager253@naver.com", "rhkddh77@A");
