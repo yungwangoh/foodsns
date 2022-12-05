@@ -3,6 +3,7 @@ package sejong.foodsns.jwt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +41,23 @@ public class JwtProvider {
     }
 
     public TokenResponseDto createTokenByLogin(MemberLoginDto memberLoginDto) throws JsonProcessingException{
-        String accessToken = createToken(memberLoginDto, accessTokenExpireTime);
-        String refreshToken = createToken(memberLoginDto, refreshTokenExpireTime);
+        String accessToken = createAccessToken(memberLoginDto);
+        String refreshToken = createRefreshToken(memberLoginDto);
 
         redisService.setValues(memberLoginDto.getEmail(), refreshToken, Duration.ofMillis(refreshTokenExpireTime));
         return new TokenResponseDto(accessToken);
     }
 
-    public String createToken(MemberLoginDto memberLoginDto, Long expireTime) throws JsonProcessingException {
-        String objectCovertString = objectMapper.writeValueAsString(memberLoginDto);
+    public String createRefreshToken(MemberLoginDto memberLoginDto) throws JsonProcessingException {
+        return createToken(memberLoginDto.getEmail(), refreshTokenExpireTime);
+    }
+
+    public String createAccessToken(MemberLoginDto memberLoginDto) throws JsonProcessingException {
+        return createToken(memberLoginDto.getEmail(), accessTokenExpireTime);
+    }
+
+    public String createToken(String emailAccount, Long expireTime) throws JsonProcessingException {
+        String objectCovertString = objectMapper.writeValueAsString(emailAccount);
         Claims claims = Jwts.claims().setSubject(objectCovertString);
         Date date = new Date();
 
@@ -61,8 +70,19 @@ public class JwtProvider {
     }
 
     public MemberLoginDto getLoginDto(String accessToken) throws JsonProcessingException {
-        String subject = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody().getSubject();
+        String subject = isValidToken(accessToken);
+        if (subject == null) return null;
         return objectMapper.readValue(subject, MemberLoginDto.class);
+    }
+
+    public String isValidToken(String accessToken) {
+        String subject;
+        try {
+            subject = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody().getSubject();
+        } catch (ExpiredJwtException e) { // 토큰 만료 예외.
+            return null;
+        }
+        return subject;
     }
 
     public TokenResponseDto reissueToken(MemberLoginDto memberLoginDto) throws JsonProcessingException, ForbiddenException {
@@ -70,7 +90,9 @@ public class JwtProvider {
         if(getRefreshToken.isEmpty())
             throw new ForbiddenException("인증 정보가 만료되었습니다.");
 
-        String reissueAccessToken = createToken(memberLoginDto, accessTokenExpireTime);
+        String reissueAccessToken = createAccessToken(memberLoginDto);
         return new TokenResponseDto(reissueAccessToken);
     }
+
+
 }

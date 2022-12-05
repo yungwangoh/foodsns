@@ -2,6 +2,7 @@ package sejong.foodsns.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +12,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import sejong.foodsns.dto.member.login.MemberLoginDto;
+import sejong.foodsns.dto.token.TokenResponseDto;
+import sejong.foodsns.exception.http.ForbiddenException;
 import sejong.foodsns.service.redis.RedisService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
+
+import static java.util.Optional.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +32,9 @@ class JwtProviderTest {
 
     @Autowired
     private JwtProvider jwtProvider;
+    @Autowired
+    private RedisService redisService;
+
     private MemberLoginDto memberLoginDto;
 
     @Value("${spring.jwt.expire_time.access}")
@@ -41,10 +54,103 @@ class JwtProviderTest {
         // given
 
         // when
-        String accessToken = jwtProvider.createToken(memberLoginDto, accessTokenExpireTime);
+        String accessToken = jwtProvider.createToken(memberLoginDto.getEmail(), accessTokenExpireTime);
 
         // then
         assertThat(accessToken).isNotNull();
         System.out.println("accessToken : " + accessToken);
+    }
+
+    @Test
+    @DisplayName("엑세스 토큰 발급 정보 맞는지 확인")
+    void accessTokenMatchInfo() throws JsonProcessingException {
+        // given
+        String accessToken = jwtProvider.createToken(memberLoginDto.getEmail(), accessTokenExpireTime);
+
+        // when
+        MemberLoginDto memberLoginInfo = jwtProvider.getLoginDto(accessToken);
+
+        // then
+        assertThat(memberLoginInfo).isNotNull();
+        assertThat(memberLoginInfo.getEmail()).isEqualTo(memberLoginDto.getEmail());
+        assertThat(memberLoginInfo.getUsername()).isEqualTo(memberLoginDto.getUsername());
+        assertThat(memberLoginInfo.getPassword()).isEqualTo(memberLoginDto.getPassword());
+    }
+
+    @Test
+    @DisplayName("만료된 토큰을 넣었을 경우 반환 값 NULL 확인")
+    void ExpiredAccessTokenNotMatchedInfo() throws JsonProcessingException {
+        // given
+        String expiredToken = jwtProvider.createToken(memberLoginDto.getEmail(), 0L);
+
+        // when
+        MemberLoginDto memberLogin = jwtProvider.getLoginDto(expiredToken);
+
+        // then
+        assertThat(memberLogin).isNull();
+    }
+
+    @Test
+    @DisplayName("토큰 로그인 Redis -> refreshToken")
+    void tokenLogin() throws JsonProcessingException{
+        // given
+
+        // when
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+        String refreshToken = redisService.getValues(memberLoginDto.getEmail());
+
+        // then
+        assertFalse(tokenByLogin.getAccessToken().isEmpty());
+        assertFalse(refreshToken.isEmpty());
+    }
+
+    @Test
+    @DisplayName("토큰 유효성 검사")
+    void tokenValidationCheck() throws JsonProcessingException {
+        // given
+        String expiredToken = jwtProvider.createToken(memberLoginDto.getEmail(), 0L);
+        String accessToken = jwtProvider.createToken(memberLoginDto.getEmail(), accessTokenExpireTime);
+
+        // when
+        String expiredValidToken = jwtProvider.isValidToken(expiredToken);
+        String accessValidToken = jwtProvider.isValidToken(accessToken);
+
+        // then
+        assertThat(expiredValidToken).isNull();
+        assertThat(accessValidToken).isNotNull();
+    }
+
+    @Test
+    @DisplayName("토큰 재발급")
+    void tokenReIssue() throws JsonProcessingException, ForbiddenException {
+        // given
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+
+        // when
+
+        // 만료 토큰 검증하고 로그인 정보 반환
+        MemberLoginDto memberLogin = jwtProvider.getLoginDto(tokenByLogin.getAccessToken());
+
+        // 반환된 로그인 정보를 토대로 재발급.
+        TokenResponseDto tokenResponseDto = jwtProvider.reissueToken(memberLogin);
+
+        // then
+        assertThat(tokenResponseDto.getAccessToken()).isNotNull();
+        System.out.println("AccessToken = " + tokenResponseDto.getAccessToken());
+    }
+
+    @Test
+    @DisplayName("토큰 HTTP 헤더 전송")
+    void sendSetTokenHttpHeader() throws JsonProcessingException {
+        // given
+        HttpServletResponse response = new MockHttpServletResponse();
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+
+        // when
+        response.setHeader("X-AUTH-TOKEN", tokenByLogin.getAccessToken());
+
+        // then
+        String token = response.getHeader("X-AUTH-TOKEN");
+        assertThat(tokenByLogin.getAccessToken()).isEqualTo(token);
     }
 }
