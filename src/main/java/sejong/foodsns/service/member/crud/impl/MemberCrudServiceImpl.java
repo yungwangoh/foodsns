@@ -60,11 +60,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     @Transactional
     public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
-        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
+        Member save = memberRepository.save(updateMember);
+
+        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
     }
 
     /**
@@ -77,11 +79,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     @Transactional
     public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
-        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
+        Member save = memberRepository.save(updateMember);
+
+        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
     }
 
     /**
@@ -93,7 +97,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     @Transactional
     public ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
 
         memberRepository.delete(getMember(member));
 
@@ -102,13 +106,13 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
     /**
      * 회원 찾기 -> 성공 200, 실패 404
-     * @param memberRequestDto
+     * @param email
      * @return
      */
     @Override
-    public ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberResponseDto>> findMember(String email) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         return new ResponseEntity<>(of(new MemberResponseDto(getMember(member))), OK);
     }
@@ -158,10 +162,8 @@ public class MemberCrudServiceImpl implements MemberCrudService {
         return member.get();
     }
 
-    private Optional<Member> getMemberReturnOptionalMember(MemberRequestDto memberRequestDto) {
-        Optional<Member> member = of(memberRepository.findMemberByEmail(memberRequestDto.getEmail())
+    private Optional<Member> getMemberReturnOptionalMember(String email) {
+        return of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
-
-        return member;
     }
 }

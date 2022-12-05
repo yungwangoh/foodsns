@@ -18,7 +18,7 @@ public interface MemberCrudService {
 
     ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto);
+    ResponseEntity<Optional<MemberResponseDto>> findMember(String email);
 
     ResponseEntity<Optional<List<MemberResponseDto>>> memberList();
 

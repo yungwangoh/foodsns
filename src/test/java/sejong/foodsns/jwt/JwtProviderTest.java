@@ -3,10 +3,7 @@ package sejong.foodsns.jwt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,9 +11,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import sejong.foodsns.dto.member.MemberRequestDto;
+import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.member.login.MemberLoginDto;
 import sejong.foodsns.dto.token.TokenResponseDto;
 import sejong.foodsns.exception.http.ForbiddenException;
+import sejong.foodsns.service.member.crud.MemberCrudService;
 import sejong.foodsns.service.redis.RedisService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,8 @@ class JwtProviderTest {
     private JwtProvider jwtProvider;
     @Autowired
     private RedisService redisService;
-
+    @Autowired
+    private MemberCrudService memberCrudService;
     private MemberLoginDto memberLoginDto;
 
     @Value("${spring.jwt.expire_time.access}")
@@ -46,6 +47,30 @@ class JwtProviderTest {
     @BeforeEach
     void memberLoginInit() {
         memberLoginDto = new MemberLoginDto("윤광오", "swager253@naver.com", "rhkddh77@A");
+    }
+
+    @BeforeEach
+    void memberCreateInit() {
+        MemberRequestDto memberRequestDto =
+                getMemberRequestDto("윤광오", "swager253@naver.com", "rhkddh77@A");
+
+        memberCrudService.memberCreate(memberRequestDto);
+    }
+
+    @AfterEach
+    void memberDeleteInit() {
+        MemberRequestDto memberRequestDto =
+                getMemberRequestDto("윤광오", "swager253@naver.com", "rhkddh77@A");
+
+        memberCrudService.memberDelete(memberRequestDto);
+    }
+
+    private MemberRequestDto getMemberRequestDto(String username, String email, String password) {
+        return MemberRequestDto.builder()
+                .username(username)
+                .email(email)
+                .password(password)
+                .build();
     }
 
     @Test
@@ -65,16 +90,13 @@ class JwtProviderTest {
     @DisplayName("엑세스 토큰 발급 정보 맞는지 확인")
     void accessTokenMatchInfo() throws JsonProcessingException {
         // given
-        String accessToken = jwtProvider.createToken(memberLoginDto.getEmail(), accessTokenExpireTime);
+        String accessToken = jwtProvider.createAccessToken(memberLoginDto.getEmail());
 
         // when
-        MemberLoginDto memberLoginInfo = jwtProvider.getLoginDto(accessToken);
+        MemberResponseDto memberResponseDto = jwtProvider.getLoginDto(accessToken);
 
         // then
-        assertThat(memberLoginInfo).isNotNull();
-        assertThat(memberLoginInfo.getEmail()).isEqualTo(memberLoginDto.getEmail());
-        assertThat(memberLoginInfo.getUsername()).isEqualTo(memberLoginDto.getUsername());
-        assertThat(memberLoginInfo.getPassword()).isEqualTo(memberLoginDto.getPassword());
+        assertThat(memberResponseDto).isNotNull();
     }
 
     @Test
@@ -84,10 +106,23 @@ class JwtProviderTest {
         String expiredToken = jwtProvider.createToken(memberLoginDto.getEmail(), 0L);
 
         // when
-        MemberLoginDto memberLogin = jwtProvider.getLoginDto(expiredToken);
+        MemberResponseDto memberResponseDto = jwtProvider.getLoginDto(expiredToken);
 
         // then
-        assertThat(memberLogin).isNull();
+        assertThat(memberResponseDto).isNull();
+    }
+
+    @Test
+    @DisplayName("리프레시 토큰 Redis 에 저장이 잘 되었는지 확인")
+    void checkRefreshTokenSaveToRedis() throws JsonProcessingException {
+        // given
+        jwtProvider.createTokenByLogin(memberLoginDto.getEmail());
+
+        // when
+        String refreshToken = redisService.getValues(memberLoginDto.getEmail());
+
+        // then
+        assertThat(refreshToken).isNotNull();
     }
 
     @Test
@@ -96,7 +131,7 @@ class JwtProviderTest {
         // given
 
         // when
-        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto.getEmail());
         String refreshToken = redisService.getValues(memberLoginDto.getEmail());
 
         // then
@@ -124,15 +159,15 @@ class JwtProviderTest {
     @DisplayName("토큰 재발급")
     void tokenReIssue() throws JsonProcessingException, ForbiddenException {
         // given
-        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto.getEmail());
 
         // when
 
         // 만료 토큰 검증하고 로그인 정보 반환
-        MemberLoginDto memberLogin = jwtProvider.getLoginDto(tokenByLogin.getAccessToken());
+        MemberResponseDto memberResponseDto = jwtProvider.getLoginDto(tokenByLogin.getAccessToken());
 
         // 반환된 로그인 정보를 토대로 재발급.
-        TokenResponseDto tokenResponseDto = jwtProvider.reissueToken(memberLogin);
+        TokenResponseDto tokenResponseDto = jwtProvider.reissueToken(memberResponseDto.getEmail());
 
         // then
         assertThat(tokenResponseDto.getAccessToken()).isNotNull();
@@ -144,7 +179,7 @@ class JwtProviderTest {
     void sendSetTokenHttpHeader() throws JsonProcessingException {
         // given
         HttpServletResponse response = new MockHttpServletResponse();
-        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto);
+        TokenResponseDto tokenByLogin = jwtProvider.createTokenByLogin(memberLoginDto.getEmail());
 
         // when
         response.setHeader("X-AUTH-TOKEN", tokenByLogin.getAccessToken());

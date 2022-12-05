@@ -73,7 +73,7 @@ class MemberCrudServiceImplTest {
             memberCrudService.memberCreate(memberRequestDto);
 
             // when
-            ResponseEntity<Optional<MemberResponseDto>> findMember = memberCrudService.findMember(memberRequestDto);
+            ResponseEntity<Optional<MemberResponseDto>> findMember = memberCrudService.findMember(memberRequestDto.getEmail());
 
             // then
             assertThat(findMember.getStatusCode()).isEqualTo(OK);
@@ -105,14 +105,17 @@ class MemberCrudServiceImplTest {
             // given
             String tempPassword = "alstngud77@A";
             MemberRequestDto memberRequestDto = getMemberRequestDto();
-            memberCrudService.memberCreate(memberRequestDto);
+            ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
 
             // when
-            ResponseEntity<Optional<MemberResponseDto>> passwordUpdate = memberCrudService.memberPasswordUpdate(memberRequestDto, tempPassword);
+            ResponseEntity<Optional<MemberResponseDto>> passwordUpdate =
+                    memberCrudService.memberPasswordUpdate(memberRequestDto, tempPassword);
+
+            Optional<Member> member = memberRepository.findMemberByEmail(getBody(passwordUpdate).getEmail());
 
             // then
             assertThat(passwordUpdate.getStatusCode()).isEqualTo(OK);
-            assertTrue(passwordEncoder.matches(tempPassword, getBody(passwordUpdate).getPassword()));
+            assertTrue(passwordEncoder.matches(tempPassword, getMember(member).getPassword()));
         }
 
         @Test
@@ -125,11 +128,14 @@ class MemberCrudServiceImplTest {
             memberCrudService.memberCreate(memberRequestDto);
 
             // when
-            ResponseEntity<Optional<MemberResponseDto>> nameUpdate = memberCrudService.memberNameUpdate(memberRequestDto, "하윤");
+            ResponseEntity<Optional<MemberResponseDto>> nameUpdate =
+                    memberCrudService.memberNameUpdate(memberRequestDto, "하윤");
+
+            Optional<Member> member = memberRepository.findMemberByEmail(getBody(nameUpdate).getEmail());
 
             //then
             assertThat(nameUpdate.getStatusCode()).isEqualTo(OK);
-            assertThat(getBody(nameUpdate).getUsername()).isEqualTo(username);
+            assertThat(getMember(member).getUsername()).isEqualTo(username);
         }
 
         @Test
@@ -146,7 +152,8 @@ class MemberCrudServiceImplTest {
             // then
             // 찾으려는 회원이 없어야한다.
             assertThatThrownBy(() -> {
-                ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(memberRequestDto);
+                ResponseEntity<Optional<MemberResponseDto>> member =
+                        memberCrudService.findMember(memberRequestDto.getEmail());
 
                 assertThat(member.getStatusCode()).isEqualTo(OK);
             }).isInstanceOf(IllegalArgumentException.class);
@@ -160,6 +167,10 @@ class MemberCrudServiceImplTest {
         private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
             return memberList.getBody().get();
         }
+    }
+
+    private Member getMember(Optional<Member> member) {
+        return member.get();
     }
 
     @Nested
@@ -193,7 +204,7 @@ class MemberCrudServiceImplTest {
             memberCrudService.memberCreate(memberRequestDto);
 
             // then
-            assertThatThrownBy(() -> memberCrudService.findMember(getMemberRequestDtoTwo()))
+            assertThatThrownBy(() -> memberCrudService.findMember(getMemberRequestDtoTwo().getEmail()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
