@@ -33,7 +33,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * 회원 생성 -> 성공 201, 실패 404
      * @param memberRequestDto
-     * @return
+     * @return 회원 DTO, HTTP CREATED
      */
     @Override
     @Transactional
@@ -54,7 +54,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * 회원 비밀번호 수정 -> 성공 200, 실패 404
      * @param memberRequestDto
      * @param password
-     * @return
+     * @return 회원 DTO, HTTP OK
      */
     @Override
     @Transactional
@@ -73,7 +73,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * 회원 이름 수정 -> 성공 200, 실패 404
      * @param memberRequestDto
      * @param username
-     * @return
+     * @return 회원 DTO, HTTP OK
      */
     @Override
     @Transactional
@@ -91,7 +91,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * 회원 탈퇴 -> 성공 200, 실패 404
      * @param memberRequestDto
-     * @return
+     * @return HTTP OK
      */
     @Override
     @Transactional
@@ -107,7 +107,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * 회원 찾기 -> 성공 200, 실패 404
      * @param email
-     * @return
+     * @return 회원, HTTP OK
      */
     @Override
     public ResponseEntity<Optional<MemberResponseDto>> findMember(String email) {
@@ -119,7 +119,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
     /**
      * 맴버 목록 -> 성공 200
-     * @return
+     * @return 회원 리스트, HTTP OK
      */
     @Override
     public ResponseEntity<Optional<List<MemberResponseDto>>> memberList() {
@@ -146,7 +146,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * 회원 이메일 중복 검사
      * @param memberRequestDto
-     * @return 중복 true, 아니면 false
+     * @return 중복이면 true, 아니면 false
      */
     @Override
     public Boolean memberEmailExistValidation(MemberRequestDto memberRequestDto) {
@@ -156,7 +156,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * Optional Member -> return member
      * @param member
-     * @return
+     * @return 회원
      */
     private Member getMember(Optional<Member> member) {
         return member.get();

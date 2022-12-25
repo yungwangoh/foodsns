@@ -28,6 +28,7 @@ spring:
 
   jwt:
     key: key
+    blackList: blackList
     expire_time:
       access: 3600000
       refresh: 1296000000

@@ -46,7 +46,7 @@ class JwtProviderTest {
 
     @BeforeEach
     void memberLoginInit() {
-        memberLoginDto = new MemberLoginDto("윤광오", "swager253@naver.com", "rhkddh77@A");
+        memberLoginDto = new MemberLoginDto("swager253@naver.com", "rhkddh77@A");
     }
 
     @BeforeEach

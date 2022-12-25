@@ -33,13 +33,12 @@ public class JwtProvider {
     private final RedisService redisService;
     private final ObjectMapper objectMapper;
     private final MemberCrudService memberCrudService;
-    
     @Value("${spring.jwt.key}")
     private String key;
-
+    @Value("${spring.jwt.blackList}")
+    private String blackList;
     @Value("${spring.jwt.expire_time.access}")
     private Long accessTokenExpireTime;
-
     @Value("${spring.jwt.expire_time.refresh}")
     private Long refreshTokenExpireTime;
 
@@ -86,6 +85,12 @@ public class JwtProvider {
         return objectMapper.readValue(subject, MemberResponseDto.class);
     }
 
+    public void logout(String email, String accessToken) {
+        long expireTime = getTokenExpireTime(accessToken).getTime() - new Date().getTime();
+        redisService.setValues(blackList + accessToken, email, Duration.ofMillis(expireTime));
+        redisService.deleteValues(email);
+    }
+
     public String isValidToken(String accessToken) {
         String subject;
         try {
@@ -107,5 +112,9 @@ public class JwtProvider {
 
     private Optional<MemberResponseDto> getBody(ResponseEntity<Optional<MemberResponseDto>> member) {
         return member.getBody();
+    }
+
+    private Date getTokenExpireTime(String token) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getExpiration();
     }
 }

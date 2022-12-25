@@ -108,7 +108,7 @@ public class MemberReportServiceImpl implements MemberReportService {
     /**
      * Member return
      * @param memberReportRequestDto
-     * @return
+     * @return member
      */
     private Member getMember(MemberReportRequestDto memberReportRequestDto) {
         return memberReportRequestDto.getMember();
