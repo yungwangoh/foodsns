@@ -12,9 +12,9 @@ public interface MemberCrudService {
 
     ResponseEntity<Optional<MemberResponseDto>> memberCreate(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password);
+    ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(String email, String password);
 
-    ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username);
+    ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(String email, String username);
 
     ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto);
 

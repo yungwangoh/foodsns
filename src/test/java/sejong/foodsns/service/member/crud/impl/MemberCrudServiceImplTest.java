@@ -109,7 +109,7 @@ class MemberCrudServiceImplTest {
 
             // when
             ResponseEntity<Optional<MemberResponseDto>> passwordUpdate =
-                    memberCrudService.memberPasswordUpdate(memberRequestDto, tempPassword);
+                    memberCrudService.memberPasswordUpdate(memberRequestDto.getEmail(), tempPassword);
 
             Optional<Member> member = memberRepository.findMemberByEmail(getBody(passwordUpdate).getEmail());
 
@@ -129,7 +129,7 @@ class MemberCrudServiceImplTest {
 
             // when
             ResponseEntity<Optional<MemberResponseDto>> nameUpdate =
-                    memberCrudService.memberNameUpdate(memberRequestDto, "하윤");
+                    memberCrudService.memberNameUpdate(memberRequestDto.getEmail(), "하윤");
 
             Optional<Member> member = memberRepository.findMemberByEmail(getBody(nameUpdate).getEmail());
 

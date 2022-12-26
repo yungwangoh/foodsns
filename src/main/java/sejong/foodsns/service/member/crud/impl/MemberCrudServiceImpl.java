@@ -58,9 +58,9 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(String email, String password) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
@@ -77,9 +77,9 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(String email, String username) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
