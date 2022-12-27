@@ -2,6 +2,7 @@ package sejong.foodsns.dto.member.update;
 
 import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -11,7 +12,11 @@ import static lombok.AccessLevel.*;
 @Builder
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
-public class MemberUpdateDto {
+public class MemberUpdatePwdDto {
+
+    @NotBlank
+    @Email
+    private String email;
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$",

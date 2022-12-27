@@ -11,6 +11,7 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
+import sejong.foodsns.service.member.crud.MemberSuccessOrFailedMessage;
 
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +100,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
 
-        memberRepository.delete(getMember(member));
+        passwordMatchCheck(memberRequestDto, member);
 
         return new ResponseEntity<>(OK);
     }
@@ -165,5 +166,14 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     private Optional<Member> getMemberReturnOptionalMember(String email) {
         return of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+    }
+
+    private void passwordMatchCheck(MemberRequestDto memberRequestDto, Optional<Member> member) {
+        boolean matches = passwordEncoder.matches(memberRequestDto.getPassword(), member.get().getPassword());
+        if(matches) {
+            memberRepository.delete(getMember(member));
+        } else {
+            throw new IllegalArgumentException("비밀번호가 동일하지 않습니다.");
+        }
     }
 }
