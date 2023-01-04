@@ -45,26 +45,32 @@ public class Member extends BaseEntity {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
+    // 신고 수
     @Column(name = "report_count")
-    private Long reportCount = 0L;
+    private Long reportCount;
 
+    // 회원 등급
     @Enumerated(value = STRING)
     @Column(name = "member_rank")
     private MemberRank memberRank;
 
+    // 일반 회원, 관리자 회원
     @Enumerated(value = STRING)
     @Column(name = "member_type")
     private MemberType memberType;
 
+    // 추천 수
     @Column(name = "recommend_count")
     private int recommendCount;
 
+    // 회원 게시물
     @OneToMany(mappedBy = "member")
     @JsonIgnore
-    private List<Board> boards = new ArrayList<>();
+    private List<Board> boards;
 
+    // 패널티 수
     @Column(name = "penalty")
-    private int penalty = 0;
+    private int penalty;
 
     @Builder
     public Member(String username, String email, String password, MemberType memberType) {
@@ -73,6 +79,9 @@ public class Member extends BaseEntity {
         this.password = password;
         this.memberType = memberType;
         this.memberRank = NORMAL;
+        this.penalty = 0;
+        this.reportCount = 0L;
+        this.boards = new ArrayList<>();
     }
 
     // 연관 관계 편의 메서드, 비즈니스 로직
