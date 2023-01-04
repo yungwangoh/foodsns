@@ -72,6 +72,7 @@ public class Member extends BaseEntity {
         this.email = email;
         this.password = password;
         this.memberType = memberType;
+        this.memberRank = NORMAL;
     }
 
     // 연관 관계 편의 메서드, 비즈니스 로직
