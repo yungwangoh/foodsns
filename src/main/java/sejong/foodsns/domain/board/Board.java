@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.member.Member;
@@ -65,16 +66,16 @@ public class Board extends BaseEntity {
 
     @Builder
     public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
-                 FoodTag foodTag, Member member, List<Comment> comments, List<BoardFile> boardFiles) {
-        this.title = title;
-        this.content = content;
-        this.memberRank = memberRank;
-        this.check = check;
-        this.recommCount = recommCount;
-        this.foodTag = foodTag;
-        this.member = member;
-        this.comments = comments;
-        this.boardFiles = boardFiles;
+                 @Nullable FoodTag foodTag, Member member, @Nullable List<Comment> comments, @Nullable List<BoardFile> boardFiles) {
+        this.title = title; // 게시물
+        this.content = content; // 요리메뉴
+        this.memberRank = memberRank; //멤버랭크
+        this.check = check; // 조회수
+        this.recommCount = recommCount; // 추천수
+        this.foodTag = foodTag; //
+        this.member = member; // 게시물작성자
+        this.comments = comments; // 댓글
+        this.boardFiles = boardFiles; // 첨부파일
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드
@@ -85,4 +86,9 @@ public class Board extends BaseEntity {
         this.member = member;
         member.getBoards().add(this);
     }
+
+    public void plusRecommendCount() {
+        this.recommCount++;
+    }
+
 }
