@@ -4,16 +4,12 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.member.ReportMemberRepository;
-import sejong.foodsns.service.member.business.MemberReportService;
 
 import java.util.*;
 

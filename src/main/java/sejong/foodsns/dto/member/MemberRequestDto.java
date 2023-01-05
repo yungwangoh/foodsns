@@ -2,13 +2,10 @@ package sejong.foodsns.dto.member;
 
 import lombok.*;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
-import java.util.Optional;
 
 import static lombok.AccessLevel.*;
 import static sejong.foodsns.domain.member.MemberType.*;

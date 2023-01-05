@@ -11,7 +11,6 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
-import sejong.foodsns.service.member.crud.MemberSuccessOrFailedMessage;
 
 import java.util.List;
 import java.util.Optional;
