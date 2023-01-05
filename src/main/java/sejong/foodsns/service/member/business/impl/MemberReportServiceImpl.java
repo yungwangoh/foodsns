@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
-import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
@@ -17,7 +16,7 @@ import sejong.foodsns.service.member.business.MemberReportService;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.*;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberNumberOfCount.numOfReportFirst;
@@ -33,56 +32,59 @@ public class MemberReportServiceImpl implements MemberReportService {
 
     /**
      * 신고 회원 저장
-     * 유의 사항 -> (10개 미만은 에러가 아님 -> 203으로 처리되지 않음을 표시.) 
-     * @param memberRequestDto
+     * 유의 사항 -> (10개 미만은 에러가 아님 -> 203으로 처리되지 않음을 표시.)
+     *
+     * @param memberReportRequestDto 신고 회원 DTO
      * @return 성공 : (신고회원 리스폰, Create), 실패 : (Exception)
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberReportResponseDto> reportMemberCreate(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(MemberReportRequestDto memberReportRequestDto) {
 
-        Optional<Member> member = ofNullable(memberRepository.findById(memberRequestDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+        Optional<Member> member = of(memberRepository.findMemberByEmail(getMember(memberReportRequestDto).getEmail())
+                .orElseThrow(() -> new  IllegalArgumentException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));
 
         if(TheNumberOfReportIsTenOrMore(member)) {
             ReportMember save = reportMemberRepository.save(reportMember);
-            return new ResponseEntity<>(new MemberReportResponseDto(save), CREATED);
+            return new ResponseEntity<>(of(new MemberReportResponseDto(save)), CREATED);
         }
         // 10개 미만은 에러가 아님 -> 203으로 처리되지 않음을 표시. 유의사항.
-        else return new ResponseEntity<>(new MemberReportResponseDto(reportMember), ACCEPTED);
+        else return new ResponseEntity<>(of(new MemberReportResponseDto(reportMember)), ACCEPTED);
     }
 
     /**
      * 신고 회원 찾기
-     * @param memberReportRequestDto
+     *
+     * @param id
      * @return 성공 : (신고회원 리스폰, OK), 실패 : (Exception)
      */
     @Override
-    public ResponseEntity<MemberReportResponseDto> reportMemberFindOne(MemberReportRequestDto memberReportRequestDto) {
+    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) throws IllegalArgumentException{
 
-        Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(reportMemberGetId(memberReportRequestDto))
+        Optional<ReportMember> reportMember = of(reportMemberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
 
         MemberReportResponseDto memberReportResponseDto = MemberReportResponseDto.builder()
                 .reportMember(getReportMember(reportMember))
                 .build();
 
-        return new ResponseEntity<>(memberReportResponseDto, OK);
+        return new ResponseEntity<>(of(memberReportResponseDto), OK);
     }
 
     /**
      * 신고 회원 목록
+     *
      * @return 성공 : (신고회원 리스폰, OK)
      */
     @Override
-    public ResponseEntity<List<MemberReportResponseDto>> reportMemberList() {
+    public ResponseEntity<Optional<List<MemberReportResponseDto>>> reportMemberList() {
         List<ReportMember> reportMembers = reportMemberRepository.findAll();
         List<MemberReportResponseDto> reportResponseDtos = reportMembers.stream()
                 .map(MemberReportResponseDto::new).collect(toList());
 
-        return new ResponseEntity<>(reportResponseDtos, OK);
+        return new ResponseEntity<>(of(reportResponseDtos), OK);
     }
 
     /**
@@ -103,6 +105,14 @@ public class MemberReportServiceImpl implements MemberReportService {
         return member.get();
     }
 
+    /**
+     * Member return
+     * @param memberReportRequestDto
+     * @return member
+     */
+    private Member getMember(MemberReportRequestDto memberReportRequestDto) {
+        return memberReportRequestDto.getMember();
+    }
 
     /**
      * reportMember return

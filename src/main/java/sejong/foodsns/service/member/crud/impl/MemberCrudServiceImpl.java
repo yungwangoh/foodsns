@@ -33,7 +33,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     /**
      * 회원 생성 -> 성공 201, 실패 404
      * @param memberRequestDto
-     * @return
+     * @return 회원 DTO, HTTP CREATED
      */
     @Override
     @Transactional
@@ -54,68 +54,72 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * 회원 비밀번호 수정 -> 성공 200, 실패 404
      * @param memberRequestDto
      * @param password
-     * @return
+     * @return 회원 DTO, HTTP OK
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(MemberRequestDto memberRequestDto, String password) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberPasswordUpdate(String email, String password) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
-        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
+        Member save = memberRepository.save(updateMember);
+
+        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
     }
 
     /**
      * 회원 이름 수정 -> 성공 200, 실패 404
      * @param memberRequestDto
      * @param username
-     * @return
+     * @return 회원 DTO, HTTP OK
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(MemberRequestDto memberRequestDto, String username) {
+    public ResponseEntity<Optional<MemberResponseDto>> memberNameUpdate(String email, String username) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
-        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
+        Member save = memberRepository.save(updateMember);
+
+        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
     }
 
     /**
      * 회원 탈퇴 -> 성공 200, 실패 404
      * @param memberRequestDto
-     * @return
+     * @return HTTP OK
      */
     @Override
     @Transactional
     public ResponseEntity<Optional<MemberResponseDto>> memberDelete(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto.getEmail());
 
-        memberRepository.delete(getMember(member));
+        passwordMatchCheck(memberRequestDto, member);
 
         return new ResponseEntity<>(OK);
     }
 
     /**
      * 회원 찾기 -> 성공 200, 실패 404
-     * @param memberRequestDto
-     * @return
+     * @param email
+     * @return 회원, HTTP OK
      */
     @Override
-    public ResponseEntity<Optional<MemberResponseDto>> findMember(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Optional<MemberResponseDto>> findMember(String email) {
 
-        Optional<Member> member = getMemberReturnOptionalMember(memberRequestDto);
+        Optional<Member> member = getMemberReturnOptionalMember(email);
 
         return new ResponseEntity<>(of(new MemberResponseDto(getMember(member))), OK);
     }
 
     /**
      * 맴버 목록 -> 성공 200
-     * @return
+     * @return 회원 리스트, HTTP OK
      */
     @Override
     public ResponseEntity<Optional<List<MemberResponseDto>>> memberList() {
@@ -130,18 +134,45 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     }
 
     /**
+     * 회원 이름 중복 검사
+     * @param memberRequestDto
+     * @return 중복 true, 아니면 false
+     */
+    @Override
+    public Boolean memberNameExistValidation(MemberRequestDto memberRequestDto) {
+        return memberRepository.existsMemberByUsername(memberRequestDto.getUsername());
+    }
+
+    /**
+     * 회원 이메일 중복 검사
+     * @param memberRequestDto
+     * @return 중복이면 true, 아니면 false
+     */
+    @Override
+    public Boolean memberEmailExistValidation(MemberRequestDto memberRequestDto) {
+        return memberRepository.existsMemberByEmail(memberRequestDto.getEmail());
+    }
+
+    /**
      * Optional Member -> return member
      * @param member
-     * @return
+     * @return 회원
      */
     private Member getMember(Optional<Member> member) {
         return member.get();
     }
 
-    private Optional<Member> getMemberReturnOptionalMember(MemberRequestDto memberRequestDto) {
-        Optional<Member> member = of(memberRepository.findMemberByEmail(memberRequestDto.getEmail())
+    private Optional<Member> getMemberReturnOptionalMember(String email) {
+        return of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+    }
 
-        return member;
+    private void passwordMatchCheck(MemberRequestDto memberRequestDto, Optional<Member> member) {
+        boolean matches = passwordEncoder.matches(memberRequestDto.getPassword(), member.get().getPassword());
+        if(matches) {
+            memberRepository.delete(getMember(member));
+        } else {
+            throw new IllegalArgumentException("비밀번호가 동일하지 않습니다.");
+        }
     }
 }
