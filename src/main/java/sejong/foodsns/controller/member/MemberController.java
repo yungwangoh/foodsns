@@ -2,26 +2,28 @@ package sejong.foodsns.controller.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
-import sejong.foodsns.dto.member.find.MemberFindDto;
 import sejong.foodsns.dto.member.update.MemberUpdatePwdDto;
 import sejong.foodsns.dto.member.update.MemberUpdateUserNameDto;
 import sejong.foodsns.service.member.business.MemberBusinessService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
-import sejong.foodsns.service.member.crud.MemberSuccessOrFailedMessage;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.service.member.crud.MemberSuccessOrFailedMessage.*;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class MemberController {
 
     private final MemberCrudService memberCrudService;
@@ -45,10 +47,10 @@ public class MemberController {
      * @param memberFindDto
      * @return 회원 정보, OK
      */
-    @PostMapping("/member/search")
-    public ResponseEntity<MemberResponseDto> memberSearch(@RequestBody @Valid MemberFindDto memberFindDto) {
+    @GetMapping("/member/search/{email}")
+    public ResponseEntity<MemberResponseDto> memberSearch(@PathVariable("email") String email) {
 
-        ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(memberFindDto.getEmail());
+        ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(email);
 
         return new ResponseEntity<>(getMember(member), member.getStatusCode());
     }
@@ -104,6 +106,42 @@ public class MemberController {
         ResponseEntity<Optional<MemberResponseDto>> memberDelete = memberCrudService.memberDelete(memberRequestDto);
 
         return new ResponseEntity<>(USER_DELETE_SUCCESS, memberDelete.getStatusCode());
+    }
+
+    /**
+     * 회원 이메일 중복 검사
+     * @param memberRequestDto
+     * @return 중복을 찾는데에 성공하면 True 와 OK, 실패하면 False 와 NOT_FOUND
+     * 혼동이 있을 수도 있으니, 후에 테스트를 하여 수정하겠음.
+     */
+    @PostMapping("/member/duplicated/email")
+    public ResponseEntity<String> memberDuplicatedEmailCheck(@RequestBody @Valid MemberRequestDto memberRequestDto) {
+
+        Boolean emailExistValidation = memberCrudService.memberEmailExistValidation(memberRequestDto);
+
+        if(emailExistValidation) {
+            return new ResponseEntity<>(emailExistValidation.toString(), OK);
+        } else {
+            return new ResponseEntity<>(emailExistValidation.toString(), NOT_FOUND);
+        }
+    }
+
+    /**
+     * 회원 닉네임(유저이름) 중복 검사
+     * @param memberRequestDto
+     * @return 중복을 찾는데에 성공하면 True 와 OK, 실패하면 False 와 NOT_FOUND
+     * 혼동이 있을 수도 있으니, 후에 테스트를 하여 수정하겠음.
+     */
+    @PostMapping("/member/duplicated/username")
+    public ResponseEntity<String> memberDuplicatedNameCheck(@RequestBody @Valid MemberRequestDto memberRequestDto) {
+
+        Boolean nameExistValidation = memberCrudService.memberNameExistValidation(memberRequestDto);
+
+        if(nameExistValidation) {
+            return new ResponseEntity<>(nameExistValidation.toString(), OK);
+        } else {
+            return new ResponseEntity<>(nameExistValidation.toString(), NOT_FOUND);
+        }
     }
 
     /**

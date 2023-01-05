@@ -33,5 +33,6 @@ public class MemberResponseDto {
         this.username = member.getUsername();
         this.email = member.getEmail();
         this.memberRank = member.getMemberRank();
+        this.memberType = member.getMemberType();
     }
 }

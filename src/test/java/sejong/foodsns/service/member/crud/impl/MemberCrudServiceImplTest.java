@@ -215,30 +215,27 @@ class MemberCrudServiceImplTest {
     }
 
     private MemberRequestDto getMemberRequestDto() {
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+        return MemberRequestDto.builder()
                 .username("윤광오")
                 .email("swager253@naver.com")
                 .password("rhkddh77@A")
                 .build();
-        return memberRequestDto;
     }
 
     private MemberRequestDto getMemberRequestDtoTwo() {
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+        return MemberRequestDto.builder()
                 .username("하윤")
                 .email("qkfks1234@naver.com")
                 .password("rhkddh77@A")
                 .build();
-        return memberRequestDto;
     }
 
     private MemberRequestDto getMemberRequestDtoThree() {
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+        return MemberRequestDto.builder()
                 .username("윤민수")
                 .email("alstngud77@naver.com")
                 .password("rhkddh77@A")
                 .build();
-        return memberRequestDto;
     }
 
     private MemberResponseDto getBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {
