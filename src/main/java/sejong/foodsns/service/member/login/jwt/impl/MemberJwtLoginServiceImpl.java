@@ -15,7 +15,6 @@ import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.login.jwt.MemberLoginService;
 import sejong.foodsns.service.redis.RedisService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;

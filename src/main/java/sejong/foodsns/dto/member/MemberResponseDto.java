@@ -8,8 +8,6 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.domain.member.MemberType;
 
-import java.util.Optional;
-
 import static lombok.AccessLevel.PROTECTED;
 
 @Data

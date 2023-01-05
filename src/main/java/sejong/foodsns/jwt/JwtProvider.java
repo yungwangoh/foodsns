@@ -10,13 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
-import sejong.foodsns.dto.member.login.MemberLoginDto;
 import sejong.foodsns.dto.token.TokenResponseDto;
 import sejong.foodsns.exception.http.ForbiddenException;
-import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 import sejong.foodsns.service.redis.RedisService;
 

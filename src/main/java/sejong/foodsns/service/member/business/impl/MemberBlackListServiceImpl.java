@@ -7,7 +7,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.BlackList;
-import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberNumberOfCount;
 import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.login.MemberLoginDto;
 import sejong.foodsns.repository.member.MemberRepository;

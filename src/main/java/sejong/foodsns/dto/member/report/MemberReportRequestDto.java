@@ -4,10 +4,6 @@ import lombok.*;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
 
-import java.util.Optional;
-
-import static java.util.Optional.of;
-
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
