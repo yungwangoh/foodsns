@@ -1,17 +1,19 @@
 package sejong.foodsns.service.member.business;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import sejong.foodsns.domain.member.ReportMember;
+import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MemberReportService {
 
-    ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(MemberReportRequestDto memberReportRequestDto);
+    ResponseEntity<MemberReportResponseDto> reportMemberCreate(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id);
+    ResponseEntity<MemberReportResponseDto> reportMemberFindOne(MemberReportRequestDto memberReportRequestDto);
 
-    ResponseEntity<Optional<List<MemberReportResponseDto>>> reportMemberList();
+    ResponseEntity<List<MemberReportResponseDto>> reportMemberList();
 }

@@ -87,8 +87,10 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
     private MemberResponseDto getMemberResponseDto(Member save) {
 
-        return MemberResponseDto.builder()
+        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .member(save)
                 .build();
+
+        return memberResponseDto;
     }
 }

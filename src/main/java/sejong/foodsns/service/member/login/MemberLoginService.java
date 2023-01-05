@@ -1,16 +1,13 @@
 package sejong.foodsns.service.member.login;
 
 import org.springframework.http.ResponseEntity;
-import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.member.login.MemberLoginDto;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Service;
+import sejong.foodsns.dto.member.MemberRequestDto;
+import sejong.foodsns.dto.member.MemberResponseDto;
 
 public interface MemberLoginService {
 
-    ResponseEntity<String> login(MemberLoginDto memberLoginDto, HttpServletRequest request);
+    ResponseEntity<MemberResponseDto> login(MemberRequestDto memberRequestDto);
 
-    ResponseEntity<String> logout(HttpServletRequest request);
-
-    ResponseEntity<String> keepSessionLogin(Member member);
+    ResponseEntity<MemberResponseDto> logout(MemberRequestDto memberRequestDto);
 }

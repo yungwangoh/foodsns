@@ -30,8 +30,4 @@ public class FoodTag extends BaseEntity {
         this.foodName = foodName;
         this.foodType = foodType;
     }
-
-    /**
-     * redis로 해쉬태그 맵핑된 게시물 조회(예정)
-     */
 }

@@ -21,7 +21,7 @@ public class Comment extends BaseEntity {
     private Long id;
 
     @Column(name = "content")
-    @Lob // 문자열 길이 varchar(255) 이상 저장가능
+    @Lob
     private String content;
 
     @Column(name = "recommend_count")
@@ -41,9 +41,9 @@ public class Comment extends BaseEntity {
     @Builder
     public Comment(String content, int recommCount, int reportCount, List<Reply> reply, Board board) {
         this.content = content;
-        this.recommCount = recommCount; // 추천수
-        this.reportCount = reportCount; // 신고수
-        this.reply = reply; // 대댓글
-        this.board = board; // 댓글을 달 게시물
+        this.recommCount = recommCount;
+        this.reportCount = reportCount;
+        this.reply = reply;
+        this.board = board;
     }
 }
