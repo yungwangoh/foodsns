@@ -91,4 +91,13 @@ public class Board extends BaseEntity {
         this.recommCount++;
     }
 
+    /**
+     * 게시물 제목 수정
+     * @param title
+     * @return
+     */
+    public Board boardTitleUpdate(String title) {
+        this.title = title;
+        return this;
+    }
 }
