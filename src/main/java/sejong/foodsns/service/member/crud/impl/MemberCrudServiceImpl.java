@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.exception.http.DuplicatedException;
+import sejong.foodsns.exception.http.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
@@ -165,7 +167,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      */
     private Optional<Member> getMemberReturnOptionalMember(String email) {
         return of(memberRepository.findMemberByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+                .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
     }
 
     /**
@@ -175,7 +177,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     private void duplicatedCheckLogic(MemberRequestDto memberRequestDto) {
         Boolean duplicatedCheck = memberRepository.existsMemberByEmail(memberRequestDto.getEmail());
         if(duplicatedCheck) 
-            throw new IllegalArgumentException("중복된 회원입니다.");
+            throw new DuplicatedException("중복된 회원입니다.");
     }
 
     /**

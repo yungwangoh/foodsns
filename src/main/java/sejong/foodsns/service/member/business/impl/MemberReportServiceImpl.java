@@ -9,6 +9,8 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
+import sejong.foodsns.exception.http.DuplicatedException;
+import sejong.foodsns.exception.http.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.member.ReportMemberRepository;
 import sejong.foodsns.service.member.business.MemberReportService;
@@ -42,7 +44,7 @@ public class MemberReportServiceImpl implements MemberReportService {
     public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(MemberReportRequestDto memberReportRequestDto) {
 
         Optional<Member> member = of(memberRepository.findMemberByEmail(getMember(memberReportRequestDto).getEmail())
-                .orElseThrow(() -> new  IllegalArgumentException("회원이 존재하지 않습니다.")));
+                .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));
 
@@ -64,7 +66,7 @@ public class MemberReportServiceImpl implements MemberReportService {
     public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) throws IllegalArgumentException{
 
         Optional<ReportMember> reportMember = of(reportMemberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
+                .orElseThrow(() -> new NoSearchMemberException("신고 회원이 존재하지 않습니다.")));
 
         MemberReportResponseDto memberReportResponseDto = MemberReportResponseDto.builder()
                 .reportMember(getReportMember(reportMember))
