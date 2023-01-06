@@ -167,7 +167,7 @@ class BoardRepositoryTest {
     class updateBoard {
         @Test
         @DisplayName("게시물 이름 수정")
-        void memberUpdateName() {
+        void boardUpdateName() {
             // given
             Long id = 1L;
             Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
