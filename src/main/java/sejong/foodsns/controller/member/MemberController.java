@@ -34,7 +34,7 @@ public class MemberController {
      * @param memberRequestDto
      * @return 회원 정보, CREATE
      */
-    @PostMapping("/member/create")
+    @PostMapping("/member")
     public ResponseEntity<MemberResponseDto> memberCreate(@RequestBody @Valid MemberRequestDto memberRequestDto) {
 
         ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
@@ -47,7 +47,7 @@ public class MemberController {
      * @param memberFindDto
      * @return 회원 정보, OK
      */
-    @GetMapping("/member/search/{email}")
+    @GetMapping("/member/{email}")
     public ResponseEntity<MemberResponseDto> memberSearch(@PathVariable("email") String email) {
 
         ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(email);
@@ -60,12 +60,13 @@ public class MemberController {
      * @param memberUpdatePwdDto
      * @return 비밀번호 수정 완료, OK
      */
-    @PatchMapping("/member/update/password")
+    @PatchMapping("/member/password")
     public ResponseEntity<String> memberUpdatePassword(@RequestBody @Valid MemberUpdatePwdDto memberUpdatePwdDto) {
 
         ResponseEntity<Optional<MemberResponseDto>> passwordUpdate =
                 memberCrudService.memberPasswordUpdate(memberUpdatePwdDto.getEmail(), memberUpdatePwdDto.getPassword());
 
+        // 비밀번호 찾기 기능은 일반적으로 수정이 되어야한다. 그 때문에 수정 메세지를 리턴하는 것이다.
         return new ResponseEntity<>(PASSWORD_SEARCH_SUCCESS, passwordUpdate.getStatusCode());
     }
 
@@ -74,7 +75,7 @@ public class MemberController {
      * @param memberUpdateUserNameDto
      * @return 닉네임 수정 완료, OK
      */
-    @PatchMapping("/member/update/username")
+    @PatchMapping("/member/username")
     public ResponseEntity<String> memberUpdateUsername(@RequestBody @Valid MemberUpdateUserNameDto memberUpdateUserNameDto) {
 
         ResponseEntity<Optional<MemberResponseDto>> nameUpdate =
@@ -100,7 +101,7 @@ public class MemberController {
      * @param memberRequestDto
      * @return 회원 삭제 완료, OK
      */
-    @DeleteMapping("/member/delete")
+    @DeleteMapping("/member")
     public ResponseEntity<String> memberDelete(@RequestBody @Valid MemberRequestDto memberRequestDto) {
 
         ResponseEntity<Optional<MemberResponseDto>> memberDelete = memberCrudService.memberDelete(memberRequestDto);

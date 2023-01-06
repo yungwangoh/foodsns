@@ -9,11 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.foodsns.dto.member.MemberRequestDto;
-import sejong.foodsns.service.member.crud.MemberCrudService;
+import sejong.foodsns.dto.member.update.MemberUpdateUserNameDto;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,15 +23,13 @@ class MemberControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private MemberCrudService memberCrudService;
     private MemberRequestDto memberRequestDto;
 
     @BeforeEach
     void init() {
         memberRequestDto = MemberRequestDto.builder()
                 .username("윤광오")
-                .email("swaegr253@naver.com")
+                .email("swager253@naver.com")
                 .password("rhkddh77@A")
                 .build();
     }
@@ -46,7 +42,7 @@ class MemberControllerTest {
         String memberCreate = objectMapper.writeValueAsString(memberRequestDto);
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/member/create")
+        ResultActions resultActions = mockMvc.perform(post("/member")
                         .content(memberCreate)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -70,7 +66,7 @@ class MemberControllerTest {
         String memberCreate = objectMapper.writeValueAsString(memberRequestDto1);
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/member/create")
+        ResultActions resultActions = mockMvc.perform(post("/member")
                 .content(memberCreate)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -83,32 +79,31 @@ class MemberControllerTest {
     @Test
     @Order(2)
     @DisplayName("회원 가입 (NOT_FOUND -> 중복 회원 가입)")
-    @Disabled
-    void registerMemberNotFound() throws Exception{
+    //@Disabled
+    void registerMemberNotFound() throws Exception {
         // given
         String memberCreate = objectMapper.writeValueAsString(memberRequestDto);
 
         // when
-        ResultActions resultActions = mockMvc.perform(post("/member/create")
+        ResultActions resultActions = mockMvc.perform(post("/member")
                 .content(memberCreate)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        resultActions.andExpect(status().isNotFound())
+        resultActions.andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
     @Test
     @Order(3)
     @DisplayName("회원 찾기 OK")
-    //@Disabled
     void memberSearchOK() throws Exception {
         // given
         String email = "swager253@naver.com";
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/member/search/{email}", email));
+        ResultActions resultActions = mockMvc.perform(get("/member/{email}", email));
 
         // then
         resultActions.andExpect(status().isOk())
@@ -126,6 +121,47 @@ class MemberControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("회원 이름 수정 OK")
+    void memberNameUpdate() throws Exception {
+        // given
+        MemberUpdateUserNameDto updateUserNameDto = MemberUpdateUserNameDto.builder()
+                .email("swager253@naver.com")
+                .username("윤재경")
+                .build();
+
+        String updateName = objectMapper.writeValueAsString(updateUserNameDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(patch("/member/username")
+                .content(updateName)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("회원 탈퇴 NO_CONTENT")
+    void memberDeleteNoContent() throws Exception{
+        // given
+        String memberDelete = objectMapper.writeValueAsString(memberRequestDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/member")
+                .content(memberDelete)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isNoContent())
                 .andDo(print());
     }
 }

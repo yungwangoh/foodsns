@@ -17,8 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
@@ -155,7 +154,7 @@ class MemberCrudServiceImplTest {
                 ResponseEntity<Optional<MemberResponseDto>> member =
                         memberCrudService.findMember(memberRequestDto.getEmail());
 
-                assertThat(member.getStatusCode()).isEqualTo(OK);
+                assertThat(member.getStatusCode()).isEqualTo(NO_CONTENT);
             }).isInstanceOf(IllegalArgumentException.class);
         }
 
