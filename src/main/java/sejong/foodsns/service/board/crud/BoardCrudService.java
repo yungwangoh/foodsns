@@ -13,7 +13,7 @@ public interface BoardCrudService {
 
     ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto);
 
-    ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String email, String username);
+    ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String updateTitle, String orderTitle);
 
     ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto);
 
