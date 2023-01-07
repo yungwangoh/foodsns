@@ -23,9 +23,11 @@ public class BlackList extends BaseEntity {
     @Column(name = "black_list_id")
     private Long id;
 
+    // 블랙리스트인 사유
     @Column(name = "penalty_reason")
     private String reason;
 
+    // 신고 당한 회원
     @OneToOne
     @JoinColumn(name = "report_id")
     private ReportMember reportMember;

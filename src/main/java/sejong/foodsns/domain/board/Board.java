@@ -52,7 +52,7 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "food_id")
     private FoodTag foodTag;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 

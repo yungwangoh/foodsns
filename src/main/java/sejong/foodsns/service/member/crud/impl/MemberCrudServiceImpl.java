@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.exception.http.DuplicatedException;
+import sejong.foodsns.exception.http.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
@@ -17,8 +19,7 @@ import java.util.Optional;
 
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @Service
@@ -39,12 +40,9 @@ public class MemberCrudServiceImpl implements MemberCrudService {
     @Transactional
     public ResponseEntity<Optional<MemberResponseDto>> memberCreate(MemberRequestDto memberRequestDto) {
 
-        Member member = Member.builder()
-                .username(memberRequestDto.getUsername())
-                .email(memberRequestDto.getEmail())
-                .password(passwordEncoder.encode(memberRequestDto.getPassword()))
-                .memberType(NORMAL)
-                .build();
+        duplicatedCheckLogic(memberRequestDto);
+
+        Member member = memberClassCreated(memberRequestDto);
 
         Member save = memberRepository.save(member);
         return new ResponseEntity<>(of(new MemberResponseDto(save)), CREATED);
@@ -101,7 +99,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         passwordMatchCheck(memberRequestDto, member);
 
-        return new ResponseEntity<>(OK);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     /**
@@ -162,11 +160,31 @@ public class MemberCrudServiceImpl implements MemberCrudService {
         return member.get();
     }
 
+    /**
+     * 회원 찾고 반환하는 로직 Optional
+     * @param email
+     * @return 회원 존재 X -> Exception
+     */
     private Optional<Member> getMemberReturnOptionalMember(String email) {
         return of(memberRepository.findMemberByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+                .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
     }
 
+    /**
+     * 회원 중복 검증
+     * @param memberRequestDto
+     */
+    private void duplicatedCheckLogic(MemberRequestDto memberRequestDto) {
+        Boolean duplicatedCheck = memberRepository.existsMemberByEmail(memberRequestDto.getEmail());
+        if(duplicatedCheck) 
+            throw new DuplicatedException("중복된 회원입니다.");
+    }
+
+    /**
+     * 비밀번호 체크 로직
+     * @param memberRequestDto
+     * @param member
+     */
     private void passwordMatchCheck(MemberRequestDto memberRequestDto, Optional<Member> member) {
         boolean matches = passwordEncoder.matches(memberRequestDto.getPassword(), member.get().getPassword());
         if(matches) {
@@ -174,5 +192,19 @@ public class MemberCrudServiceImpl implements MemberCrudService {
         } else {
             throw new IllegalArgumentException("비밀번호가 동일하지 않습니다.");
         }
+    }
+
+    /**
+     * 회원 객체 생성
+     * @param memberRequestDto
+     * @return 회원
+     */
+    private Member memberClassCreated(MemberRequestDto memberRequestDto) {
+        return Member.builder()
+                .username(memberRequestDto.getUsername())
+                .email(memberRequestDto.getEmail())
+                .password(passwordEncoder.encode(memberRequestDto.getPassword()))
+                .memberType(NORMAL)
+                .build();
     }
 }
