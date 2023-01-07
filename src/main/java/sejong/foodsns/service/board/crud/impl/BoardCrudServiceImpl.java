@@ -3,6 +3,7 @@ package sejong.foodsns.service.board.crud.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
@@ -32,7 +33,6 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 public class BoardCrudServiceImpl implements BoardCrudService {
 
     private final BoardRepository boardRepository;
-    private final MemberCrudServiceImpl memberCrudService;
 
     /**
      * 게시물 생성 -> 성공 ?, 실패 ?
@@ -59,7 +59,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String updateTitle, String orderTitle) {
+    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String orderTitle, String updateTitle) {
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(orderTitle);
 
         Board updateBoard = getBoard(board).boardTitleUpdate(updateTitle);
@@ -79,8 +79,6 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     public ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto) {
 
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(boardRequestDto.getTitle());
-
-//        memberCrudService.passwordMatchCheck(memberRequestDto, member);
 
         return new ResponseEntity<>(NO_CONTENT);
     }
