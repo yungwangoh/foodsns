@@ -1,7 +1,6 @@
 package sejong.foodsns.controller.member.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 class MemberLoginControllerTest {
 
     @Autowired
@@ -50,6 +49,7 @@ class MemberLoginControllerTest {
 
     @Nested
     @DisplayName("성공")
+    @Order(0)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class Success {
 
@@ -94,6 +94,7 @@ class MemberLoginControllerTest {
 
     @Nested
     @DisplayName("실패")
+    @Order(1)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class Failed {
 

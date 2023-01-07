@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.log.error.ErrorResult;
 
 import static org.springframework.http.HttpStatus.*;
