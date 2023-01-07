@@ -32,9 +32,9 @@ public class BoardResponseDto {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
+        this.member = board.getMember();
         this.memberRank = member.getMemberRank();
         this.check = board.getCheck();
         this.recommCount = board.getRecommCount();
-        this.member = board.getMember();
     }
 }
