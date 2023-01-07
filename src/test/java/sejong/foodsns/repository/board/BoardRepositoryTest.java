@@ -166,7 +166,7 @@ class BoardRepositoryTest {
     @DisplayName("Update")
     class updateBoard {
         @Test
-        @DisplayName("게시물 이름 수정")
+        @DisplayName("게시물 제목 수정")
         void boardUpdateName() {
             // given
             Long id = 1L;
