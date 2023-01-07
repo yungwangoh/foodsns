@@ -64,7 +64,7 @@ public class Member extends BaseEntity {
     private int recommendCount;
 
     // 회원 게시물
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Board> boards;
 
