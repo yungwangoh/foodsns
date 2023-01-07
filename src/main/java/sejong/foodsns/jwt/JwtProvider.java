@@ -43,6 +43,12 @@ public class JwtProvider {
         key = Base64.getEncoder().encodeToString(key.getBytes());
     }
 
+    /**
+     * 로그인을 위한 토큰 생성. 리프레시 토큰은 Redis에 저장 엑세스는 클라이언트로 보냄
+     * @param email
+     * @return TokenResponseDto
+     * @throws JsonProcessingException
+     */
     public TokenResponseDto createTokenByLogin(String email) throws JsonProcessingException{
         String accessToken = createAccessToken(email);
         String refreshToken = createRefreshToken(email);
@@ -51,14 +57,33 @@ public class JwtProvider {
         return new TokenResponseDto(accessToken);
     }
 
+    /**
+     * 리프레시 토큰 생성
+     * @param email
+     * @return 리프레시 토큰
+     * @throws JsonProcessingException
+     */
     public String createRefreshToken(String email) throws JsonProcessingException {
         return createToken(email, refreshTokenExpireTime);
     }
 
+    /**
+     * 엑세스 토큰 생성
+     * @param email
+     * @return 엑세스 토큰
+     * @throws JsonProcessingException
+     */
     public String createAccessToken(String email) throws JsonProcessingException {
         return createToken(email, accessTokenExpireTime);
     }
 
+    /**
+     * 토큰 생성
+     * @param emailAccount 이메일 계정
+     * @param expireTime 만료 기간
+     * @return JWT Token
+     * @throws JsonProcessingException
+     */
     public String createToken(String emailAccount, Long expireTime) throws JsonProcessingException {
 
         ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(emailAccount);
@@ -75,18 +100,34 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * 로그인 회원 정보
+     * @param accessToken
+     * @return 회원 정보 객체
+     * @throws JsonProcessingException
+     */
     public MemberResponseDto getLoginDto(String accessToken) throws JsonProcessingException {
         String subject = isValidToken(accessToken);
         if (subject == null) return null;
         return objectMapper.readValue(subject, MemberResponseDto.class);
     }
 
+    /**
+     * 로그아웃
+     * @param email
+     * @param accessToken
+     */
     public void logout(String email, String accessToken) {
         long expireTime = getTokenExpireTime(accessToken).getTime() - new Date().getTime();
         redisService.setValues(blackList + accessToken, email, Duration.ofMillis(expireTime));
         redisService.deleteValues(email);
     }
 
+    /**
+     * 토큰 유효성 검사
+     * @param accessToken
+     * @return
+     */
     public String isValidToken(String accessToken) {
         String subject;
         try {
@@ -97,6 +138,13 @@ public class JwtProvider {
         return subject;
     }
 
+    /**
+     * 토큰 재발급
+     * @param email
+     * @return 재발급 토큰
+     * @throws JsonProcessingException
+     * @throws ForbiddenException 리프레시 토큰이 Redis에 없을 경우 예외
+     */
     public TokenResponseDto reissueToken(String email) throws JsonProcessingException, ForbiddenException {
         String getRefreshToken = redisService.getValues(email);
         if(getRefreshToken.isEmpty())

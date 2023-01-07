@@ -1,9 +1,10 @@
-package sejong.foodsns.log.interceptor;
+package sejong.foodsns.log.interceptor.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.jwt.JwtProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,20 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtServiceInterceptor implements HandlerInterceptor {
+public class MemberAccessInterceptor implements HandlerInterceptor {
 
     private final JwtProvider jwtProvider;
 
-    /**
-     * Jwt Token Intercept
-     * @param request current HTTP request
-     * @param response current HTTP response
-     * @param handler chosen handler to execute, for type and/or instance evaluation
-     * @return
-     * @throws Exception
-     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        String token = request.getHeader("X-AUTH-TOKEN");
+        MemberResponseDto loginDto = jwtProvider.getLoginDto(token);
+
         return true;
     }
 
