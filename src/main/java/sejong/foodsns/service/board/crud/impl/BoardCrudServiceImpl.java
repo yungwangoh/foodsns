@@ -73,7 +73,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     public ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto) {
 
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(boardRequestDto.getTitle());
-
+        
         return new ResponseEntity<>(NO_CONTENT);
     }
 

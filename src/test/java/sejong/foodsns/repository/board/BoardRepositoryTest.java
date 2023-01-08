@@ -73,13 +73,13 @@ class BoardRepositoryTest {
         //멤버 추천수 총 12개 일때, BRONZE.
         for (int i = 1; i <= 12; i++)
             board.plusRecommendCount();
-        member.memberRecommendUp(board.getRecommCount());
+        member.memberRankUp(board.getRecommCount());
         assertThat(member.getMemberRank()).isEqualTo(MemberRank.BRONZE);
 
         //멤버 추천수 총 31개 일때, SILVER.
         for (int i = 1; i <= 19; i++)
             board.plusRecommendCount();
-        member.memberRecommendUp(board.getRecommCount());
+        member.memberRankUp(board.getRecommCount());
         assertThat(member.getMemberRank()).isEqualTo(MemberRank.SILVER);
     }
 
@@ -127,9 +127,9 @@ class BoardRepositoryTest {
         private void initBoardRegister() {
 
             Member member1 = new Member(userName.get(0), email.get(0), password.get(0), memberType);
-            member1.memberRecommendUp(5); // 멤버 랭크 -> Normal
+            member1.memberRankUp(5); // 멤버 랭크 -> Normal
             Member member2 = new Member(userName.get(1), email.get(1), password.get(1), memberType);
-            member2.memberRecommendUp(130); // 멤버 랭크 -> Diamond
+            member2.memberRankUp(130); // 멤버 랭크 -> Diamond
 
             Board board1 = new Board(title.get(0), content.get(0), member1.getMemberRank(), 13L, 0, null, member1
                     , null, null);

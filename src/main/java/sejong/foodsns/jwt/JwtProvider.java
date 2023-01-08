@@ -2,11 +2,9 @@ package sejong.foodsns.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,6 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
 
@@ -124,9 +123,31 @@ public class JwtProvider {
     }
 
     /**
+     * 토큰 유효성 검사 bool type
+     * @param accessToken
+     * @return 유효함 true, 유효하지 않음 false
+     */
+    public boolean isValidTokenCheck(String accessToken) {
+
+        try {
+            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
+            log.info("[expireTime] = {}", claims.getExpiration());
+            log.info("[subject] = {}", claims.getSubject());
+            return true;
+        } catch (JwtException | NullPointerException e) {
+            log.error("Token Error");
+            return false;
+        }
+    }
+
+    public String getFormatToken(String accessToken) {
+        return accessToken.split(" ")[1];
+    }
+
+    /**
      * 토큰 유효성 검사
      * @param accessToken
-     * @return
+     * @return subject
      */
     public String isValidToken(String accessToken) {
         String subject;
