@@ -71,6 +71,9 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
 
         MemberBlackListResponseDto member = getMember(blackListMemberFindOne);
         Member m = setMemberBlackListType(member);
+        m.memberBlackListType(BLACKLIST);
+
+
 
         return blackListMemberFindOne;
     }

@@ -158,6 +158,10 @@ public class Member extends BaseEntity {
         return this;
     }
 
+    public void memberBlackListType(MemberType memberType) {
+        this.memberType = memberType;
+    }
+
     /**
      * 유저 신고 리포트 수 증가
      */
