@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sejong.foodsns.jwt.JwtProvider;
-import sejong.foodsns.log.interceptor.JwtServiceInterceptor;
+import sejong.foodsns.log.interceptor.member.JwtServiceInterceptor;
 
 @Configuration
 @RequiredArgsConstructor

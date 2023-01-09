@@ -10,7 +10,7 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 

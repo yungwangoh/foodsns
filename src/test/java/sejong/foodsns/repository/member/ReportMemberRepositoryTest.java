@@ -141,6 +141,6 @@ class ReportMemberRepositoryTest {
      * @return
      */
     private int getInitPenaltyCount(ReportMember reportMember) {
-        return reportMember.blackListPenaltyCount(reportMember.getMember());
+        return ReportMember.blackListPenaltyCount(reportMember.getMember());
     }
 }

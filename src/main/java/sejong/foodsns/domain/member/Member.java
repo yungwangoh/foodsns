@@ -97,7 +97,9 @@ public class Member extends BaseEntity {
      * 유저 회원 등급
      * @param recommendCount
      */
-    public void memberRecommendUp(int recommendCount) {
+    public void memberRankUp(int recommendCount) {
+        negativeNumExceptionCheck(recommendCount);
+
         if(bronzeRank(recommendCount)) {
             this.memberRank = BRONZE;
         } else if (silverRank(recommendCount)) {
@@ -151,8 +153,13 @@ public class Member extends BaseEntity {
      * @return
      */
     public Member memberRecommendCount(int recommendCount) {
+        negativeNumExceptionCheck(recommendCount);
         this.recommendCount = recommendCount;
         return this;
+    }
+
+    public void memberBlackListType(MemberType memberType) {
+        this.memberType = memberType;
     }
 
     /**
@@ -163,11 +170,9 @@ public class Member extends BaseEntity {
     }
 
     /**
-     * 유저 패널티 수 증가
+     * 유저 패널티 수
      */
-    public void penaltyCount() {
-        this.penalty++;
-    }
+    public void setPenalty(int penalty) { this.penalty = penalty; }
 
     /**
      * 유저 브론즈 등급 추천 수 10 ~ 29
@@ -221,5 +226,15 @@ public class Member extends BaseEntity {
      */
     private boolean vipRank(int recommendCount) {
         return recommendCount >= vipNumOfRecommend;
+    }
+
+    /**
+     * 회원 추천수가 음수일 떄 예외
+     * @param recommendCount
+     */
+    private void negativeNumExceptionCheck(int recommendCount) {
+        if(recommendCount < 0) {
+            throw new IllegalArgumentException("잘못된 추천 수 입니다.");
+        }
     }
 }

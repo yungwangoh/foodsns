@@ -1,6 +1,7 @@
 package sejong.foodsns.dto.member.login;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Data
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
+@Builder
 public class MemberLoginDto {
 
     @NotBlank(message = "이메일을 입력해주세요.")

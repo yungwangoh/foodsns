@@ -3,21 +3,17 @@ package sejong.foodsns.service.board.crud.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
-import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
-import sejong.foodsns.dto.member.MemberRequestDto;
-import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.exception.http.NoSearchBoardException;
 import sejong.foodsns.exception.http.NoSearchMemberException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
-import sejong.foodsns.service.member.crud.impl.MemberCrudServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +21,6 @@ import java.util.Optional;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
-import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +78,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
         //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
         boardRepository.delete(getBoard(board));
+
         return new ResponseEntity<>(NO_CONTENT);
     }
 

@@ -1,4 +1,4 @@
-package sejong.foodsns.log.interceptor;
+package sejong.foodsns.log.interceptor.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,16 +16,28 @@ public class JwtServiceInterceptor implements HandlerInterceptor {
     private final JwtProvider jwtProvider;
 
     /**
-     * Jwt Token Intercept
+     * Jwt 토큰 인터셉터 (유효성 검사)
      * @param request current HTTP request
      * @param response current HTTP response
      * @param handler chosen handler to execute, for type and/or instance evaluation
-     * @return
+     * @return 유효하지 않은 토큰 (토큰이 존재하지 않음) false, 토큰이 존재함 true
      * @throws Exception
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        return true;
+
+        log.info("[Http Request token] = {}", request.getHeader("X-AUTH-TOKEN"));
+
+        String accessToken = request.getHeader("X-AUTH-TOKEN");
+
+        if(accessToken != null) {
+            String token = jwtProvider.getFormatToken(accessToken);
+            if(jwtProvider.isValidTokenCheck(token)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

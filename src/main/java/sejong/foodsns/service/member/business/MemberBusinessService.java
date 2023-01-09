@@ -13,5 +13,5 @@ public interface MemberBusinessService {
     ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto);
 
     // 게시판이 구현되면 구현할 예정.
-    ResponseEntity<MemberResponseDto> memberRecommendCount(int recommendCount);
+    ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend);
 }
