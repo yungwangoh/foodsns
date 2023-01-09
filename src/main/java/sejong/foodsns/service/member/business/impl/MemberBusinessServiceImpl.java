@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
+import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.BlackListRepository;
@@ -78,7 +79,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
         Optional<Member> member = getMember(memberRequestDto);
 
-        getMember(member).penaltyCount();
+        ReportMember.blackListPenaltyCount(getMember(member));
 
         Member save = memberRepository.save(getMember(member));
 
@@ -88,17 +89,18 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
     }
 
     /**
-     * 회원 추천 수 업데이트 (게시물에 받은 추천수를 맴버로 업데이트 {Mapping} )
+     * 회원 추천 수 업데이트 (게시물에 받은 추천수를 맴버로 업데이트 {Mapping} 초기 구현)
      * @param memberRequestDto
+     * @param recommend
      * @return 회원 정보, OK
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend) {
 
         Optional<Member> memberRequest = getMember(memberRequestDto);
 
-        getMember(memberRequest).memberRecommendCount(getMember(memberRequest).getRecommendCount());
+        getMember(memberRequest).memberRecommendCount(recommend);
 
         Member save = memberRepository.save(getMember(memberRequest));
 
@@ -122,7 +124,6 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      * @return 회원 응답 Dto
      */
     private MemberResponseDto getMemberResponseDto(Member save) {
-
         return MemberResponseDto.builder()
                 .member(save)
                 .build();

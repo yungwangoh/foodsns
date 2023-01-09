@@ -34,7 +34,7 @@ public class ReportMember extends BaseEntity {
      * @param member
      * @return
      */
-    public int blackListPenaltyCount(Member member) {
+    public static int blackListPenaltyCount(Member member) {
 
         return penaltyCalculate(member);
     }
@@ -44,42 +44,42 @@ public class ReportMember extends BaseEntity {
      * @param member
      * @return 회원 패널티 개수
      */
-    private int penaltyCalculate(Member member) {
+    private static int penaltyCalculate(Member member) {
         if(penaltyFirst(member)) {
-            member.penaltyCount();
+            member.setPenalty(1);
         } else if (penaltySecond(member)) {
-            member.penaltyCount();
+            member.setPenalty(2);
         } else if (penaltyThird(member)) {
-            member.penaltyCount();
+            member.setPenalty(3);
         }
 
         return member.getPenalty();
     }
 
     /**
-     * 신고 횟수가 30개 이상이면서, 패널티 개수가 2개면 패널티 수 증가.
+     * 신고 횟수가 30개 이상이면 penalty 3
      * @param member
      * @return
      */
-    private boolean penaltyThird(Member member) {
-        return member.getReportCount() >= numOfReportThird && member.getPenalty() >= 2;
+    private static boolean penaltyThird(Member member) {
+        return member.getReportCount() >= numOfReportThird;
     }
 
     /**
-     * 신고 횟수가 20개 이상이면서, 패널티 개수가 1개면 패널티 수 증가.
+     * 신고 횟수가 20개 이상이면 penalty 2
      * @param member
      * @return
      */
-    private boolean penaltySecond(Member member) {
-        return (member.getReportCount() >= numOfReportSecond && member.getReportCount() < numOfReportThird) && member.getPenalty() == 1;
+    private static boolean penaltySecond(Member member) {
+        return (member.getReportCount() >= numOfReportSecond && member.getReportCount() < numOfReportThird);
     }
 
     /**
-     * 신고 횟수가 10개 이상이면서, 패널티 개수가 0개면 패널티 수 증가.
+     * 신고 횟수가 10개 이상이면 penalty 1
      * @param member
      * @return
      */
-    private boolean penaltyFirst(Member member) {
-        return (member.getReportCount() >= numOfReportFirst && member.getReportCount() < numOfReportSecond) && member.getPenalty() == 0;
+    private static boolean penaltyFirst(Member member) {
+        return (member.getReportCount() >= numOfReportFirst && member.getReportCount() < numOfReportSecond);
     }
 }

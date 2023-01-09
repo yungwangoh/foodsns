@@ -8,7 +8,7 @@ import sejong.foodsns.domain.member.ReportMember;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class MemberBlackListRequestDto {
+public class MemberBlackListCreateRequestDto {
 
     private Long id;
     private String reason;

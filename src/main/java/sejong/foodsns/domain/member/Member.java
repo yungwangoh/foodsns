@@ -158,7 +158,6 @@ public class Member extends BaseEntity {
         return this;
     }
 
-
     /**
      * 유저 신고 리포트 수 증가
      */
@@ -167,11 +166,9 @@ public class Member extends BaseEntity {
     }
 
     /**
-     * 유저 패널티 수 증가
+     * 유저 패널티 수
      */
-    public void penaltyCount() {
-        this.penalty++;
-    }
+    public void setPenalty(int penalty) { this.penalty = penalty; }
 
     /**
      * 유저 브론즈 등급 추천 수 10 ~ 29

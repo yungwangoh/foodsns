@@ -28,6 +28,7 @@ class MemberBusinessServiceImplTest {
     @Autowired
     private MemberCrudService memberCrudService;
     private static MemberRequestDto memberRequestDto;
+
     @BeforeEach
     void init() {
         memberRequestDto = MemberRequestDto.builder()
@@ -103,6 +104,13 @@ class MemberBusinessServiceImplTest {
 
         // then
         assertThat(getBody(memberBlackListPenaltyCount).getPenaltyCount()).isEqualTo(1);
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("회원")
+    void member() {
+
     }
 
     private Optional<Member> getMember() {
