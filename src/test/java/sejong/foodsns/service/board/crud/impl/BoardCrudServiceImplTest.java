@@ -39,20 +39,17 @@ public class BoardCrudServiceImplTest {
 
     private BoardResponseDto boardResponseDto;
 
-    @BeforeEach
-    void boardResponseInit() {
+    @Test
+    @DisplayName("게시물 등록")
+    void boardCreate() {
+
+        //given
         Member member = new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL);
         Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
                 member, null, null);
         boardResponseDto = BoardResponseDto.builder()
                 .board(board)
                 .build();
-    }
-
-    @Test
-    @DisplayName("게시물 등록")
-    void boardCreate() {
-        //given
         BoardRequestDto boardRequestDto = getBoardRequestDto(1);
 
         //when
@@ -195,7 +192,8 @@ public class BoardCrudServiceImplTest {
                     .check(13L)
                     .recommCount(13)
                     .build();
-        } return BoardRequestDto.builder()
+        }
+        return BoardRequestDto.builder()
                 .title("레시피2")
                 .content("시금치무침")
                 .member(new Member("윤광오", "swager123@naver.com", "1234", NORMAL))
