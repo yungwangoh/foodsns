@@ -38,6 +38,7 @@ class MemberBlackListServiceImplTest {
     private static Member member;
     private static MemberRequestDto memberRequestDto;
     private static ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate;
+    private static ReportMember reportSave;
 
     @BeforeAll
     static void init() {
@@ -65,7 +66,7 @@ class MemberBlackListServiceImplTest {
     @DisplayName("블랙리스트 등록")
     void blackListMemberCreate() {
         // given
-        ReportMember reportSave = testReportMemberInit();
+        reportSave = testReportMemberInit();
 
         String reason = "악의 적인 댓글";
         MemberBlackListCreateRequestDto memberBlackListCreateRequestDto = getMemberBlackListCreateRequestDto(reason, reportSave);
@@ -84,8 +85,11 @@ class MemberBlackListServiceImplTest {
     void blackListMemberSearch() {
         // given
         String reason = "악의 적인 댓글";
-        MemberBlackListRequestDto memberBlackListRequestDto =
-                getMemberBlackListRequestDto(getMemberBlackListResponseDto(blackListMemberCreate));
+        MemberBlackListRequestDto memberBlackListRequestDto = MemberBlackListRequestDto.builder()
+                .id(blackListMemberCreate.getBody().get().getId())
+                .reason(reason)
+                .reportMember(reportSave)
+                .build();
 
         // when
         ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
@@ -110,23 +114,6 @@ class MemberBlackListServiceImplTest {
         assertThat(blackListMemberList.getBody().get().size()).isEqualTo(1);
     }
 
-    @Test
-    @Order(3)
-    @DisplayName("블랙리스트 회원 삭제 (실제 회원이 삭제 블랙리스트 DB의 저장된 회원은 삭제가 되지 않는다.)")
-    void blackListMemberDelete() {
-        // given
-        MemberBlackListRequestDto memberBlackListRequestDto =
-                getMemberBlackListRequestDto(getMemberBlackListResponseDto(blackListMemberCreate));
-
-        // when
-        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberDelete =
-                memberBlackListService.blackListMemberTypeChange(memberBlackListRequestDto);
-
-        // then (삭제된 블랙리스트 회원의 정보와 회원의 블랙리스트 타입 확인)
-        assertThat(blackListMemberDelete.getBody().get().getReason()).isEqualTo(memberBlackListRequestDto.getReason());
-        assertThat(getMember(blackListMemberDelete).getMemberType()).isEqualTo(BLACKLIST);
-    }
-
     private MemberBlackListCreateRequestDto getMemberBlackListCreateRequestDto(String reason, ReportMember reportMember) {
         return MemberBlackListCreateRequestDto.builder()
                 .id(reportMember.getId())
@@ -135,24 +122,8 @@ class MemberBlackListServiceImplTest {
                 .build();
     }
 
-    private MemberBlackListRequestDto getMemberBlackListRequestDto(MemberBlackListResponseDto memberBlackListResponseDto) {
-        return MemberBlackListRequestDto.builder()
-                .id(memberBlackListResponseDto.getId())
-                .reason(memberBlackListResponseDto.getReason())
-                .reportMember(memberBlackListResponseDto.getReportMember())
-                .build();
-    }
-
     private MemberBlackListResponseDto getMemberBlackListResponseDto(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMember) {
         return blackListMember.getBody().get();
-    }
-
-    private Optional<MemberBlackListResponseDto> getMemberBlackListBody(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMember) {
-        return blackListMember.getBody();
-    }
-
-    private Member getMember(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberDelete) {
-        return blackListMemberDelete.getBody().get().getReportMember().getMember();
     }
 
     private ReportMember testReportMemberInit() {

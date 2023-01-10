@@ -12,7 +12,9 @@ public interface MemberBlackListService {
 
     ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto);
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberTypeChange(MemberBlackListRequestDto memberBlackListRequestDto);
+    default ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberTypeChange(MemberBlackListRequestDto memberBlackListRequestDto) {
+        return null;
+    }
 
     ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto);
 

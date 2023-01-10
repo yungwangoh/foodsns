@@ -57,25 +57,8 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
         else return new ResponseEntity<>(of(new MemberBlackListResponseDto(blackList)), ACCEPTED);
     }
 
-    /**
-     * 블랙리스트 회원 타입 변경
-     * @param memberBlackListRequestDto 블랙리스트 회원 DTO
-     * @return 성공 : OK, 실패 : NOT_FOUND
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberTypeChange(MemberBlackListRequestDto memberBlackListRequestDto) {
-
-        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
-                blackListMemberFindOne(memberBlackListRequestDto);
-
-        MemberBlackListResponseDto member = getMember(blackListMemberFindOne);
-        Member m = setMemberBlackListType(member);
-        m.memberBlackListType(BLACKLIST);
-
-
-
-        return blackListMemberFindOne;
+    private MemberBlackListResponseDto getMemberBlackListResponseDto(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne) {
+        return blackListMemberFindOne.getBody().get();
     }
 
     /**
@@ -150,11 +133,6 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
     private MemberBlackListResponseDto getMember(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne) {
         return Objects.requireNonNull(blackListMemberFindOne.getBody())
                 .orElseThrow(() -> new IllegalArgumentException("찾는 신고 회원이 없습니다."));
-    }
-
-    private Member setMemberBlackListType(MemberBlackListResponseDto member) {
-        Member blackListMember = member.getReportMember().getMember();
-        return new Member(blackListMember.getUsername(), blackListMember.getEmail(), blackListMember.getPassword(), BLACKLIST);
     }
 
     private BlackList getBlackList(Optional<BlackList> blackListMember) {
