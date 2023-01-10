@@ -48,7 +48,7 @@ public class Board extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommCount;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "food_id")
     private FoodTag foodTag;
 

@@ -20,6 +20,7 @@ public class Friend extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder

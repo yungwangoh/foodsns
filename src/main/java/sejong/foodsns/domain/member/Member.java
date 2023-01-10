@@ -63,8 +63,13 @@ public class Member extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommendCount;
 
+    // 친구 목록
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Friend> friends;
+
     // 회원 게시물
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Board> boards;
 
@@ -82,16 +87,29 @@ public class Member extends BaseEntity {
         this.penalty = 0;
         this.reportCount = 0L;
         this.boards = new ArrayList<>();
+        this.friends = new ArrayList<>(5);
     }
 
-    // 연관 관계 편의 메서드, 비즈니스 로직
-    public void setBoards(Board boards) {
-        this.boards.add(boards);
-        if(boards.getMember() != this) {
-            boards.setMember(this);
+    /**
+     * 게시물 연관 관계 편의 메서드, 비즈니스 로직
+     * @param board
+     */
+    public void setBoards(Board board) {
+        this.boards.add(board);
+        if(board.getMember() != this) {
+            board.setMember(this);
         }
     }
-    // 추천 수 -> 회원 등급
+
+    /**
+     * 친구 추가 연관 관계 편의 메서드
+     * @param friend
+     */
+    public void setFriends(Friend friend) {
+        if(this != friend.getMember()) {
+            this.friends.add(friend);
+        }
+    }
 
     /**
      * 유저 회원 등급
