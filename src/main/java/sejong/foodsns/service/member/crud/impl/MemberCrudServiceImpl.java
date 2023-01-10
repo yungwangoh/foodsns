@@ -62,9 +62,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
-        Member save = memberRepository.save(updateMember);
-
-        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**
@@ -81,9 +79,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
-        Member save = memberRepository.save(updateMember);
-
-        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**

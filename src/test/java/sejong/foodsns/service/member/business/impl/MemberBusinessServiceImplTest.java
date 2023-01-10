@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
+import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.MemberRepository;
@@ -97,20 +98,31 @@ class MemberBusinessServiceImplTest {
     @DisplayName("회원 패널티 수 증가")
     void memberPenaltyCountUp() {
         // given
+        for(int i = 0; i < 10; i++) {
+            memberBusinessService.memberReportCount(memberRequestDto);
+        }
 
         // when
         ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount =
                 memberBusinessService.memberBlackListPenaltyCount(memberRequestDto);
 
-        // then
+        // then -> 총 신고 수가 10 이므로 패널티 수는 1이 된다.
         assertThat(getBody(memberBlackListPenaltyCount).getPenaltyCount()).isEqualTo(1);
     }
 
     @Test
     @Order(4)
-    @DisplayName("회원")
-    void member() {
+    @DisplayName("회원 블랙리스트 타입 변경")
+    void memberBlackListTypeConvert() {
+        // given
+        MemberType memberType = MemberType.BLACKLIST;
 
+        // when
+        ResponseEntity<MemberResponseDto> memberBlackListTypeConvert = memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
+        Optional<Member> member = memberRepository.findMemberByEmail(getBody(memberBlackListTypeConvert).getEmail());
+
+        // then
+        assertThat(member.get().getMemberType()).isEqualTo(memberType);
     }
 
     private Optional<Member> getMember() {

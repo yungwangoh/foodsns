@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.OK;
+import static sejong.foodsns.domain.member.MemberType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +43,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
         getMember(member).memberRankUp(getMember(member).getRecommendCount());
 
-        Member save = memberRepository.save(getMember(member));
-
-        MemberResponseDto memberResponseDto = getMemberResponseDto(save);
+        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
         return new ResponseEntity<>(memberResponseDto, OK);
     }
@@ -61,9 +60,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
         getMember(member).reportCount();
 
-        Member save = memberRepository.save(getMember(member));
-
-        MemberResponseDto memberResponseDto = getMemberResponseDto(save);
+        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
         return new ResponseEntity<>(memberResponseDto, OK);
     }
@@ -81,9 +78,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
         ReportMember.blackListPenaltyCount(getMember(member));
 
-        Member save = memberRepository.save(getMember(member));
-
-        MemberResponseDto memberResponseDto = getMemberResponseDto(save);
+        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
         return new ResponseEntity<>(memberResponseDto, OK);
     }
@@ -98,13 +93,29 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
     @Transactional
     public ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend) {
 
-        Optional<Member> memberRequest = getMember(memberRequestDto);
+        Optional<Member> member = getMember(memberRequestDto);
 
-        getMember(memberRequest).memberRecommendCount(recommend);
+        getMember(member).memberRecommendCount(recommend);
 
-        Member save = memberRepository.save(getMember(memberRequest));
+        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
-        MemberResponseDto memberResponseDto = getMemberResponseDto(save);
+        return new ResponseEntity<>(memberResponseDto, OK);
+    }
+
+    /**
+     * 회원 타입 블랙리스트로 변경
+     * @param memberRequestDto
+     * @return 회원 응답 Dto, OK
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(MemberRequestDto memberRequestDto) {
+
+        Optional<Member> member = getMember(memberRequestDto);
+
+        getMember(member).memberBlackListType(BLACKLIST);
+
+        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
         return new ResponseEntity<>(memberResponseDto, OK);
     }
@@ -120,12 +131,12 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
     /**
      * 회원 응답 Dto 로 변형
-     * @param save
+     * @param member
      * @return 회원 응답 Dto
      */
-    private MemberResponseDto getMemberResponseDto(Member save) {
+    private MemberResponseDto getMemberResponseDto(Member member) {
         return MemberResponseDto.builder()
-                .member(save)
+                .member(member)
                 .build();
     }
 
