@@ -9,9 +9,10 @@ import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.domain.member.MemberType;
 
 import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.PUBLIC;
 
 @Data
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor(access = PUBLIC)
 @AllArgsConstructor
 public class MemberResponseDto {
 

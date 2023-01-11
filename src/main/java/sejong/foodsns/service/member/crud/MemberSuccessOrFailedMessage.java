@@ -20,4 +20,16 @@ public interface MemberSuccessOrFailedMessage {
     // 탈퇴 관련
     String USER_DELETE_SUCCESS = "정상적으로 회원 탈퇴하였습니다.";
     String USER_DELETE_FAILED = "회원 탈퇴에 실패하였습니다.";
+
+    // 친구 관련
+    String FRIEND_ADD_SUCCESS = "친구 추가가 완료되었습니다.";
+    String FRIEND_ADD_FAILED = "친구 추가에 실패하였습니다.";
+
+    String FRIEND_SEARCH_SUCCESS = "친구 찾기에 성공하였습니다.";
+    String FRIEND_SEARCH_FAILED = "친구 찾기에 실패하였습니다.";
+
+    String FRIEND_LIST_SUCCESS = "친구 리스트 조회에 성공하였습니다.";
+
+    String FRIEND_DELETE_SUCCESS = "친구 삭제에 성공하였습니다.";
+    String FRIEND_DELETE_FAILED = "친구 삭제에 실패하였습니다.";
 }
