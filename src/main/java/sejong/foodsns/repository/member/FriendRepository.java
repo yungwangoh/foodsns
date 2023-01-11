@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     Optional<Friend> findByMember_Email(String email);
+    Optional<Friend> findByMemberId(Long id);
 }

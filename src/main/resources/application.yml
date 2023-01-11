@@ -5,7 +5,7 @@ spring:
 ---
 spring:
   datasource:
-    url: jdbc:h2:mem:foodsns
+    url: jdbc:h2:mem:foodSns
     username: sa
     password:
     driver-class-name: org.h2.Driver
