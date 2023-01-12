@@ -46,4 +46,19 @@ public class Comment extends BaseEntity {
         this.reply = reply; // 대댓글
         this.board = board; // 댓글을 달 게시물
     }
+
+    // 비즈니스 로직
+    public void setBoard(Board board) {
+        board.getComments().add(this);
+    }
+
+    /**
+     * 댓글 내용 수정
+     * @param content
+     * @return
+     */
+    public Comment commentContentUpdate(String content) {
+        this.content = content;
+        return this;
+    }
 }
