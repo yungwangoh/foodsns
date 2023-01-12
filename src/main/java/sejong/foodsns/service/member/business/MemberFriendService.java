@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface MemberFriendService {
 
-    default ResponseEntity<List<MemberResponseDto>> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
+    default ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
         return null;
     }
 
-    default ResponseEntity<List<MemberResponseDto>> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
+    default ResponseEntity<MemberResponseDto> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
         return null;
     }
 
