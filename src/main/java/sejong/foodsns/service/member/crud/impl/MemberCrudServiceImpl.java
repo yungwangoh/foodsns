@@ -162,7 +162,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
      * @return 회원 존재 X -> Exception
      */
     private Optional<Member> getMemberReturnOptionalMember(String email) {
-        return of(memberRepository.findMemberByEmail(email)
+        return of(memberRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
     }
 

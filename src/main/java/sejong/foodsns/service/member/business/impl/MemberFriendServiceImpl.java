@@ -39,16 +39,13 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
-        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
-        Optional<Member> friendSearch = memberRepository.findMemberByUsername(username);
+        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> friendSearch = memberRepository.findByUsername(username);
 
         // 추가하려는 회원이 블랙리스트가 아니라면
         if(!getMember(friendSearch).getMemberType().equals(BLACKLIST)) {
-
-            Friend friendSave = friendRepository.save(new Friend(getMember(friendSearch)));
-
             // 친구 추가
-            getMember(member).setFriends(friendSave);
+            getMember(member).setFriends(new Friend(getMember(friendSearch)));
 
             return new ResponseEntity<>(getMemberResponseDto(member), CREATED);
         } else
@@ -65,7 +62,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
-        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
 
         // 삭제 완료
         try {
@@ -87,7 +84,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<List<MemberResponseDto>> friendMemberList(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
 
         List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
 
@@ -103,7 +100,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(MemberRequestDto memberRequestDto, int index) {
 
-        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
         try {
             Friend friend = getMember(member).getFriends().get(index);
 
@@ -133,14 +130,14 @@ public class MemberFriendServiceImpl implements MemberFriendService {
      * @param friend 친구 객체
      * @return 회원 응답 Dto
      */
-    private MemberResponseDto getMemberResponseDto(Friend friend) {
+    private static MemberResponseDto getMemberResponseDto(Friend friend) {
         return MemberResponseDto.builder()
                 .member(friend.getMember())
                 .build();
     }
 
 
-    private MemberResponseDto getMemberResponseDto(Optional<Member> member) {
+    private static MemberResponseDto getMemberResponseDto(Optional<Member> member) {
         return MemberResponseDto.builder()
                 .member(getMember(member))
                 .build();
@@ -151,7 +148,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
      * @param member 회원
      * @return 회원
      */
-    private Member getMember(Optional<Member> member) {
+    private static Member getMember(Optional<Member> member) {
         return member.get();
     }
 }

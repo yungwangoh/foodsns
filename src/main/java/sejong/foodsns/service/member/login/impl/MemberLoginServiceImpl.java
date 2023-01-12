@@ -36,7 +36,7 @@ public class MemberLoginServiceImpl implements MemberLoginService {
     @Override
     public ResponseEntity<String> login(MemberLoginDto memberLoginDto, HttpServletRequest request) {
 
-        Optional<Member> member = memberRepository.findMemberByEmail(memberLoginDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(memberLoginDto.getEmail());
         if(member.isEmpty()) {
             return new ResponseEntity<>(LOGIN_FAIL, NOT_FOUND);
         }
