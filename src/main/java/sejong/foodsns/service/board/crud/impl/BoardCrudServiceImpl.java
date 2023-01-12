@@ -9,9 +9,7 @@ import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.member.NoSearchMemberException;
-import sejong.foodsns.exception.http.NoSearchBoardException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
@@ -153,7 +151,6 @@ public class BoardCrudServiceImpl implements BoardCrudService {
                 .recommCount(0)
                 .foodTag(null)
                 .member(boardRequestDto.getMember())
-                .comments(null)
                 .build();
     }
 
