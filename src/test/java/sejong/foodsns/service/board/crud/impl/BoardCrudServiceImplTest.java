@@ -46,7 +46,7 @@ public class BoardCrudServiceImplTest {
         //given
         Member member = new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL);
         Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
-                member, null, null);
+                member);
         boardResponseDto = BoardResponseDto.builder()
                 .board(board)
                 .build();
