@@ -51,10 +51,10 @@ class FriendRepositoryTest {
         memberFriendAddInit();
 
         // when
-        Member save = memberRepository.save(member);
+        Optional<Member> memberByEmail = memberRepository.findMemberByEmail("swager253@naver.com");
 
         // then -> 친구 2명 추가
-        assertThat(getFriends(of(save)).size()).isEqualTo(2);
+        assertThat(getFriends(of(memberByEmail.get())).size()).isEqualTo(2);
     }
 
     @Test
@@ -137,6 +137,7 @@ class FriendRepositoryTest {
      * 회원의 친구 추가 초기화
      */
     private void memberFriendAddInit() {
+        memberRepository.save(member);
         memberRepository.save(member1);
         memberRepository.save(member2);
 
