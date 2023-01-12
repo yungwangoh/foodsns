@@ -146,7 +146,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      * @return Optional Member
      */
     private Optional<Member> getMember(MemberRequestDto memberRequestDto) {
-        return ofNullable(memberRepository.findMemberByEmail(memberRequestDto.getEmail())
+        return ofNullable(memberRepository.findByEmail(memberRequestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
     }
 }

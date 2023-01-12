@@ -4,9 +4,12 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import sejong.foodsns.domain.member.Friend;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.repository.member.FriendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.business.MemberBlackListService;
 import sejong.foodsns.service.member.business.MemberFriendService;
@@ -15,8 +18,7 @@ import sejong.foodsns.service.member.crud.MemberCrudService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -30,6 +32,9 @@ class MemberFriendServiceImplTest {
     private MemberBlackListService memberBlackListService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private FriendRepository friendRepository;
+
     private MemberRequestDto memberRequestDto;
     private MemberRequestDto memberRequestDto1;
     private MemberRequestDto memberRequestDto2;
@@ -58,6 +63,7 @@ class MemberFriendServiceImplTest {
     @Test
     @Order(0)
     @DisplayName("친구 추가 성공")
+    //@Transactional
     void myFriendAddingServiceSuccess() {
         // given
         String testUserName = "하윤";

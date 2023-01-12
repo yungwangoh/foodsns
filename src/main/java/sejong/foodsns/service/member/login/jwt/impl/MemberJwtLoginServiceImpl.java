@@ -35,7 +35,7 @@ public class MemberJwtLoginServiceImpl implements MemberLoginService {
     @Override
     public ResponseEntity<String> jwtLogin(MemberLoginDto loginDto) throws JsonProcessingException {
 
-        Optional<Member> member = memberRepository.findMemberByEmail(loginDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(loginDto.getEmail());
         String password = getMember(member).getPassword();
 
         boolean matchCheck = passwordEncoder.matches(loginDto.getPassword(), password);
