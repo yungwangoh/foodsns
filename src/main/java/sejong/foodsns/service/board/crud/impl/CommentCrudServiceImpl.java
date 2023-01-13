@@ -1,4 +1,4 @@
-성package sejong.foodsns.service.board.crud.impl;
+package sejong.foodsns.service.board.crud.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
