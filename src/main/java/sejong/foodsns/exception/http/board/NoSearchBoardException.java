@@ -1,4 +1,4 @@
-package sejong.foodsns.exception.http;
+package sejong.foodsns.exception.http.board;
 
 public class NoSearchBoardException extends IllegalArgumentException {
 
