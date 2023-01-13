@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListCreateRequestDto;
@@ -93,7 +92,7 @@ class MemberBlackListServiceImplTest {
 
         // when
         ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
-                memberBlackListService.blackListMemberFindOne(memberBlackListRequestDto);
+                memberBlackListService.blackListMemberFindOne(memberBlackListRequestDto.getId());
 
         // then
         assertThat(getMemberBlackListResponseDto(blackListMemberFindOne).getReason()).isEqualTo(reason);

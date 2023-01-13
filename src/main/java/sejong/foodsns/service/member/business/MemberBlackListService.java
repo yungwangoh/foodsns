@@ -16,7 +16,7 @@ public interface MemberBlackListService {
         return null;
     }
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto);
+    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id);
 
     ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList();
 }

@@ -39,12 +39,13 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
+
         Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
         Optional<Member> friendSearch = memberRepository.findByUsername(username);
 
         // 추가하려는 회원이 블랙리스트가 아니라면
         if(!getMember(friendSearch).getMemberType().equals(BLACKLIST)) {
-            // 친구 추가
+            // 친구 추가 (변경 감지) -> friend save 안시켜줘도 됨 영속성 전이..
             getMember(member).setFriends(new Friend(getMember(friendSearch)));
 
             return new ResponseEntity<>(getMemberResponseDto(member), CREATED);
@@ -55,36 +56,36 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     /**
      * 친구 삭제
-     * @param memberRequestDto 회원(본인) 요청 Dto
+     * @param email 회원(본인) email
      * @param index 회원의 친구 리스트 index
      * @return 회원 응답 Dto (본인)
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+    public ResponseEntity<MemberResponseDto> friendMemberDelete(String email, int index) {
+
+        Optional<Member> member = memberRepository.findByEmail(email);
 
         // 삭제 완료
         try {
-            getMember(member).getFriends().remove(index);
+            Friend friend = getMember(member).getFriends().remove(index);
+
+            return new ResponseEntity<>(getMemberResponseDto(friend), OK);
+
         } catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(FRIEND_DELETE_FAILED);
         }
-
-        MemberResponseDto memberResponseDto = getMemberResponseDto(member);
-
-        return new ResponseEntity<>(memberResponseDto, OK);
     }
 
     /**
      * 친구 목록
-     * @param memberRequestDto 회원(본인) 요청 Dto
+     * @param email 회원(본인) email
      * @return 회원 응답 Dto List (친구 리스트)
      */
     @Override
-    public ResponseEntity<List<MemberResponseDto>> friendMemberList(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<List<MemberResponseDto>> friendMemberList(String email) {
 
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(email);
 
         List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
 
@@ -93,20 +94,18 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     /**
      * 친구 상세 조회
-     * @param memberRequestDto 회원(본인) 요청 Dto
+     * @param email 회원(본인) email
      * @param index 회원의 친구 리스트 index
      * @return 회원 응답 Dto
      */
     @Override
-    public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(MemberRequestDto memberRequestDto, int index) {
+    public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(String email, int index) {
 
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findByEmail(email);
         try {
             Friend friend = getMember(member).getFriends().get(index);
 
-            MemberResponseDto memberResponseDto = getMemberResponseDto(friend);
-
-            return new ResponseEntity<>(memberResponseDto, OK);
+            return new ResponseEntity<>(getMemberResponseDto(friend), OK);
 
         } catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(FRIEND_SEARCH_FAILED);

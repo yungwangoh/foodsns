@@ -62,7 +62,7 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @return 성공 : (신고회원 리스폰, OK), 실패 : (Exception)
      */
     @Override
-    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) throws IllegalArgumentException{
+    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) {
 
         Optional<ReportMember> reportMember = of(reportMemberRepository.findById(id)
                 .orElseThrow(() -> new NoSearchMemberException("신고 회원이 존재하지 않습니다.")));

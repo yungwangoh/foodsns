@@ -13,15 +13,15 @@ public interface MemberFriendService {
         return null;
     }
 
-    default ResponseEntity<MemberResponseDto> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
+    default ResponseEntity<MemberResponseDto> friendMemberDelete(String email, int index) {
         return null;
     }
 
-    default ResponseEntity<List<MemberResponseDto>> friendMemberList(MemberRequestDto memberRequestDto) {
+    default ResponseEntity<List<MemberResponseDto>> friendMemberList(String email) {
         return null;
     }
 
-    default ResponseEntity<MemberResponseDto> friendMemberDetailSearch(MemberRequestDto memberRequestDto, int index) {
+    default ResponseEntity<MemberResponseDto> friendMemberDetailSearch(String email, int index) {
         return null;
     }
 }
