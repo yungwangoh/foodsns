@@ -61,14 +61,9 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 추가 성공")
     void myFriendAddingServiceSuccess() {
         // given
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
+        myFriendAddInit();
 
         // when
-        memberFriendService.friendMemberAdd(testUserName, );
-        memberFriendService.friendMemberAdd(testUserName1, );
-
         ResponseEntity<List<MemberResponseDto>> memberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
         // then -> 친구 2명 저장 -> 기댓값 2
@@ -82,12 +77,7 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 상세 조회 성공")
     void myFriendSearchSuccess() {
         // given
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
-
-        memberFriendService.friendMemberAdd(testUserName, );
-        memberFriendService.friendMemberAdd(testUserName1, );
+        myFriendAddInit();
 
         ResponseEntity<List<MemberResponseDto>> friendMemberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
@@ -104,12 +94,7 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 삭제 성공")
     void myFriendDeleteSuccess() {
         // given
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
-
-        memberFriendService.friendMemberAdd(testUserName, );
-        memberFriendService.friendMemberAdd(testUserName1, );
+        myFriendAddInit();
 
         // when
         ResponseEntity<MemberResponseDto> friendMemberDelete =
@@ -128,12 +113,7 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 상세 조회 실패 -> (outOfBound)")
     void myFriendDetailSearchFailed() {
         // given
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
-
-        memberFriendService.friendMemberAdd(testUserName, );
-        memberFriendService.friendMemberAdd(testUserName1, );
+        myFriendAddInit();
 
         // when -> index 의 범위는 0 ~ 4 이다.
 
@@ -147,17 +127,21 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 삭제 실패 -> (outOfBound)")
     void myFriendDeleteFailed() {
         // given
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
-
-        memberFriendService.friendMemberAdd(testUserName, );
-        memberFriendService.friendMemberAdd(testUserName1, );
+        myFriendAddInit();
 
         // when
 
         // then -> index 범위가 0 ~ 4 인데 그것을 넘어선 예외.
         assertThatThrownBy(() -> memberFriendService.friendMemberDelete(memberRequestDto.getEmail(), 5))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private void myFriendAddInit() {
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
+
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
     }
 }

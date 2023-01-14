@@ -16,7 +16,6 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class MemberReportController {
 
     private final MemberReportService memberReportService;
@@ -28,10 +27,10 @@ public class MemberReportController {
      *  | 유의 사항 : 신고 수가 10개 미만이면 ACCEPT
      */
     @PostMapping("/member/report")
-    ResponseEntity<MemberReportResponseDto> reportMemberCreate(@RequestBody @Valid MemberReportRequestDto memberReportRequestDto) {
+    ResponseEntity<MemberReportResponseDto> reportMemberCreate(@RequestParam("email") String email) {
 
         ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate =
-                memberReportService.reportMemberCreate(memberReportRequestDto);
+                memberReportService.reportMemberCreate(email);
 
         return new ResponseEntity<>(getBody(reportMemberCreate).get(), reportMemberCreate.getStatusCode());
     }
