@@ -61,10 +61,20 @@ public class MemberReportController {
         return new ResponseEntity<>(getReportMemberListBody(reportMemberList).get(), reportMemberList.getStatusCode());
     }
 
+    /**
+     * 신고 회원 ResponseEntity 해제 후 반환
+     * @param reportMemberList
+     * @return Optional wrapping 된 신고 회원 목록
+     */
     private Optional<List<MemberReportResponseDto>> getReportMemberListBody(ResponseEntity<Optional<List<MemberReportResponseDto>>> reportMemberList) {
         return reportMemberList.getBody();
     }
 
+    /**
+     * 신고 회원 ResponseEntity 해제 후 반환
+     * @param reportMemberCreate
+     * @return Optional wrapping 된 신고 회원
+     */
     private Optional<MemberReportResponseDto> getBody(ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate) {
         return reportMemberCreate.getBody();
     }
