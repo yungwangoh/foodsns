@@ -1,8 +1,6 @@
 package sejong.foodsns.service.board.crud;
 
 import org.springframework.http.ResponseEntity;
-import sejong.foodsns.dto.board.BoardRequestDto;
-import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
 
@@ -15,7 +13,7 @@ public interface CommentCrudService {
 
     ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate(String title, String updateContent, String orderContent);
 
-    ResponseEntity<Optional<CommentResponseDto>> contentDelete(CommentRequestDto commentRequestDto);
+    ResponseEntity<Optional<CommentResponseDto>> commentDelete(CommentRequestDto commentRequestDto);
 
     ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content);
 
