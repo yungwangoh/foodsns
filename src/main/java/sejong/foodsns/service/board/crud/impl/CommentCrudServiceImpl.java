@@ -72,8 +72,10 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      */
 
     @Override
-    public ResponseEntity<Optional<CommentResponseDto>> contentDelete(CommentRequestDto commentRequestDto) {
-        Optional<Comment> findComment = getCommentReturnByCommentId(commentRequestDto.getId());
+    @Transactional
+    public ResponseEntity<Optional<CommentResponseDto>> commentDelete(CommentRequestDto commentRequestDto) {
+        Optional<CommentResponseDto> comment = findComment(commentRequestDto.getBoard().getTitle(), commentRequestDto.getContent()).getBody();
+        Optional<Comment> findComment = getCommentReturnByCommentId(comment.get().getId());
 
         //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
         commentRepository.delete(getComment(findComment));
