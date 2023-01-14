@@ -1,15 +1,13 @@
 package sejong.foodsns.service.member.business;
 
 import org.springframework.http.ResponseEntity;
-import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
-import sejong.foodsns.service.member.crud.MemberSuccessOrFailedMessage;
 
 import java.util.List;
 
 public interface MemberFriendService {
 
-    default ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
+    default ResponseEntity<MemberResponseDto> friendMemberAdd(String email, String friendEmail) {
         return null;
     }
 

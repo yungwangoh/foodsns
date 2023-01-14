@@ -20,15 +20,27 @@ public class MemberFriendController {
 
     private final MemberFriendService memberFriendService;
 
-    @PostMapping("/member/friend/{username}")
-    ResponseEntity<MemberResponseDto> memberFriendAdd(@RequestBody @Valid MemberRequestDto memberRequestDto,
-                                                      @PathVariable("username") String username) {
+    /**
+     * 친구 추가
+     * @param email 본인 이메일
+     * @param friendUsername 본인 친구리스트에 추가할 친구 닉네임
+     * @return 성공 : 친구 정보 응답 Dto, CREATE | 실패 : 친구 정보 응답 Dto, NOT_FOUND
+     */
+    @PostMapping("/member/friend")
+    ResponseEntity<MemberResponseDto> memberFriendAdd(@RequestParam("email") String email,
+                                                      @RequestParam("friendUsername") String friendUsername) {
 
-        ResponseEntity<MemberResponseDto> friendMemberAdd = memberFriendService.friendMemberAdd(memberRequestDto, username);
+        ResponseEntity<MemberResponseDto> friendMemberAdd = memberFriendService.friendMemberAdd(email, friendUsername);
 
         return new ResponseEntity<>(getBody(friendMemberAdd), friendMemberAdd.getStatusCode());
     }
 
+    /**
+     * 친구 조회
+     * @param email 본인 이메일
+     * @param index 친구 리스트의 번호 (index)
+     * @return 성공 : 친구 정보, OK | 실패 : 친구 정보, NOT_FOUND
+     */
     @GetMapping("/member/friend")
     ResponseEntity<MemberResponseDto> memberFriendDetailSearch(@RequestParam("email") String email,
                                                                @RequestParam("index") int index) {
@@ -37,6 +49,11 @@ public class MemberFriendController {
         return new ResponseEntity<>(getBody(friendMemberDetailSearch), friendMemberDetailSearch.getStatusCode());
     }
 
+    /**
+     * 친구 목록
+     * @param email 본인 이메일
+     * @return 성공 : 친구 목록, OK
+     */
     @GetMapping("/member/friends")
     ResponseEntity<List<MemberResponseDto>> memberFriendsList(@RequestParam("email") String email) {
 
@@ -45,6 +62,12 @@ public class MemberFriendController {
         return new ResponseEntity<>(getFriendMemberListBody(friendMemberList), friendMemberList.getStatusCode());
     }
 
+    /**
+     * 친구 삭제
+     * @param email 본인 이메일
+     * @param index 친구 리스트의 번호 (index)
+     * @return 성공 : 삭제된 친구의 정보, OK | 실패 :
+     */
     @DeleteMapping("/member/friends")
     ResponseEntity<MemberResponseDto> memberFriendDelete(@RequestParam("email") String email,
                                                          @RequestParam("index") int index) {

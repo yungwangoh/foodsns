@@ -66,8 +66,8 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto2);
 
         // when
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName1);
+        memberFriendService.friendMemberAdd(testUserName, );
+        memberFriendService.friendMemberAdd(testUserName1, );
 
         ResponseEntity<List<MemberResponseDto>> memberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
@@ -86,8 +86,8 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto1);
         memberCrudService.memberCreate(memberRequestDto2);
 
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName1);
+        memberFriendService.friendMemberAdd(testUserName, );
+        memberFriendService.friendMemberAdd(testUserName1, );
 
         ResponseEntity<List<MemberResponseDto>> friendMemberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
@@ -108,8 +108,8 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto1);
         memberCrudService.memberCreate(memberRequestDto2);
 
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName1);
+        memberFriendService.friendMemberAdd(testUserName, );
+        memberFriendService.friendMemberAdd(testUserName1, );
 
         // when
         ResponseEntity<MemberResponseDto> friendMemberDelete =
@@ -132,8 +132,8 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto1);
         memberCrudService.memberCreate(memberRequestDto2);
 
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName1);
+        memberFriendService.friendMemberAdd(testUserName, );
+        memberFriendService.friendMemberAdd(testUserName1, );
 
         // when -> index 의 범위는 0 ~ 4 이다.
 
@@ -151,8 +151,8 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto1);
         memberCrudService.memberCreate(memberRequestDto2);
 
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto, testUserName1);
+        memberFriendService.friendMemberAdd(testUserName, );
+        memberFriendService.friendMemberAdd(testUserName1, );
 
         // when
 

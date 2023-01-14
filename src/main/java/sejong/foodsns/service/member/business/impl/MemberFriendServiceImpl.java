@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Friend;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.FriendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
@@ -15,6 +14,7 @@ import sejong.foodsns.service.member.business.MemberFriendService;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -32,16 +32,18 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     /**
      * 친구 추가
-     * @param memberRequestDto 회원(본인) 요청 Dto
-     * @param username 찾으려는 친구 닉네임
+     *
+     * @param email       찾으려는 친구 닉네임
+     * @param friendEmail
      * @return 회원 응답 Dto (본인)
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
+    public ResponseEntity<MemberResponseDto> friendMemberAdd(String email, String friendUsername) {
 
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
-        Optional<Member> friendSearch = memberRepository.findByUsername(username);
+        Optional<Member> member = getMember(email);
+
+        Optional<Member> friendSearch = getFriendSearch(friendUsername);
 
         // 추가하려는 회원이 블랙리스트가 아니라면
         if(!getMember(friendSearch).getMemberType().equals(BLACKLIST)) {
@@ -64,7 +66,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberDelete(String email, int index) {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = getMember(email);
 
         // 삭제 완료
         try {
@@ -85,7 +87,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<List<MemberResponseDto>> friendMemberList(String email) {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = getMember(email);
 
         List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
 
@@ -101,7 +103,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(String email, int index) {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = getMember(email);
         try {
             Friend friend = getMember(member).getFriends().get(index);
 
@@ -110,6 +112,26 @@ public class MemberFriendServiceImpl implements MemberFriendService {
         } catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException(FRIEND_SEARCH_FAILED);
         }
+    }
+
+    /**
+     * 회원 email 로 찾기
+     * @param email 찾고자하는 회원 이메일
+     * @return 찾은 회원 -> 없으면 예외 (NOT_FOUND)
+     */
+    private Optional<Member> getMember(String email) {
+        return of(memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
+    }
+
+    /**
+     * 회원의 친구 리스트에 추가할 회원 닉네임으로 찾기
+     * @param friendUsername 친구 추가할 회원 닉네임
+     * @return 친구 회원 -> 없으면 예외 (NOT_FOUND)
+     */
+    private Optional<Member> getFriendSearch(String friendUsername) {
+        return of(memberRepository.findByUsername(friendUsername)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
     }
 
     /**
