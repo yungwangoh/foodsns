@@ -1,6 +1,5 @@
 package sejong.foodsns.service.board.crud.impl;
 
-import com.mysql.cj.log.Slf4JLogger;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +10,6 @@ import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
-import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
@@ -34,7 +32,7 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
 @Transactional
-//@Rollback(value = false)
+@Rollback(value = false)
 public class CommentCrudServiceImplTest {
 
     @Autowired
@@ -111,7 +109,47 @@ public class CommentCrudServiceImplTest {
         list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
 
         // when
-        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentList();
+        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.allCommentList();
+
+        // then
+        assertThat(commentList.getStatusCode()).isEqualTo(OK);
+        assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
+        assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("회원이름으로 검색한 댓글 목록")
+    void commentListByUsername() {
+        // given
+        Member member = memberRepository.findByUsername("하윤").get();
+        Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+        List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
+        list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
+        list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+
+        // when
+        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(member.getUsername());
+
+        // then
+        assertThat(commentList.getStatusCode()).isEqualTo(OK);
+        assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
+        assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("게시물 제목으로 검색한 댓글 목록")
+    void commentListByBoardTitle() {
+        // given
+        Member member = memberRepository.findByUsername("하윤").get();
+        Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+        List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
+        list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
+        list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+
+        // when
+        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(board.getTitle());
 
         // then
         assertThat(commentList.getStatusCode()).isEqualTo(OK);
