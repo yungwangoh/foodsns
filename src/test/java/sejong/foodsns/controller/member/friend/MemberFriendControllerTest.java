@@ -8,10 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.repository.member.FriendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
+import sejong.foodsns.service.member.business.MemberFriendService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,10 +32,17 @@ class MemberFriendControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
+    private MemberFriendService memberFriendService;
+    @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private FriendRepository friendRepository;
 
+    @AfterEach
+    void initDB() {
+        friendRepository.deleteAll();
+        memberRepository.deleteAll();
+    }
 
     @Nested
     @Order(0)
