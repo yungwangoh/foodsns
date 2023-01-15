@@ -2,6 +2,7 @@ package sejong.foodsns.service.member.business;
 
 import org.springframework.http.ResponseEntity;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface MemberFriendService {
         return null;
     }
 
-    default ResponseEntity<List<MemberResponseDto>> friendMemberList(String email) {
+    default ResponseEntity<List<MemberFriendResponseDto>> friendMemberList(String email) {
         return null;
     }
 

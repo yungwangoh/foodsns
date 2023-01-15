@@ -54,23 +54,25 @@ class FriendRepositoryTest {
         Optional<Member> memberByEmail = memberRepository.findByEmail("swager253@naver.com");
 
         // then -> 친구 2명 추가
-        assertThat(getFriends(of(memberByEmail.get())).size()).isEqualTo(2);
+        assertThat(getFriends(of(getMember(memberByEmail))).size()).isEqualTo(2);
     }
 
     @Test
     @Order(1)
     @DisplayName("친구 찾기")
     void myFriendsSearch() {
-        // given\
+        // given
         memberFriendAddInit();
         Member save = memberRepository.save(member);
+        Optional<Member> id = memberRepository.findById(save.getId());
 
         // when
-        Optional<Friend> byMember_email = friendRepository.findByMember_Email("qkfks1234@naver.com");
+        List<Friend> friends = getMember(id).getFriends();
 
         // then
-        assertThat(getMember(byMember_email.get()).getEmail()).isEqualTo("qkfks1234@naver.com");
-        assertThat(getMember(getFriends(of(save)).get(0)).getEmail()).isEqualTo(getMember(byMember_email.get()).getEmail());
+        assertThat(friends.size()).isEqualTo(2);
+        assertThat(friends.get(0).getMember().getUsername()).isEqualTo(member1.getUsername());
+        assertThat(friends.get(1).getMember().getUsername()).isEqualTo(member2.getUsername());
     }
 
     @Test
@@ -154,7 +156,7 @@ class FriendRepositoryTest {
      * @return 친구 목록
      */
     private List<Friend> getFriends(Optional<Member> memberByEmail) {
-        return memberByEmail.get().getFriends();
+        return getMember(memberByEmail).getFriends();
     }
 
 
@@ -165,5 +167,9 @@ class FriendRepositoryTest {
      */
     private Member getMember(Friend member) {
         return member.getMember();
+    }
+
+    private static Member getMember(Optional<Member> member) {
+        return member.get();
     }
 }

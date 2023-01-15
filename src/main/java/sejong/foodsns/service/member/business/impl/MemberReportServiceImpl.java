@@ -66,9 +66,7 @@ public class MemberReportServiceImpl implements MemberReportService {
         Optional<ReportMember> reportMember = of(reportMemberRepository.findById(id)
                 .orElseThrow(() -> new NoSearchMemberException("신고 회원이 존재하지 않습니다.")));
 
-        MemberReportResponseDto memberReportResponseDto = MemberReportResponseDto.builder()
-                .reportMember(getReportMember(reportMember))
-                .build();
+        MemberReportResponseDto memberReportResponseDto = new MemberReportResponseDto(getReportMember(reportMember));
 
         return new ResponseEntity<>(of(memberReportResponseDto), OK);
     }
@@ -119,7 +117,7 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @param reportMember
      * @return reportMember
      */
-    private ReportMember getReportMember(Optional<ReportMember> reportMember) {
+    private static ReportMember getReportMember(Optional<ReportMember> reportMember) {
         return reportMember.get();
     }
 

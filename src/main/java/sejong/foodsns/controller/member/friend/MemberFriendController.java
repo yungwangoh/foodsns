@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
 import sejong.foodsns.service.member.business.MemberFriendService;
 
 import javax.validation.Valid;
@@ -55,9 +56,9 @@ public class MemberFriendController {
      * @return 성공 : 친구 목록, OK
      */
     @GetMapping("/member/friends")
-    ResponseEntity<List<MemberResponseDto>> memberFriendsList(@RequestParam("email") String email) {
+    ResponseEntity<List<MemberFriendResponseDto>> memberFriendsList(@RequestParam("email") String email) {
 
-        ResponseEntity<List<MemberResponseDto>> friendMemberList = memberFriendService.friendMemberList(email);
+        ResponseEntity<List<MemberFriendResponseDto>> friendMemberList = memberFriendService.friendMemberList(email);
 
         return new ResponseEntity<>(getFriendMemberListBody(friendMemberList), friendMemberList.getStatusCode());
     }
@@ -77,7 +78,7 @@ public class MemberFriendController {
         return new ResponseEntity<>(getBody(friendMemberDelete), friendMemberDelete.getStatusCode());
     }
 
-    private static List<MemberResponseDto> getFriendMemberListBody(ResponseEntity<List<MemberResponseDto>> friendMemberList) {
+    private static List<MemberFriendResponseDto> getFriendMemberListBody(ResponseEntity<List<MemberFriendResponseDto>> friendMemberList) {
         return friendMemberList.getBody();
     }
 

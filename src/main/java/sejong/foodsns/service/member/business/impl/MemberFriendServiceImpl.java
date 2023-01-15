@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Friend;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
 import sejong.foodsns.repository.member.FriendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.business.MemberFriendService;
@@ -81,15 +82,19 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
     /**
      * 친구 목록
+     *
      * @param email 회원(본인) email
      * @return 회원 응답 Dto List (친구 리스트)
      */
     @Override
-    public ResponseEntity<List<MemberResponseDto>> friendMemberList(String email) {
+    public ResponseEntity<List<MemberFriendResponseDto>> friendMemberList(String email) {
 
         Optional<Member> member = getMember(email);
 
-        List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
+        List<Friend> friends = member.get().getFriends();
+        List<MemberFriendResponseDto> collect =
+                friends.stream().map(MemberFriendResponseDto::new).collect(toList());
+        //List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
 
         return new ResponseEntity<>(collect, OK);
     }

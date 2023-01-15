@@ -4,16 +4,17 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
+import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
 import sejong.foodsns.service.member.business.MemberFriendService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -56,6 +57,11 @@ class MemberFriendServiceImplTest {
         testUserName1 = "임우택";
     }
 
+    @AfterEach
+    void initDB() {
+
+    }
+
     @Test
     @Order(0)
     @DisplayName("친구 추가 성공")
@@ -64,7 +70,10 @@ class MemberFriendServiceImplTest {
         myFriendAddInit();
 
         // when
-        ResponseEntity<List<MemberResponseDto>> memberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
+
+        ResponseEntity<List<MemberFriendResponseDto>> memberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
         // then -> 친구 2명 저장 -> 기댓값 2
         assertThat(memberList.getBody().size()).isEqualTo(2);
@@ -78,15 +87,24 @@ class MemberFriendServiceImplTest {
     void myFriendSearchSuccess() {
         // given
         myFriendAddInit();
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
-        ResponseEntity<List<MemberResponseDto>> friendMemberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
+        ResponseEntity<List<MemberFriendResponseDto>> friendMemberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
         // when
         ResponseEntity<MemberResponseDto> memberDetailSearch =
                 memberFriendService.friendMemberDetailSearch(memberRequestDto.getEmail(), 0);
 
+        ResponseEntity<MemberResponseDto> memberDetailSearch1 =
+                memberFriendService.friendMemberDetailSearch(memberRequestDto.getEmail(), 1);
+
         // then
-        assertThat(friendMemberList.getBody().get(0)).isEqualTo(memberDetailSearch.getBody());
+        assertThat(friendMemberList.getBody().get(0).getUsername()).isEqualTo(memberDetailSearch.getBody().getUsername());
+        assertThat(friendMemberList.getBody().get(0).getUsername()).isEqualTo(memberDetailSearch.getBody().getUsername());
+
+        assertThat(friendMemberList.getBody().get(1).getUsername()).isEqualTo(memberDetailSearch1.getBody().getUsername());
+        assertThat(friendMemberList.getBody().get(1).getUsername()).isEqualTo(memberDetailSearch1.getBody().getUsername());
     }
 
     @Test
@@ -95,12 +113,14 @@ class MemberFriendServiceImplTest {
     void myFriendDeleteSuccess() {
         // given
         myFriendAddInit();
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
         // when
         ResponseEntity<MemberResponseDto> friendMemberDelete =
                 memberFriendService.friendMemberDelete(memberRequestDto.getEmail(), 1);
 
-        ResponseEntity<List<MemberResponseDto>> friendMemberList = memberFriendService.
+        ResponseEntity<List<MemberFriendResponseDto>> friendMemberList = memberFriendService.
                 friendMemberList(memberRequestDto.getEmail());
 
         // then
@@ -140,8 +160,5 @@ class MemberFriendServiceImplTest {
         memberCrudService.memberCreate(memberRequestDto);
         memberCrudService.memberCreate(memberRequestDto1);
         memberCrudService.memberCreate(memberRequestDto2);
-
-        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
     }
 }
