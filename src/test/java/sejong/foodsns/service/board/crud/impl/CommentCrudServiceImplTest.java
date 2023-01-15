@@ -66,7 +66,7 @@ public class CommentCrudServiceImplTest {
     void commentCreate() {
 
         //given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
         CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
 
@@ -83,7 +83,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 찾기")
     void findComment() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
@@ -101,7 +101,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 목록")
     void commentList() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByEmail("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
@@ -121,7 +121,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("회원이름으로 검색한 댓글 목록")
     void commentListByUsername() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
@@ -141,7 +141,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("게시물 제목으로 검색한 댓글 목록")
     void commentListByBoardTitle() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByEmail("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
@@ -164,7 +164,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 내용 수정")
     void commentContentUpdate() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         String updateContent = "레시피가 업데이트 됐네요?";
@@ -184,7 +184,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 삭제")
     void commentDelete() {
         // given
-        Member member = memberRepository.findByUsername("하윤").get();
+        Member member = memberRepository.findMemberByEmail("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
@@ -216,7 +216,7 @@ public class CommentCrudServiceImplTest {
         @DisplayName("찾으려는 댓글이 존재하지 않을때 예외")
         void commentFindException() {
             // given
-            Member member = memberRepository.findByUsername("하윤").get();
+            Member member = memberRepository.findMemberByUsername("하윤").get();
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
