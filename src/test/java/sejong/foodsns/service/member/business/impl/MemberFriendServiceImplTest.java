@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
+import sejong.foodsns.repository.member.FriendRepository;
+import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.business.MemberFriendService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
@@ -18,13 +20,17 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
+//@Transactional
 class MemberFriendServiceImplTest {
 
     @Autowired
     private MemberFriendService memberFriendService;
     @Autowired
     private MemberCrudService memberCrudService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private FriendRepository friendRepository;
 
     private static MemberRequestDto memberRequestDto;
     private static MemberRequestDto memberRequestDto1;
@@ -36,20 +42,20 @@ class MemberFriendServiceImplTest {
     @BeforeAll
     static void init() {
         memberRequestDto = MemberRequestDto.builder()
-                .email("swager253@naver.com")
-                .password("rhkddh77@A")
+                .email("swager253@zzz.com")
+                .password("zzz10324@A")
                 .username("윤광오")
                 .build();
 
         memberRequestDto1 = MemberRequestDto.builder()
-                .email("qkfks1234@naver.com")
-                .password("rhkddh77@A")
+                .email("qkfks1234@zzz.com")
+                .password("zzz10324@A")
                 .username("하윤")
                 .build();
 
         memberRequestDto2 = MemberRequestDto.builder()
-                .email("ssapper234@naver.com")
-                .password("rhkddh77@A")
+                .email("ssapper234@zzz.com")
+                .password("zzz10324@A")
                 .username("임우택")
                 .build();
 
@@ -59,7 +65,8 @@ class MemberFriendServiceImplTest {
 
     @AfterEach
     void initDB() {
-
+        friendRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 
     @Test
@@ -67,7 +74,9 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 추가 성공")
     void myFriendAddingServiceSuccess() {
         // given
-        myFriendAddInit();
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
 
         // when
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
@@ -86,7 +95,10 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 상세 조회 성공")
     void myFriendSearchSuccess() {
         // given
-        myFriendAddInit();
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
+
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
@@ -112,7 +124,10 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 삭제 성공")
     void myFriendDeleteSuccess() {
         // given
-        myFriendAddInit();
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
+
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
@@ -133,7 +148,9 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 상세 조회 실패 -> (outOfBound)")
     void myFriendDetailSearchFailed() {
         // given
-        myFriendAddInit();
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
 
         // when -> index 의 범위는 0 ~ 4 이다.
 
@@ -147,18 +164,14 @@ class MemberFriendServiceImplTest {
     @DisplayName("친구 삭제 실패 -> (outOfBound)")
     void myFriendDeleteFailed() {
         // given
-        myFriendAddInit();
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+        memberCrudService.memberCreate(memberRequestDto2);
 
         // when
 
         // then -> index 범위가 0 ~ 4 인데 그것을 넘어선 예외.
         assertThatThrownBy(() -> memberFriendService.friendMemberDelete(memberRequestDto.getEmail(), 5))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private void myFriendAddInit() {
-        memberCrudService.memberCreate(memberRequestDto);
-        memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
     }
 }
