@@ -12,6 +12,7 @@ import sejong.foodsns.domain.member.MemberRank;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
@@ -58,15 +59,15 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<BoardFile> boardFiles;
+    private List<BoardFile> boardFiles = new ArrayList<>();
 
     @Builder
     public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
-                 @Nullable FoodTag foodTag, Member member, @Nullable List<Comment> comments, @Nullable List<BoardFile> boardFiles) {
+                 @Nullable FoodTag foodTag, Member member) {
         this.title = title; // 게시물
         this.content = content; // 요리메뉴
         this.memberRank = memberRank; //멤버랭크
@@ -85,6 +86,13 @@ public class Board extends BaseEntity {
         }
         this.member = member;
         member.getBoards().add(this);
+    }
+
+    public void setComment(Comment comment) {
+        this.comments.add(comment);
+        if(comment.getBoard() != this) {
+            comment.setBoard(this);
+        }
     }
 
     public void plusRecommendCount() {
