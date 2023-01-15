@@ -30,7 +30,6 @@ public class BoardController {
      * @param boardRequestDto
      * @return 게시물, CREATE
      */
-
     @PostMapping("/board")
     public ResponseEntity<BoardResponseDto> boardCreate(@RequestBody @Valid BoardRequestDto boardRequestDto) {
         ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
