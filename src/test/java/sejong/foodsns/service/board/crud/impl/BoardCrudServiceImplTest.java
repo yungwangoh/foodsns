@@ -2,8 +2,10 @@ package sejong.foodsns.service.board.crud.impl;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
@@ -25,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
+//@DataJpaTest
 @SpringBootTest
+@Transactional
 public class BoardCrudServiceImplTest {
 
     @Autowired
@@ -40,20 +44,23 @@ public class BoardCrudServiceImplTest {
     private BoardResponseDto boardResponseDto;
 
     @BeforeEach
-    void boardResponseInit() {
+    void initMember() {
         Member member = new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL);
-        Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
-                member, null, null);
-        boardResponseDto = BoardResponseDto.builder()
-                .board(board)
-                .build();
+        memberRepository.save(member);
     }
 
     @Test
     @DisplayName("게시물 등록")
     void boardCreate() {
+
         //given
-        BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+        Member findMember = memberRepository.findByUsername("하윤").get();
+        Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
+                findMember);
+        boardResponseDto = BoardResponseDto.builder()
+                .board(board)
+                .build();
+        BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
 
         //when
         ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
@@ -67,11 +74,11 @@ public class BoardCrudServiceImplTest {
     }
 
     @Test
-    @Order(1)
     @DisplayName("게시물 찾기")
-    void findMember() {
+    void findBoard() {
         // given
-        BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+        Member findMember = memberRepository.findByUsername("하윤").get();
+        BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
 
         // when
@@ -83,13 +90,13 @@ public class BoardCrudServiceImplTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("게시판 목록")
-    void memberList() {
+    void boardList() {
         // given
+        Member findMember = memberRepository.findByUsername("하윤").get();
         List<ResponseEntity<Optional<BoardResponseDto>>> list = new ArrayList<>();
-        list.add(boardCrudService.boardCreate(getBoardRequestDto(1)));
-        list.add(boardCrudService.boardCreate(getBoardRequestDto(2)));
+        list.add(boardCrudService.boardCreate(getBoardRequestDto(1, findMember)));
+        list.add(boardCrudService.boardCreate(getBoardRequestDto(2, findMember)));
 
         // when
         ResponseEntity<Optional<List<BoardResponseDto>>> boardList = boardCrudService.boardList();
@@ -104,29 +111,29 @@ public class BoardCrudServiceImplTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("게시판 제목 수정")
-    void memberPasswordUpdate() {
+    void boardTitleUpdate() {
         // given
+        Member findMember = memberRepository.findByUsername("하윤").get();
         String updateTitle = "검은콩나물무침";
-        BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+        BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
 
         ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate =
                 boardCrudService.boardTitleUpdate(boardRequestDto.getTitle(), updateTitle);
 
-        Optional<Board> board = boardRepository.findBoardByTitle(getBody(boardTitleUpdate).getTitle());
+        Board board = boardRepository.findBoardByTitle(getBody(boardTitleUpdate).getTitle()).get();
         // then
         assertThat(boardTitleUpdate.getStatusCode()).isEqualTo(OK);
-//        assertThat(board.get().getTitle().equals(updateTitle));
+        assertThat(board.getTitle()).isEqualTo(updateTitle);
     }
 
     @Test
-    @Order(5)
     @DisplayName("게시물 삭제")
     void boardDelete() {
         // given
-        BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+        Member findMember = memberRepository.findByUsername("하윤").get();
+        BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
 
         // when
@@ -142,10 +149,10 @@ public class BoardCrudServiceImplTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @AfterEach
-    void deleteInit() {
-        boardRepository.deleteAll();
-    }
+//    @AfterEach
+//    void deleteInit() {
+//        boardRepository.deleteAll();
+//    }
 
     @Nested
     @DisplayName("서비스 실패")
@@ -153,9 +160,10 @@ public class BoardCrudServiceImplTest {
 
         @Test
         @DisplayName("게시물 제목 중복 -> 게시물 등록 실패")
-        void memberDuplicatedValidationFail() {
+        void boardDuplicatedValidationFail() {
             // given
-            BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+            Member findMember = memberRepository.findByUsername("하윤").get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
             boardCrudService.boardCreate(boardRequestDto);
 
             // when
@@ -168,15 +176,16 @@ public class BoardCrudServiceImplTest {
 
         @Test
         @DisplayName("찾으려는 게시물이 존재하지 않을때 예외")
-        void memberFindException() {
+        void boardFindException() {
             // given
-            BoardRequestDto boardRequestDto = getBoardRequestDto(1);
+            Member findMember = memberRepository.findByUsername("하윤").get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
 
             // when
             boardCrudService.boardCreate(boardRequestDto);
 
             // then
-            assertThatThrownBy(() -> boardCrudService.findBoard(getBoardRequestDto(2).getTitle()))
+            assertThatThrownBy(() -> boardCrudService.findBoard(getBoardRequestDto(2, findMember).getTitle()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -186,19 +195,20 @@ public class BoardCrudServiceImplTest {
         }
     }
 
-    private BoardRequestDto getBoardRequestDto(int idx) {
+    private BoardRequestDto getBoardRequestDto(int idx, Member member) {
         if(idx == 1) {
             return BoardRequestDto.builder()
                     .title("레시피1")
                     .content("콩나물무침")
-                    .member(new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL))
+                    .member(member)
                     .check(13L)
                     .recommCount(13)
                     .build();
-        } return BoardRequestDto.builder()
+        }
+        return BoardRequestDto.builder()
                 .title("레시피2")
                 .content("시금치무침")
-                .member(new Member("윤광오", "swager123@naver.com", "1234", NORMAL))
+                .member(member)
                 .check(13L)
                 .recommCount(13)
                 .build();

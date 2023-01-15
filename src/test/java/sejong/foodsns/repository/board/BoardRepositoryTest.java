@@ -35,7 +35,7 @@ class BoardRepositoryTest {
     MemberRank memberRank;
 
     @BeforeEach
-    void init() {
+    void initBoardSetting() {
         this.title = List.of("test1", "test2", "test3");
         this.content = List.of("된장찌개", "김치찌개", "오이초무침");
         this.userName = List.of("윤광오", "하윤", "Naver");
@@ -54,8 +54,8 @@ class BoardRepositoryTest {
         void registerBoard() {
 
             FoodTag foodTag = new FoodTag("gfd", "fds");
-            Board board = new sejong.foodsns.domain.board.Board(title.get(0), content.get(0), memberRank, 13L, 13, null,
-                    new Member(userName.get(0), email.get(0), password.get(0), memberType), null, null);
+            Board board = new Board(title.get(0), content.get(0), memberRank, 13L, 13, null,
+                    new Member(userName.get(0), email.get(0), password.get(0), memberType));
 
             Board saveData = boardRepository.save(board);
 
@@ -68,7 +68,7 @@ class BoardRepositoryTest {
     void advancedRankByRecommending() {
         Member member = new Member(userName.get(1), email.get(1), password.get(1), memberType);
         Board board = new Board(title.get(0), content.get(0), member.getMemberRank(),
-                13L, 0, null, member, null, null);
+                13L, 0, null, member);
 
         //멤버 추천수 총 12개 일때, BRONZE.
         for (int i = 1; i <= 12; i++)
@@ -92,8 +92,7 @@ class BoardRepositoryTest {
             // given
             Long id = 1L;
             Member member = new Member(userName.get(1), email.get(1), password.get(1), memberType);
-            Board board = new Board(title.get(0), content.get(0), member.getMemberRank(), 13L, 0, null, member
-                    , null, null);
+            Board board = new Board(title.get(0), content.get(0), member.getMemberRank(), 13L, 0, null, member);
 
             memberRepository.save(member);
             Board boardSave = boardRepository.save(board);
@@ -132,11 +131,11 @@ class BoardRepositoryTest {
             member2.memberRankUp(130); // 멤버 랭크 -> Diamond
 
             Board board1 = new Board(title.get(0), content.get(0), member1.getMemberRank(), 13L, 0, null, member1
-                    , null, null);
+                    );
             Board board2 = new Board("Test3", "잔치국수", member2.getMemberRank(), 13L, 0, null, member2
-                    , null, null);
+                    );
             Board board3 = new Board("Test4", "김치전", member2.getMemberRank(), 13L, 0, null, member2
-                    , null, null);
+                    );
 
             memberRepository.save(member1);
             memberRepository.save(member2);
@@ -175,8 +174,7 @@ class BoardRepositoryTest {
 
             String updateBoardTitle = "김치찌개 레시피(업데이트)";
             Board board = new Board(title.get(1), content.get(1), MemberRank.BRONZE, 13L, 13, null,
-                    member, null,
-                    null);
+                    member);
             Board save = boardRepository.save(board);
 
             // when
@@ -201,8 +199,7 @@ class BoardRepositoryTest {
             memberRepository.save(member);
 
             Board board = new Board(title.get(1), content.get(1), MemberRank.BRONZE, 13L, 13, null,
-                    member, null,
-                    null);
+                    member);
             Board save = boardRepository.save(board);
 
             // when
@@ -225,12 +222,10 @@ class BoardRepositoryTest {
             Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
             memberRepository.save(member);
 
-            Board orderBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member,
-                    null, null);
+            Board orderBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member);
             boardRepository.save(orderBoard);
 
-            Board saveNewBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member,
-                    null, null);
+            Board saveNewBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member);
 
             // when
             Board boardByTitle = getBoardByTitle(orderBoard);
@@ -275,17 +270,15 @@ class BoardRepositoryTest {
      * @return
      */
     private List<Board> getBoards() {
-        init();
+        initBoardSetting();
         List<Board> addBoard = new ArrayList<>();
         List<Member> addMember = new ArrayList<>();
 
         Member member1 = new Member(userName.get(0), email.get(0), password.get(0), memberType);
         Member member2 = new Member(userName.get(1), email.get(1), password.get(1), memberType);
 
-        Board board1 = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member1,
-                null, null);
-        Board board2 = new Board(title.get(1), content.get(1), memberRank.PLATINUM, 13L, 13, null, member2,
-                null, null);
+        Board board1 = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member1);
+        Board board2 = new Board(title.get(1), content.get(1), memberRank.PLATINUM, 13L, 13, null, member2);
 
         addMember.add(member1);
         addMember.add(member2);
