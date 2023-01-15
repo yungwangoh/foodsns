@@ -41,7 +41,7 @@ public class MemberReportServiceImpl implements MemberReportService {
     @Transactional
     public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(String email) {
 
-        Optional<Member> member = of(memberRepository.findByEmail(email)
+        Optional<Member> member = of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));

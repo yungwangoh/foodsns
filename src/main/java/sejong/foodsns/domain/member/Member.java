@@ -108,6 +108,8 @@ public class Member extends BaseEntity {
     public void setFriends(Friend friend) {
         if(this != friend.getMember()) {
             this.friends.add(friend);
+        } else {
+            throw new IllegalArgumentException("같은 회원을 친구 추가 할 수 없습니다.");
         }
     }
 

@@ -2,18 +2,14 @@ package sejong.foodsns.service.board.crud.impl;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
-import sejong.foodsns.dto.member.MemberRequestDto;
-import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
@@ -54,7 +50,7 @@ public class BoardCrudServiceImplTest {
     void boardCreate() {
 
         //given
-        Member findMember = memberRepository.findByUsername("하윤").get();
+        Member findMember = memberRepository.findMemberByUsername("하윤").get();
         Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
                 findMember);
         boardResponseDto = BoardResponseDto.builder()
@@ -77,7 +73,7 @@ public class BoardCrudServiceImplTest {
     @DisplayName("게시물 찾기")
     void findBoard() {
         // given
-        Member findMember = memberRepository.findByUsername("하윤").get();
+        Member findMember = memberRepository.findMemberByUsername("하윤").get();
         BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
 
@@ -93,7 +89,7 @@ public class BoardCrudServiceImplTest {
     @DisplayName("게시판 목록")
     void boardList() {
         // given
-        Member findMember = memberRepository.findByUsername("하윤").get();
+        Member findMember = memberRepository.findMemberByUsername("하윤").get();
         List<ResponseEntity<Optional<BoardResponseDto>>> list = new ArrayList<>();
         list.add(boardCrudService.boardCreate(getBoardRequestDto(1, findMember)));
         list.add(boardCrudService.boardCreate(getBoardRequestDto(2, findMember)));
@@ -114,7 +110,7 @@ public class BoardCrudServiceImplTest {
     @DisplayName("게시판 제목 수정")
     void boardTitleUpdate() {
         // given
-        Member findMember = memberRepository.findByUsername("하윤").get();
+        Member findMember = memberRepository.findMemberByUsername("하윤").get();
         String updateTitle = "검은콩나물무침";
         BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
@@ -132,7 +128,7 @@ public class BoardCrudServiceImplTest {
     @DisplayName("게시물 삭제")
     void boardDelete() {
         // given
-        Member findMember = memberRepository.findByUsername("하윤").get();
+        Member findMember = memberRepository.findMemberByUsername("하윤").get();
         BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
         boardCrudService.boardCreate(boardRequestDto);
 
@@ -162,7 +158,7 @@ public class BoardCrudServiceImplTest {
         @DisplayName("게시물 제목 중복 -> 게시물 등록 실패")
         void boardDuplicatedValidationFail() {
             // given
-            Member findMember = memberRepository.findByUsername("하윤").get();
+            Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
             boardCrudService.boardCreate(boardRequestDto);
 
@@ -178,7 +174,7 @@ public class BoardCrudServiceImplTest {
         @DisplayName("찾으려는 게시물이 존재하지 않을때 예외")
         void boardFindException() {
             // given
-            Member findMember = memberRepository.findByUsername("하윤").get();
+            Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
 
             // when

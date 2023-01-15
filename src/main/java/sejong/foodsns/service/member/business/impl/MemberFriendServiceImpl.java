@@ -125,7 +125,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
      * @return 찾은 회원 -> 없으면 예외 (NOT_FOUND)
      */
     private Optional<Member> getMember(String email) {
-        return of(memberRepository.findByEmail(email)
+        return of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
     }
 
@@ -135,7 +135,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
      * @return 친구 회원 -> 없으면 예외 (NOT_FOUND)
      */
     private Optional<Member> getFriendSearch(String friendUsername) {
-        return of(memberRepository.findByUsername(friendUsername)
+        return of(memberRepository.findMemberByUsername(friendUsername)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
     }
 

@@ -15,9 +15,7 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("select f from Friend f join fetch f.member m where m.email = :email")
-    Optional<Friend> findByMember_Email(@Param("email") String email);
+    List<Optional<Friend>> findByMember_Email(@Param("email") String email);
     @Query("select f from Friend f join fetch f.member m where m.id = :memberId")
-    Optional<Friend> findByMemberId(@Param("memberId") Long id);
-    @Query("select m from Member m join fetch m.friends where m.id = :memberId")
-    List<Friend> findFriendsByMemberId(@Param("memberId") Long id);
+    List<Optional<Friend>> findByMemberId(@Param("memberId") Long id);
 }

@@ -26,21 +26,18 @@ class FriendRepositoryTest {
     private static Member member;
     private Member member1;
     private Member member2;
-    private Friend friend;
-    private Friend friend1;
 
     @BeforeEach
     void init() {
         member = new Member("윤광오", "swager253@naver.com", "rhkddh77@A", NORMAL);
         member1 = new Member("하윤", "qkfks1234@naver.com", "qkfks1234@A", NORMAL);
         member2 = new Member("임우택", "ssafy1234@ssafy.com", "rhkddh77@A", NORMAL);
-
-        friend = new Friend(member1);
-        friend1 = new Friend(member2);
     }
 
     @AfterEach
     void initDB() {
+        friendRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 
     @Test
@@ -48,10 +45,22 @@ class FriendRepositoryTest {
     @DisplayName("친구 등록")
     void friendCreate() {
         // given
-        memberFriendAddInit();
+        Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+        Member save2 = memberRepository.save(member2);
+
+        Friend friendSave = new Friend(save1);
+        Friend friendSave2 = new Friend(save2);
+
+        save.setFriends(friendSave);
+        save.setFriends(friendSave2);
+
+        friendSave.setMember(save);
+        friendSave2.setMember(save);
 
         // when
-        Optional<Member> memberByEmail = memberRepository.findMemberByEmail("swager253@naver.com");
+        Optional<Member> memberByEmail = memberRepository.findMemberByEmail(save.getEmail());
+
 
         // then -> 친구 2명 추가
         assertThat(getFriends(of(getMember(memberByEmail))).size()).isEqualTo(2);
@@ -59,20 +68,23 @@ class FriendRepositoryTest {
 
     @Test
     @Order(1)
-    @DisplayName("친구 찾기")
+    @DisplayName("친구 찾아서 상세 조회")
     void myFriendsSearch() {
         // given
-        memberFriendAddInit();
         Member save = memberRepository.save(member);
-        Optional<Member> id = memberRepository.findById(save.getId());
+        Member save1 = memberRepository.save(member1);
+
+        Friend friendSave = new Friend(save1);
+
+        save.setFriends(friendSave);
+
+        friendSave.setMember(save);
 
         // when
-        List<Friend> friends = getMember(id).getFriends();
+        Optional<Member> memberByUsername = memberRepository.findMemberByUsername(save.getUsername());
 
-        // then
-        assertThat(friends.size()).isEqualTo(2);
-        assertThat(friends.get(0).getMember().getUsername()).isEqualTo(member1.getUsername());
-        assertThat(friends.get(1).getMember().getUsername()).isEqualTo(member2.getUsername());
+        // then -> 친구 리스트엔 친구 정보가 있음. -> 추가한 친구 정보와 리스트에 존재하는 친구 비교
+        assertThat(getMember(memberByUsername).getFriends().get(0)).isEqualTo(friendSave);
     }
 
     @Test
@@ -80,8 +92,18 @@ class FriendRepositoryTest {
     @DisplayName("친구 삭제")
     void myFriendDelete() {
         // given
-        memberFriendAddInit();
         Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+        Member save2 = memberRepository.save(member2);
+
+        Friend friendSave = new Friend(save1);
+        Friend friendSave2 = new Friend(save2);
+
+        save.setFriends(friendSave);
+        save.setFriends(friendSave2);
+
+        friendSave.setMember(save);
+        friendSave2.setMember(save);
 
         // when -> 친구 리스트에서 삭제
         getFriends(of(save)).remove(0);
@@ -95,16 +117,26 @@ class FriendRepositoryTest {
     @DisplayName("친구 목록")
     void myFriendList() {
         // given
-        memberFriendAddInit();
-        memberRepository.save(member);
+        Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+        Member save2 = memberRepository.save(member2);
+
+        Friend friendSave = new Friend(save1);
+        Friend friendSave2 = new Friend(save2);
+
+        save.setFriends(friendSave);
+        save.setFriends(friendSave2);
+
+        friendSave.setMember(save);
+        friendSave2.setMember(save);
 
         // when
         Optional<Member> memberByEmail = memberRepository.findMemberByEmail("swager253@naver.com");
 
         // then
         assertThat(getFriends(memberByEmail).size()).isEqualTo(2);
-        assertThat(getFriends(memberByEmail).get(0).getMember().getEmail()).isEqualTo(getMember(friend).getEmail());
-        assertThat(getFriends(memberByEmail).get(1).getMember().getEmail()).isEqualTo(getMember(friend1).getEmail());
+        assertThat(getMember(memberByEmail).getFriends().get(0)).isEqualTo(friendSave);
+        assertThat(getMember(memberByEmail).getFriends().get(1)).isEqualTo(friendSave2);
     }
 
     @Test
@@ -112,7 +144,7 @@ class FriendRepositoryTest {
     @DisplayName("블랙리스트인 회원을 친구 추가할 수 없음")
     void myFriendNotAddBlackListMember() {
         // given
-        Member black = new Member("한재경", "han1234@naver.com", "rhkddh77@A", BLACKLIST);
+        Member black = new Member("한재경", "han1234@naver.com", "gfgfdgdsd@A", BLACKLIST);
         memberRepository.save(member);
         Member save = memberRepository.save(black);
         Friend blackFriendSave = friendRepository.save(new Friend(save));
@@ -126,12 +158,59 @@ class FriendRepositoryTest {
         assertThat(member.getFriends().size()).isEqualTo(0);
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("회원의 친구 목록 레포 테스트")
+    void myFriendListRepoTest() {
+        // given
+        Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+
+        Friend friendSave = new Friend(save1);
+
+        save.setFriends(friendSave);
+
+        friendSave.setMember(save);
+
+        // when
+        List<Optional<Friend>> friendList = friendRepository.findByMemberId(save.getId());
+
+        // then
+        assertThat(friendList.size()).isEqualTo(1);
+        assertThat(friendList.get(0).get()).isEqualTo(friendSave);
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("친구를 조회하여 어느 회원과 친구를 맺었는지 조회")
+    void friendSearchWhoMember() {
+        // given
+        Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+
+        Friend friendSave = new Friend(save1);
+
+        save.setFriends(friendSave);
+
+        friendSave.setMember(save);
+
+        // when
+        Optional<Member> memberSearch =
+                memberRepository.findMemberByUsername(save.getUsername());
+
+        Optional<Member> memberByFriends =
+                memberRepository.findMemberByFriends(getFriends(memberSearch).get(0).getId());
+
+        // then
+        assertThat(memberByFriends.get()).isEqualTo(save);
+    }
+
     /**
      * 회원 타입이 블랙리스트인지 구분
      * @param memberType
      * @return 블랙이면 true, 아니면 false
      */
-    private boolean notAddBlackListMember(MemberType memberType) {
+    private static boolean notAddBlackListMember(MemberType memberType) {
         return BLACKLIST == memberType;
     }
 
@@ -139,15 +218,7 @@ class FriendRepositoryTest {
      * 회원의 친구 추가 초기화
      */
     private void memberFriendAddInit() {
-        memberRepository.save(member);
-        memberRepository.save(member1);
-        memberRepository.save(member2);
 
-        Friend friendSave = friendRepository.save(friend);
-        Friend friendSave2 = friendRepository.save(friend1);
-
-        member.setFriends(friendSave);
-        member.setFriends(friendSave2);
     }
 
     /**
@@ -155,7 +226,7 @@ class FriendRepositoryTest {
      * @param memberByEmail
      * @return 친구 목록
      */
-    private List<Friend> getFriends(Optional<Member> memberByEmail) {
+    private static List<Friend> getFriends(Optional<Member> memberByEmail) {
         return getMember(memberByEmail).getFriends();
     }
 
@@ -165,7 +236,7 @@ class FriendRepositoryTest {
      * @param member
      * @return 회원
      */
-    private Member getMember(Friend member) {
+    private static Member getMember(Friend member) {
         return member.getMember();
     }
 
