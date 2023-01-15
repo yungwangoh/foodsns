@@ -5,13 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
-import sejong.foodsns.dto.board.BoardRequestDto;
-import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
-import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.exception.http.board.NoSearchCommentException;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.service.board.crud.CommentCrudService;
@@ -43,6 +39,67 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
         Comment saveComment = commentRepository.save(comment);
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
+    }
+
+    /**
+     * 댓글 찾기 -> 성공 ?, 실패 ?
+     * @param title
+     * @return 게시물, HTTP OK
+     */
+
+    @Override
+    public ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content) {
+        Optional<Comment> comment = commentRepository.findByBoardTitleAndContainingContent(title, content);
+
+        return new ResponseEntity<>(of(new CommentResponseDto(getComment(comment))), OK);
+    }
+
+    /**
+     * 모든 댓글 목록 -> 성공 ?
+     * @return 게시물 리스트, HTTP OK
+     */
+
+    @Override
+    public ResponseEntity<Optional<List<CommentResponseDto>>> allCommentList() {
+        List<Comment> comments = commentRepository.findAll();
+
+        Optional<List<CommentResponseDto>> collect = of(comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(toList()));
+
+        return new ResponseEntity<>(collect, OK);
+    }
+
+    /**
+     * 회원이 작성한 댓글 목록 -> 성공 ?
+     * @return 게시물 리스트, HTTP OK
+     */
+
+    @Override
+    public ResponseEntity<Optional<List<CommentResponseDto>>> commentListByUsername(String username) {
+        List<Comment> comments = commentRepository.findCommentsByUsername(username);
+
+        Optional<List<CommentResponseDto>> collect = of(comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(toList()));
+
+        return new ResponseEntity<>(collect, OK);
+    }
+
+    /**
+     * 게시물에 작성된 댓글 목록 -> 성공 ?
+     * @return 게시물 리스트, HTTP OK
+     */
+
+    @Override
+    public ResponseEntity<Optional<List<CommentResponseDto>>> commentListByBoardTitle(String title) {
+        List<Comment> comments = commentRepository.findCommentsByBoardTitle(title);
+
+        Optional<List<CommentResponseDto>> collect = of(comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(toList()));
+
+        return new ResponseEntity<>(collect, OK);
     }
 
     /**
@@ -81,35 +138,6 @@ public class CommentCrudServiceImpl implements CommentCrudService {
         commentRepository.delete(getComment(findComment));
 
         return new ResponseEntity<>(NO_CONTENT);
-    }
-
-    /**
-     * 댓글 찾기 -> 성공 ?, 실패 ?
-     * @param title
-     * @return 게시물, HTTP OK
-     */
-
-    @Override
-    public ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content) {
-        Optional<Comment> comment = commentRepository.findByBoardTitleAndContainingContent(title, content);
-
-        return new ResponseEntity<>(of(new CommentResponseDto(getComment(comment))), OK);
-    }
-
-    /**
-     * 댓글 목록 -> 성공 ?
-     * @return 게시물 리스트, HTTP OK
-     */
-
-    @Override
-    public ResponseEntity<Optional<List<CommentResponseDto>>> commentList() {
-        List<Comment> comments = commentRepository.findAll();
-
-        Optional<List<CommentResponseDto>> collect = of(comments.stream()
-                .map(CommentResponseDto::new)
-                .collect(toList()));
-
-        return new ResponseEntity<>(collect, OK);
     }
 
     /**
