@@ -57,10 +57,6 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
         else return new ResponseEntity<>(of(new MemberBlackListResponseDto(blackList)), ACCEPTED);
     }
 
-    private MemberBlackListResponseDto getMemberBlackListResponseDto(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne) {
-        return blackListMemberFindOne.getBody().get();
-    }
-
     /**
      * 블랙리스트 회원 찾기
      *
@@ -68,9 +64,9 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      * @return 성공 : OK, 실패 : NOT_FOUND
      */
     @Override
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto) {
+    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id) {
 
-        Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(memberBlackListRequestDto.getId())
+        Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원이 존재하지 않습니다.")));
 
         MemberBlackListResponseDto memberBlackListResponseDto = MemberBlackListResponseDto.builder()

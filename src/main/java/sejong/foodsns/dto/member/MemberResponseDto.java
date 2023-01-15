@@ -4,10 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.w3c.dom.stylesheets.LinkStyle;
+import sejong.foodsns.domain.member.Friend;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.domain.member.MemberType;
+import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PROTECTED;
 import static lombok.AccessLevel.PUBLIC;
 
@@ -25,6 +32,8 @@ public class MemberResponseDto {
     private int penaltyCount;
     private MemberType memberType;
 
+    private List<MemberFriendResponseDto> memberFriendResponseDtos;
+
     @Builder
     public MemberResponseDto(Member member) {
         this.id = member.getId();
@@ -35,5 +44,8 @@ public class MemberResponseDto {
         this.penaltyCount = member.getPenalty();
         this.memberRank = member.getMemberRank();
         this.memberType = member.getMemberType();
+        this.memberFriendResponseDtos = member.getFriends().stream()
+                .map(MemberFriendResponseDto::new)
+                .collect(toList());
     }
 }
