@@ -17,7 +17,11 @@ public interface CommentCrudService {
 
     ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content);
 
-    ResponseEntity<Optional<List<CommentResponseDto>>> commentList();
+    ResponseEntity<Optional<List<CommentResponseDto>>> allCommentList();
+
+    ResponseEntity<Optional<List<CommentResponseDto>>> commentListByUsername(String username);
+
+    ResponseEntity<Optional<List<CommentResponseDto>>> commentListByBoardTitle(String title);
 
     Boolean commentContentExistValidation(CommentRequestDto commentRequestDto);
 
