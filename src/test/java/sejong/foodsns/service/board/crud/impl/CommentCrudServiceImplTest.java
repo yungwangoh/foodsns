@@ -32,7 +32,7 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+//@Rollback(value = false)
 public class CommentCrudServiceImplTest {
 
     @Autowired
@@ -101,7 +101,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 목록")
     void commentList() {
         // given
-        Member member = memberRepository.findMemberByEmail("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
@@ -141,7 +141,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("게시물 제목으로 검색한 댓글 목록")
     void commentListByBoardTitle() {
         // given
-        Member member = memberRepository.findMemberByEmail("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
@@ -184,7 +184,7 @@ public class CommentCrudServiceImplTest {
     @DisplayName("댓글 삭제")
     void commentDelete() {
         // given
-        Member member = memberRepository.findMemberByEmail("하윤").get();
+        Member member = memberRepository.findMemberByUsername("하윤").get();
         Board board = boardRepository.findBoardByTitle("레시피1").get();
 
         CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
@@ -229,10 +229,10 @@ public class CommentCrudServiceImplTest {
                     .isInstanceOf(NoSuchElementException.class);
         }
 
-        @AfterEach
-        void deleteInit() {
-            memberRepository.deleteAll();
-        }
+//        @AfterEach
+//        void deleteInit() {
+//            memberRepository.deleteAll();
+//        }
     }
 
     private CommentRequestDto getCommentRequestDto(int idx, Member member, Board board) {

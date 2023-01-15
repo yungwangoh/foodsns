@@ -39,8 +39,8 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberAdd(MemberRequestDto memberRequestDto, String username) {
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
-        Optional<Member> friendSearch = memberRepository.findByUsername(username);
+        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
+        Optional<Member> friendSearch = memberRepository.findMemberByEmail(username);
 
         // 추가하려는 회원이 블랙리스트가 아니라면
         if(!getMember(friendSearch).getMemberType().equals(BLACKLIST)) {
@@ -62,7 +62,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     @Transactional
     public ResponseEntity<MemberResponseDto> friendMemberDelete(MemberRequestDto memberRequestDto, int index) {
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findMemberByUsername(memberRequestDto.getEmail());
 
         // 삭제 완료
         try {
@@ -84,7 +84,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<List<MemberResponseDto>> friendMemberList(MemberRequestDto memberRequestDto) {
 
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findMemberByEmail(memberRequestDto.getEmail());
 
         List<MemberResponseDto> collect = friendsMappedMemberResponseDtos(member);
 
@@ -100,7 +100,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(MemberRequestDto memberRequestDto, int index) {
 
-        Optional<Member> member = memberRepository.findByEmail(memberRequestDto.getEmail());
+        Optional<Member> member = memberRepository.findMemberByUsername(memberRequestDto.getEmail());
         try {
             Friend friend = getMember(member).getFriends().get(index);
 

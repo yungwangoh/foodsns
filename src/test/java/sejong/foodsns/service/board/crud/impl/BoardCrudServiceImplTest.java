@@ -2,6 +2,7 @@ package sejong.foodsns.service.board.crud.impl;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
+//@DataJpaTest
 @SpringBootTest
 @Transactional
 public class BoardCrudServiceImplTest {

@@ -118,14 +118,14 @@ class MemberBusinessServiceImplTest {
 
         // when
         ResponseEntity<MemberResponseDto> memberBlackListTypeConvert = memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
-        Optional<Member> member = memberRepository.findByEmail(getBody(memberBlackListTypeConvert).getEmail());
+        Optional<Member> member = memberRepository.findMemberByEmail(getBody(memberBlackListTypeConvert).getEmail());
 
         // then
         assertThat(member.get().getMemberType()).isEqualTo(memberType);
     }
 
     private Optional<Member> getMember() {
-        return memberRepository.findByEmail("swager253@naver.com");
+        return memberRepository.findMemberByEmail("swager253@naver.com");
     }
 
     private MemberResponseDto getBody(ResponseEntity<MemberResponseDto> memberReportCount) {
