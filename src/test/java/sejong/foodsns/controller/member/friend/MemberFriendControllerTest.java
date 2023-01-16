@@ -8,19 +8,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.repository.member.FriendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.business.MemberFriendService;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static sejong.foodsns.domain.member.MemberType.*;
+import static sejong.foodsns.domain.member.MemberType.BLACKLIST;
+import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -194,6 +192,91 @@ class MemberFriendControllerTest {
             Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
 
             memberRepository.save(member);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNotFound())
+                    .andDo(print());
+        }
+
+        @Test
+        @Order(2)
+        @DisplayName("친구 추가하려고 할 때 친구가 존재하지 않을 때 -> NOT_FOUND")
+        void myFriendAddFriendNotExist() throws Exception{
+            // given
+            String name = "email";
+            String values = "swager253@zzz.com";
+
+            String name1 = "friendUsername";
+            String values1 = "하윤";
+
+            Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
+
+            memberRepository.save(member);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNotFound())
+                    .andDo(print());
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("회원 정보가 맞지 않을떄 -> NOT_FOUND")
+        void memberInfoMissMatchNotFound() throws Exception {
+            // given
+            String name = "email";
+            String values = "swager253@gdgdfff.com";
+
+            String name1 = "friendUsername";
+            String values1 = "하윤";
+
+            Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
+            Member member1 = new Member("하윤", "cute123@naver.com", "zizizi123@", NORMAL);
+
+            memberRepository.save(member);
+            memberRepository.save(member1);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNotFound())
+                    .andDo(print());
+        }
+
+        @Test
+        @Order(4)
+        @DisplayName("블랙리스트인 친구를 추가하려고 할 때 -> NOT_FOUND")
+        void blackListFriendAddNotFound() throws Exception {
+            // given
+            String name = "email";
+            String values = "swager253@gdgdfff.com";
+
+            String name1 = "friendUsername";
+            String values1 = "하윤";
+
+            Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
+            Member member1 = new Member("하윤", "cute123@naver.com", "zizizi123@", BLACKLIST);
+
+            memberRepository.save(member);
+            memberRepository.save(member1);
 
             // when
             ResultActions resultActions = mockMvc.perform(post("/member/friend")

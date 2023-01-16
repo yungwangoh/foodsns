@@ -197,7 +197,7 @@ class FriendRepositoryTest {
         friendSave.setMember(save);
 
         // when
-        List<Friend> friendByMemberId = friendRepository.findByMemberId(save.getId());
+        List<Friend> friendByMemberId = friendRepository.findFriendByMemberId(save.getId());
 
         // then
         assertThat(friendByMemberId.size()).isEqualTo(1);
