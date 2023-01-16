@@ -4,8 +4,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.member.friend.MemberFriendResponseDto;
@@ -15,8 +13,10 @@ import sejong.foodsns.service.member.business.MemberFriendService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -85,9 +85,9 @@ class MemberFriendServiceImplTest {
         ResponseEntity<List<MemberFriendResponseDto>> memberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
         // then -> 친구 2명 저장 -> 기댓값 2
-        assertThat(memberList.getBody().size()).isEqualTo(2);
-        assertThat(memberList.getBody().get(0).getUsername()).isEqualTo(testUserName);
-        assertThat(memberList.getBody().get(1).getUsername()).isEqualTo(testUserName1);
+        assertThat(getBody(memberList).size()).isEqualTo(2);
+        assertThat(getBody(memberList).get(0).getUsername()).isEqualTo(testUserName);
+        assertThat(getBody(memberList).get(1).getUsername()).isEqualTo(testUserName1);
     }
 
     @Test
@@ -97,26 +97,24 @@ class MemberFriendServiceImplTest {
         // given
         memberCrudService.memberCreate(memberRequestDto);
         memberCrudService.memberCreate(memberRequestDto1);
-        memberCrudService.memberCreate(memberRequestDto2);
 
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName);
-        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
+        // 친구 리스트를 꺼내온다.
         ResponseEntity<List<MemberFriendResponseDto>> friendMemberList = memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
-        // when
-        ResponseEntity<MemberResponseDto> memberDetailSearch =
+        // 친구 index 를 확인하고 친구의 Dto를 반환
+        MemberFriendResponseDto memberFriendResponseDto = getBody(friendMemberList).get(0);
+
+        // 친구의 정보를 조회
+        ResponseEntity<Optional<MemberResponseDto>> friend = memberCrudService.findMember(memberFriendResponseDto.getEmail());
+
+        // when -> 친구의 정보를 조회
+        ResponseEntity<MemberResponseDto> listFriend =
                 memberFriendService.friendMemberDetailSearch(memberRequestDto.getEmail(), 0);
 
-        ResponseEntity<MemberResponseDto> memberDetailSearch1 =
-                memberFriendService.friendMemberDetailSearch(memberRequestDto.getEmail(), 1);
-
-        // then
-        assertThat(friendMemberList.getBody().get(0).getUsername()).isEqualTo(memberDetailSearch.getBody().getUsername());
-        assertThat(friendMemberList.getBody().get(0).getUsername()).isEqualTo(memberDetailSearch.getBody().getUsername());
-
-        assertThat(friendMemberList.getBody().get(1).getUsername()).isEqualTo(memberDetailSearch1.getBody().getUsername());
-        assertThat(friendMemberList.getBody().get(1).getUsername()).isEqualTo(memberDetailSearch1.getBody().getUsername());
+        // then -> 기댓값 둘의 객체는 같다.
+        assertThat(listFriend.getBody()).isEqualTo(friend.getBody().get());
     }
 
     @Test
@@ -132,14 +130,14 @@ class MemberFriendServiceImplTest {
         memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), testUserName1);
 
         // when
-        ResponseEntity<MemberResponseDto> friendMemberDelete =
+        ResponseEntity<MemberFriendResponseDto> friendMemberDelete =
                 memberFriendService.friendMemberDelete(memberRequestDto.getEmail(), 1);
 
-        ResponseEntity<List<MemberFriendResponseDto>> friendMemberList = memberFriendService.
-                friendMemberList(memberRequestDto.getEmail());
+        ResponseEntity<List<MemberFriendResponseDto>> friendMemberList =
+                memberFriendService.friendMemberList(memberRequestDto.getEmail());
 
         // then
-        assertThat(friendMemberList.getBody().size()).isEqualTo(1);
+        assertThat(getBody(friendMemberList).size()).isEqualTo(1);
         assertThat(friendMemberDelete.getBody().getUsername()).isEqualTo(testUserName1);
     }
 
@@ -173,5 +171,40 @@ class MemberFriendServiceImplTest {
         // then -> index 범위가 0 ~ 4 인데 그것을 넘어선 예외.
         assertThatThrownBy(() -> memberFriendService.friendMemberDelete(memberRequestDto.getEmail(), 5))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("회원 자신을 친구 리스트에 추가했을때에 예외")
+    void mySelfFriendListAdd() {
+        // given
+        memberCrudService.memberCreate(memberRequestDto);
+
+        // when
+
+        // then -> 기댓값 : 예외
+        assertThatThrownBy(() -> memberFriendService
+                .friendMemberAdd(memberRequestDto.getEmail(), memberRequestDto.getEmail()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("친구 리스트의 중복 허용하지 않음.")
+    void myFriendListDuplicatedCheck() {
+        // given
+        memberCrudService.memberCreate(memberRequestDto);
+        memberCrudService.memberCreate(memberRequestDto1);
+
+        // when
+        memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), memberRequestDto1.getUsername());
+
+        // then -> 기댓값 :  예외
+        assertThatThrownBy(() -> memberFriendService.friendMemberAdd(memberRequestDto.getEmail(), memberRequestDto1.getUsername()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private static List<MemberFriendResponseDto> getBody(ResponseEntity<List<MemberFriendResponseDto>> memberList) {
+        return memberList.getBody();
     }
 }

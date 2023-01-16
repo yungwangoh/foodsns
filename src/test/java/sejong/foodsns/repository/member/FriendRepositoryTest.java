@@ -63,7 +63,9 @@ class FriendRepositoryTest {
 
 
         // then -> 친구 2명 추가
-        assertThat(getFriends(of(getMember(memberByEmail))).size()).isEqualTo(2);
+        assertThat(getMember(memberByEmail).getFriends().size()).isEqualTo(2);
+        assertThat(getMember(memberByEmail).getFriends().get(0)).isEqualTo(friendSave);
+        assertThat(getMember(memberByEmail).getFriends().get(1)).isEqualTo(friendSave2);
     }
 
     @Test
@@ -160,8 +162,8 @@ class FriendRepositoryTest {
 
     @Test
     @Order(5)
-    @DisplayName("회원의 친구 목록 레포 테스트")
-    void myFriendListRepoTest() {
+    @DisplayName("회원의 친구 목록 레포 테스트 join fetch 적용")
+    void myFriendListRepoTestJoinFetch() {
         // given
         Member save = memberRepository.save(member);
         Member save1 = memberRepository.save(member1);
@@ -173,15 +175,36 @@ class FriendRepositoryTest {
         friendSave.setMember(save);
 
         // when
-        List<Optional<Friend>> friendList = friendRepository.findByMemberId(save.getId());
+        List<Friend> friendList = friendRepository.findByMemberId(save.getId());
 
         // then
         assertThat(friendList.size()).isEqualTo(1);
-        assertThat(friendList.get(0).get()).isEqualTo(friendSave);
+        assertThat(friendList.get(0)).isEqualTo(friendSave);
     }
 
     @Test
     @Order(6)
+    @DisplayName("회원의 친구 목록 레포 테스트 join fetch 미적용")
+    void myFriendListRepoTestNotJoinFetch() {
+        // given
+        Member save = memberRepository.save(member);
+        Member save1 = memberRepository.save(member1);
+
+        Friend friendSave = new Friend(save1);
+
+        save.setFriends(friendSave);
+
+        friendSave.setMember(save);
+
+        // when
+        List<Friend> friendByMemberId = friendRepository.findByMemberId(save.getId());
+
+        // then
+        assertThat(friendByMemberId.size()).isEqualTo(1);
+    }
+
+    @Test
+    @Order(7)
     @DisplayName("친구를 조회하여 어느 회원과 친구를 맺었는지 조회")
     void friendSearchWhoMember() {
         // given

@@ -2,6 +2,7 @@ package sejong.foodsns.dto.member.friend;
 
 import lombok.*;
 import sejong.foodsns.domain.member.Friend;
+import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
@@ -16,13 +17,13 @@ public class MemberFriendResponseDto {
     private String username;
     private int recommendCount;
     private Long reportCount;
-    private MemberType memberType;
+    private MemberRank memberRank;
 
     public MemberFriendResponseDto(Friend friend) {
-        this.email = friend.getMember().getEmail();
-        this.username = friend.getMember().getUsername();
-        this.recommendCount = friend.getMember().getRecommendCount();
-        this.memberType = friend.getMember().getMemberType();
-        this.reportCount = friend.getMember().getReportCount();
+        this.email = friend.getFriendEmail();
+        this.username = friend.getFriendName();
+        this.recommendCount = friend.getRecommendCount();
+        this.reportCount = friend.getReportCount();
+        this.memberRank = friend.getMemberRank();
     }
 }

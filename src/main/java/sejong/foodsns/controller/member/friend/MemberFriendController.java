@@ -28,10 +28,10 @@ public class MemberFriendController {
      * @return 성공 : 친구 정보 응답 Dto, CREATE | 실패 : 친구 정보 응답 Dto, NOT_FOUND
      */
     @PostMapping("/member/friend")
-    ResponseEntity<MemberResponseDto> memberFriendAdd(@RequestParam("email") String email,
+    ResponseEntity<MemberFriendResponseDto> memberFriendAdd(@RequestParam("email") String email,
                                                       @RequestParam("friendUsername") String friendUsername) {
 
-        ResponseEntity<MemberResponseDto> friendMemberAdd = memberFriendService.friendMemberAdd(email, friendUsername);
+        ResponseEntity<MemberFriendResponseDto> friendMemberAdd = memberFriendService.friendMemberAdd(email, friendUsername);
 
         return new ResponseEntity<>(getBody(friendMemberAdd), friendMemberAdd.getStatusCode());
     }
@@ -47,7 +47,7 @@ public class MemberFriendController {
                                                                @RequestParam("index") int index) {
         ResponseEntity<MemberResponseDto> friendMemberDetailSearch = memberFriendService.friendMemberDetailSearch(email, index);
 
-        return new ResponseEntity<>(getBody(friendMemberDetailSearch), friendMemberDetailSearch.getStatusCode());
+        return new ResponseEntity<>(getMemberResponseDto(friendMemberDetailSearch), friendMemberDetailSearch.getStatusCode());
     }
 
     /**
@@ -70,10 +70,10 @@ public class MemberFriendController {
      * @return 성공 : 삭제된 친구의 정보, OK | 실패 :
      */
     @DeleteMapping("/member/friends")
-    ResponseEntity<MemberResponseDto> memberFriendDelete(@RequestParam("email") String email,
+    ResponseEntity<MemberFriendResponseDto> memberFriendDelete(@RequestParam("email") String email,
                                                          @RequestParam("index") int index) {
 
-        ResponseEntity<MemberResponseDto> friendMemberDelete = memberFriendService.friendMemberDelete(email, index);
+        ResponseEntity<MemberFriendResponseDto> friendMemberDelete = memberFriendService.friendMemberDelete(email, index);
 
         return new ResponseEntity<>(getBody(friendMemberDelete), friendMemberDelete.getStatusCode());
     }
@@ -82,7 +82,11 @@ public class MemberFriendController {
         return friendMemberList.getBody();
     }
 
-    private static MemberResponseDto getBody(ResponseEntity<MemberResponseDto> friendMemberAdd) {
+    private static MemberFriendResponseDto getBody(ResponseEntity<MemberFriendResponseDto> friendMemberAdd) {
         return friendMemberAdd.getBody();
+    }
+
+    private static MemberResponseDto getMemberResponseDto(ResponseEntity<MemberResponseDto> friendMemberDetailSearch) {
+        return friendMemberDetailSearch.getBody();
     }
 }

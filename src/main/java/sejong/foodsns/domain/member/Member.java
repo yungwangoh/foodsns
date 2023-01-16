@@ -11,8 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
@@ -106,11 +106,30 @@ public class Member extends BaseEntity {
      * @param friend
      */
     public void setFriends(Friend friend) {
-        if(this != friend.getMember()) {
+        if(!this.username.equals(friend.getFriendName())) {
+
+            // 친구 중복 체크.
+            if(duplicatedCheck(friend))
+                throw new IllegalArgumentException("같은 친구를 추가할 수 없습니다.");
+
             this.friends.add(friend);
         } else {
-            throw new IllegalArgumentException("같은 회원을 친구 추가 할 수 없습니다.");
+            throw new IllegalArgumentException("자신을 친구 추가할 수 없습니다.");
         }
+    }
+
+    /**
+     * 중복 체크 로직
+     * @param friend 친구
+     * @return 중복이면 true, 아니면 false
+     */
+    private boolean duplicatedCheck(Friend friend) {
+        for(Friend f : this.getFriends()) {
+            if(friend.getFriendName().equals(f.getFriendName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

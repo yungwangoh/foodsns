@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface MemberFriendService {
 
-    default ResponseEntity<MemberResponseDto> friendMemberAdd(String email, String friendEmail) {
+    default ResponseEntity<MemberFriendResponseDto> friendMemberAdd(String email, String friendEmail) {
         return null;
     }
 
-    default ResponseEntity<MemberResponseDto> friendMemberDelete(String email, int index) {
+    default ResponseEntity<MemberFriendResponseDto> friendMemberDelete(String email, int index) {
         return null;
     }
 

@@ -145,5 +145,18 @@ class MemberFriendControllerTest {
     @DisplayName("실패")
     class Failed {
 
+        @Test
+        @Order(0)
+        @DisplayName("같은 친구를 추가하려할떄 실패 -> NOT_FOUND")
+        void myFriendDuplicatedNotFound() {
+
+        }
+
+        @Test
+        @Order(1)
+        @DisplayName("회원 자신을 친구 추가 하려할 때 -> NOT_FOUND")
+        void mySelfFriendListAddNotFound() {
+
+        }
     }
 }
