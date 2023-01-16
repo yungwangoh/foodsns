@@ -148,15 +148,63 @@ class MemberFriendControllerTest {
         @Test
         @Order(0)
         @DisplayName("같은 친구를 추가하려할떄 실패 -> NOT_FOUND")
-        void myFriendDuplicatedNotFound() {
+        void myFriendDuplicatedNotFound() throws Exception {
+            // given
+            String name = "email";
+            String values = "swager253@zzz.com";
 
+            String name1 = "friendUsername";
+            String values1 = "하윤";
+
+            Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
+            Member friend = new Member("하윤", "qkfks1234@zzz.com", "zlzlzl123@", NORMAL);
+
+            memberRepository.save(member);
+            memberRepository.save(friend);
+
+            mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNotFound())
+                    .andDo(print());
         }
 
         @Test
         @Order(1)
         @DisplayName("회원 자신을 친구 추가 하려할 때 -> NOT_FOUND")
-        void mySelfFriendListAddNotFound() {
+        void mySelfFriendListAddNotFound() throws Exception {
+            // given
+            String name = "email";
+            String values = "swager253@zzz.com";
 
+            String name1 = "friendUsername";
+            String values1 = "윤광오";
+
+            Member member = new Member("윤광오", "swager253@zzz.com", "zlzlzl123@", NORMAL);
+
+            memberRepository.save(member);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/member/friend")
+                    .param(name, values)
+                    .param(name1, values1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions.andExpect(status().isNotFound())
+                    .andDo(print());
         }
     }
 }
