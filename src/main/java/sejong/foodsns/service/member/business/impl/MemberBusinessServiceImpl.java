@@ -80,11 +80,6 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
         return new ResponseEntity<>(memberResponseDto, OK);
     }
 
-    @Override
-    public ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto) {
-        return null;
-    }
-
     /**
      * 회원 타입 블랙리스트로 변경
      * @param memberRequestDto
@@ -96,11 +91,15 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
         Optional<Member> member = getMember(memberRequestDto);
 
-        getMember(member).memberBlackListType(BLACKLIST);
+        if(getMember(member).getReportCount() >= 30) {
+            getMember(member).memberBlackListType(BLACKLIST);
 
-        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
+            MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
-        return new ResponseEntity<>(memberResponseDto, OK);
+            return new ResponseEntity<>(memberResponseDto, OK);
+        } else {
+            throw new IllegalStateException("회원의 신고 수가 30개가 넘지 않아서 블랙리스트 타입을 지정할 수 없습니다.");
+        }
     }
 
     /**

@@ -90,7 +90,7 @@ class MemberCrudServiceImplTest {
             list.add(memberCrudService.memberCreate(getMemberRequestDtoThree()));
 
             // when
-            ResponseEntity<Optional<List<MemberResponseDto>>> memberList = memberCrudService.memberList();
+            ResponseEntity<List<MemberResponseDto>> memberList = memberCrudService.memberList();
 
             // then
             assertThat(memberList.getStatusCode()).isEqualTo(OK);
@@ -104,7 +104,7 @@ class MemberCrudServiceImplTest {
             // given
             String tempPassword = "alstngud77@A";
             MemberRequestDto memberRequestDto = getMemberRequestDto();
-            ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
+            memberCrudService.memberCreate(memberRequestDto);
 
             // when
             ResponseEntity<Optional<MemberResponseDto>> passwordUpdate =
@@ -163,8 +163,8 @@ class MemberCrudServiceImplTest {
             memberRepository.deleteAll();
         }
 
-        private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
-            return memberList.getBody().get();
+        private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<List<MemberResponseDto>> memberList) {
+            return memberList.getBody();
         }
     }
 

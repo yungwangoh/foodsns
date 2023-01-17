@@ -73,10 +73,6 @@ public class Member extends BaseEntity {
     @JsonIgnore
     private List<Board> boards;
 
-    // 패널티 수
-    @Column(name = "penalty")
-    private int penalty;
-
     @Builder
     public Member(String username, String email, String password, MemberType memberType) {
         this.username = username;
@@ -84,7 +80,6 @@ public class Member extends BaseEntity {
         this.password = password;
         this.memberType = memberType;
         this.memberRank = NORMAL;
-        this.penalty = 0;
         this.reportCount = 0L;
         this.boards = new ArrayList<>();
         this.friends = new ArrayList<>(5);
@@ -207,11 +202,6 @@ public class Member extends BaseEntity {
     public void reportCount() {
         this.reportCount++;
     }
-
-    /**
-     * 유저 패널티 수
-     */
-    public void setPenalty(int penalty) { this.penalty = penalty; }
 
     /**
      * 유저 브론즈 등급 추천 수 10 ~ 29

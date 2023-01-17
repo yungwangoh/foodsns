@@ -50,8 +50,8 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
     /**
      * 회원 비밀번호 수정 -> 성공 200, 실패 404
-     * @param memberRequestDto
-     * @param password
+     * @param email 회원 이메일
+     * @param password 회원 비밀번호
      * @return 회원 DTO, HTTP OK
      */
     @Override
@@ -67,8 +67,8 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
     /**
      * 회원 이름 수정 -> 성공 200, 실패 404
-     * @param memberRequestDto
-     * @param username
+     * @param email 회원 이메일
+     * @param username 회원 닉네임
      * @return 회원 DTO, HTTP OK
      */
     @Override
@@ -113,16 +113,17 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
     /**
      * 맴버 목록 -> 성공 200
+     *
      * @return 회원 리스트, HTTP OK
      */
     @Override
-    public ResponseEntity<Optional<List<MemberResponseDto>>> memberList() {
+    public ResponseEntity<List<MemberResponseDto>> memberList() {
 
         List<Member> members = memberRepository.findAll();
 
-        Optional<List<MemberResponseDto>> collect = of(members.stream()
+        List<MemberResponseDto> collect = members.stream()
                 .map(MemberResponseDto::new)
-                .collect(toList()));
+                .collect(toList());
 
         return new ResponseEntity<>(collect, OK);
     }

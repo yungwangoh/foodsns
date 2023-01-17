@@ -1,7 +1,6 @@
 package sejong.foodsns.service.member.crud;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 
@@ -20,7 +19,7 @@ public interface MemberCrudService {
 
     ResponseEntity<Optional<MemberResponseDto>> findMember(String email);
 
-    ResponseEntity<Optional<List<MemberResponseDto>>> memberList();
+    ResponseEntity<List<MemberResponseDto>> memberList();
 
     Boolean memberNameExistValidation(MemberRequestDto memberRequestDto);
 

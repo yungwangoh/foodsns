@@ -41,7 +41,6 @@ public class MemberResponseDto {
         this.email = member.getEmail();
         this.recommendCount = member.getRecommendCount();
         this.reportCount = member.getReportCount();
-        this.penaltyCount = member.getPenalty();
         this.memberRank = member.getMemberRank();
         this.memberType = member.getMemberType();
         this.memberFriendResponseDtos = member.getFriends().stream()

@@ -93,23 +93,6 @@ class MemberBusinessServiceImplTest {
     }
 
     @Test
-    @Order(3)
-    @DisplayName("회원 패널티 수 증가")
-    void memberPenaltyCountUp() {
-        // given
-        for(int i = 0; i < 10; i++) {
-            memberBusinessService.memberReportCount(memberRequestDto);
-        }
-
-        // when
-        ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount =
-                memberBusinessService.memberBlackListPenaltyCount(memberRequestDto);
-
-        // then -> 총 신고 수가 10 이므로 패널티 수는 1이 된다.
-        assertThat(getBody(memberBlackListPenaltyCount).getPenaltyCount()).isEqualTo(1);
-    }
-
-    @Test
     @Order(4)
     @DisplayName("회원 블랙리스트 타입 변경")
     void memberBlackListTypeConvert() {
