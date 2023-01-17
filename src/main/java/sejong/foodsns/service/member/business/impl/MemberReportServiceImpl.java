@@ -90,7 +90,7 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @param member
      * @return success : true, fail : false
      */
-    private boolean TheNumberOfReportIsTenOrMore(Optional<Member> member) {
+    private static boolean TheNumberOfReportIsTenOrMore(Optional<Member> member) {
         return getMember(member).getReportCount() >= numOfReportFirst;
     }
 
@@ -99,7 +99,7 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @param member
      * @return member
      */
-    private Member getMember(Optional<Member> member) {
+    private static Member getMember(Optional<Member> member) {
         return member.get();
     }
 

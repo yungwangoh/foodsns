@@ -125,7 +125,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      * @param member
      * @return 회원 객체
      */
-    private Member getMember(Optional<Member> member) {
+    private static Member getMember(Optional<Member> member) {
         return member.get();
     }
 
@@ -134,7 +134,7 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      * @param member
      * @return 회원 응답 Dto
      */
-    private MemberResponseDto getMemberResponseDto(Member member) {
+    private static MemberResponseDto getMemberResponseDto(Member member) {
         return MemberResponseDto.builder()
                 .member(member)
                 .build();

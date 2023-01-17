@@ -41,7 +41,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto) {
+    public ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto) {
 
         Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(memberBlackListCreateRequestDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
@@ -52,19 +52,19 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
 
             BlackList save = blackListProcessAndSave(reportMember, blackList);
 
-            return new ResponseEntity<>(of(new MemberBlackListResponseDto(save)), CREATED);
+            return new ResponseEntity<>(new MemberBlackListResponseDto(save), CREATED);
         }
-        else return new ResponseEntity<>(of(new MemberBlackListResponseDto(blackList)), ACCEPTED);
+        else return new ResponseEntity<>(new MemberBlackListResponseDto(blackList), ACCEPTED);
     }
 
     /**
      * 블랙리스트 회원 찾기
      *
-     * @param memberBlackListCreateRequestDto 블랙리스트 회원 DTO
+     * @param id 블랙리스트 회원 DTO
      * @return 성공 : OK, 실패 : NOT_FOUND
      */
     @Override
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id) {
+    public ResponseEntity<MemberBlackListResponseDto> blackListMemberFindOne(Long id) {
 
         Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원이 존재하지 않습니다.")));
@@ -73,7 +73,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
                 .blackList(getBlackList(blackListMember))
                 .build();
 
-        return new ResponseEntity<>(of(memberBlackListResponseDto), OK);
+        return new ResponseEntity<>(memberBlackListResponseDto, OK);
     }
 
     /**
@@ -82,11 +82,11 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      * @return 성공 : OK, 실패 : NOT_FOUND
      */
     @Override
-    public ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList() {
+    public ResponseEntity<List<MemberBlackListResponseDto>> blackListMemberList() {
 
         List<BlackList> blackLists = blackListRepository.findAll();
-        Optional<List<MemberBlackListResponseDto>> blackListResponseDtos = of(blackLists.stream()
-                .map(MemberBlackListResponseDto::new).collect(toList()));
+        List<MemberBlackListResponseDto> blackListResponseDtos = blackLists.stream()
+                .map(MemberBlackListResponseDto::new).collect(toList());
 
         return new ResponseEntity<>(blackListResponseDtos, OK);
     }
@@ -96,7 +96,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      * @param reportMember 신고 회원
      * @return 패널티 3개 이상 : true, 미만 : false
      */
-    private boolean TheNumberOfPenaltyIsThreeOrMore(Optional<ReportMember> reportMember) {
+    private static boolean TheNumberOfPenaltyIsThreeOrMore(Optional<ReportMember> reportMember) {
         return getReportMember(reportMember).getMember().getPenalty() >= MemberNumberOfCount.penalty;
     }
 
@@ -105,7 +105,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      * @param reportMember 신고 회원
      * @return 신고회원 리턴
      */
-    private ReportMember getReportMember(Optional<ReportMember> reportMember) {
+    private static ReportMember getReportMember(Optional<ReportMember> reportMember) {
         return reportMember.get();
     }
 
@@ -131,7 +131,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
                 .orElseThrow(() -> new IllegalArgumentException("찾는 신고 회원이 없습니다."));
     }
 
-    private BlackList getBlackList(Optional<BlackList> blackListMember) {
+    private static BlackList getBlackList(Optional<BlackList> blackListMember) {
         return blackListMember.get();
     }
 }

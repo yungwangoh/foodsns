@@ -28,10 +28,10 @@ public class MemberBlackListController {
      */
     @PostMapping("/member/blackList")
     ResponseEntity<MemberBlackListResponseDto> memberBlackListCreate(@RequestBody @Valid MemberBlackListCreateRequestDto memberBlackListCreateRequestDto) {
-        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate =
+        ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate =
                 memberBlackListService.blackListMemberCreate(memberBlackListCreateRequestDto);
 
-        return new ResponseEntity<>(getBody(blackListMemberCreate).get(), blackListMemberCreate.getStatusCode());
+        return new ResponseEntity<>(getBody(blackListMemberCreate), blackListMemberCreate.getStatusCode());
     }
 
     /**
@@ -41,10 +41,10 @@ public class MemberBlackListController {
     @GetMapping("/member/blackLists")
     ResponseEntity<List<MemberBlackListResponseDto>> memberBlackLists() {
 
-        ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList =
+        ResponseEntity<List<MemberBlackListResponseDto>> blackListMemberList =
                 memberBlackListService.blackListMemberList();
 
-        return new ResponseEntity<>(getBlackListMemberListBody(blackListMemberList).get(), blackListMemberList.getStatusCode());
+        return new ResponseEntity<>(getBlackListMemberListBody(blackListMemberList), blackListMemberList.getStatusCode());
     }
 
     /**
@@ -54,27 +54,27 @@ public class MemberBlackListController {
      */
     @GetMapping("/member/blackList/{id}")
     ResponseEntity<MemberBlackListResponseDto> memberBlackListSearch(@PathVariable("id") Long id) {
-        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
+        ResponseEntity<MemberBlackListResponseDto> blackListMemberFindOne =
                 memberBlackListService.blackListMemberFindOne(id);
 
-        return new ResponseEntity<>(getBody(blackListMemberFindOne).get(), blackListMemberFindOne.getStatusCode());
+        return new ResponseEntity<>(getBody(blackListMemberFindOne), blackListMemberFindOne.getStatusCode());
     }
 
     /**
      * 블랙리스트 목록 ResponseEntity 해제 후 반환
-     * @param blackListMemberList
+     * @param blackListMemberList 블랙리스트 회원 리스트
      * @return Optional wrapping 된 블랙리스트 목록
      */
-    private static Optional<List<MemberBlackListResponseDto>> getBlackListMemberListBody(ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList) {
+    private static List<MemberBlackListResponseDto> getBlackListMemberListBody(ResponseEntity<List<MemberBlackListResponseDto>> blackListMemberList) {
         return blackListMemberList.getBody();
     }
 
     /**
      * 블랙리스트 ResponseEntity 해제 후 반환
-     * @param blackListMemberCreate
+     * @param blackListMember 블랙리스트 응답 Dto
      * @return Optional wrapping 된 블랙리스트
      */
-    private static Optional<MemberBlackListResponseDto> getBody(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate) {
-        return blackListMemberCreate.getBody();
+    private static MemberBlackListResponseDto getBody(ResponseEntity<MemberBlackListResponseDto> blackListMember) {
+        return blackListMember.getBody();
     }
 }

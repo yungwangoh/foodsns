@@ -10,13 +10,13 @@ import java.util.Optional;
 
 public interface MemberBlackListService {
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto);
+    ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto);
 
-    default ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberTypeChange(MemberBlackListRequestDto memberBlackListRequestDto) {
+    ResponseEntity<MemberBlackListResponseDto> blackListMemberFindOne(Long id);
+
+    ResponseEntity<List<MemberBlackListResponseDto>> blackListMemberList();
+
+    default ResponseEntity<MemberBlackListResponseDto> blackListMemberBoardDelete() {
         return null;
     }
-
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id);
-
-    ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList();
 }

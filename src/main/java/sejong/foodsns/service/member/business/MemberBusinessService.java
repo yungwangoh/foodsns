@@ -13,7 +13,8 @@ public interface MemberBusinessService {
     ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto);
 
     ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(MemberRequestDto memberRequestDto);
-
     // 게시판이 구현되면 구현할 예정.
-    ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend);
+    default ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend) {
+        return null;
+    }
 }

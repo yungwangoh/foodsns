@@ -10,6 +10,7 @@ import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListCreateRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
+import sejong.foodsns.repository.member.BlackListRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.member.ReportMemberRepository;
 import sejong.foodsns.service.member.business.MemberBlackListService;
@@ -33,10 +34,11 @@ class MemberBlackListServiceImplTest {
     @Autowired
     private ReportMemberRepository reportMemberRepository;
     @Autowired
+    private BlackListRepository blackListRepository;
+    @Autowired
     private MemberBusinessService memberBusinessService;
     private static Member member;
     private static MemberRequestDto memberRequestDto;
-    private static ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate;
     private static ReportMember reportSave;
 
     @BeforeAll
@@ -54,11 +56,12 @@ class MemberBlackListServiceImplTest {
         }
     }
 
-/*    @AfterEach
+    @AfterEach
     void initDB() {
+        blackListRepository.deleteAll();
         reportMemberRepository.deleteAll();
         memberRepository.deleteAll();
-    }*/
+    }
 
     @Test
     @Order(0)
@@ -71,7 +74,8 @@ class MemberBlackListServiceImplTest {
         MemberBlackListCreateRequestDto memberBlackListCreateRequestDto = getMemberBlackListCreateRequestDto(reason, reportSave);
 
         // when
-        blackListMemberCreate = memberBlackListService.blackListMemberCreate(memberBlackListCreateRequestDto);
+        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate =
+                memberBlackListService.blackListMemberCreate(memberBlackListCreateRequestDto);
 
         // then
         assertThat(getMemberBlackListResponseDto(blackListMemberCreate).getReason()).isEqualTo(reason);
@@ -83,16 +87,17 @@ class MemberBlackListServiceImplTest {
     @DisplayName("블랙리스트 회원 조회")
     void blackListMemberSearch() {
         // given
+        reportSave = testReportMemberInit();
+
         String reason = "악의 적인 댓글";
-        MemberBlackListRequestDto memberBlackListRequestDto = MemberBlackListRequestDto.builder()
-                .id(blackListMemberCreate.getBody().get().getId())
-                .reason(reason)
-                .reportMember(reportSave)
-                .build();
+        MemberBlackListCreateRequestDto memberBlackListCreateRequestDto = getMemberBlackListCreateRequestDto(reason, reportSave);
+
+        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate =
+                memberBlackListService.blackListMemberCreate(memberBlackListCreateRequestDto);
 
         // when
         ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
-                memberBlackListService.blackListMemberFindOne(memberBlackListRequestDto.getId());
+                memberBlackListService.blackListMemberFindOne(getMemberBlackListResponseDto(blackListMemberCreate).getId());
 
         // then
         assertThat(getMemberBlackListResponseDto(blackListMemberFindOne).getReason()).isEqualTo(reason);
@@ -104,16 +109,26 @@ class MemberBlackListServiceImplTest {
     @DisplayName("블랙리스트 회원 목록")
     void blackListMemberList() {
         // given
+        reportSave = testReportMemberInit();
+
+        String reason = "악의 적인 댓글";
+        MemberBlackListCreateRequestDto memberBlackListCreateRequestDto = getMemberBlackListCreateRequestDto(reason, reportSave);
+
+        memberBlackListService.blackListMemberCreate(memberBlackListCreateRequestDto);
 
         // when
         ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList =
                 memberBlackListService.blackListMemberList();
 
         // then (블랙리스트 회원이 한명 등록 되었으므로 목록의 size 는 1이 나와야한다.)
-        assertThat(blackListMemberList.getBody().get().size()).isEqualTo(1);
+        assertThat(getMemberBlackListResponseDtos(blackListMemberList).size()).isEqualTo(1);
     }
 
-    private MemberBlackListCreateRequestDto getMemberBlackListCreateRequestDto(String reason, ReportMember reportMember) {
+    private static List<MemberBlackListResponseDto> getMemberBlackListResponseDtos(ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList) {
+        return blackListMemberList.getBody().get();
+    }
+
+    private static MemberBlackListCreateRequestDto getMemberBlackListCreateRequestDto(String reason, ReportMember reportMember) {
         return MemberBlackListCreateRequestDto.builder()
                 .id(reportMember.getId())
                 .reason(reason)
@@ -121,7 +136,7 @@ class MemberBlackListServiceImplTest {
                 .build();
     }
 
-    private MemberBlackListResponseDto getMemberBlackListResponseDto(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMember) {
+    private static MemberBlackListResponseDto getMemberBlackListResponseDto(ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMember) {
         return blackListMember.getBody().get();
     }
 
