@@ -6,27 +6,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.BlackListRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.repository.member.ReportMemberRepository;
 import sejong.foodsns.service.member.business.MemberBusinessService;
 
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.OK;
-import static sejong.foodsns.domain.member.MemberType.*;
+import static sejong.foodsns.domain.member.MemberType.BLACKLIST;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
 public class MemberBusinessServiceImpl implements MemberBusinessService {
-
-    private final ReportMemberRepository reportMemberRepository;
     private final MemberRepository memberRepository;
     private final BlackListRepository blackListRepository;
 
@@ -66,24 +62,6 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
     }
 
     /**
-     * 블랙 리스트 회원 패널티 카운트
-     * @param memberRequestDto
-     * @return 회원 정보, OK
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto) {
-
-        Optional<Member> member = getMember(memberRequestDto);
-
-        ReportMember.blackListPenaltyCount(getMember(member));
-
-        MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
-
-        return new ResponseEntity<>(memberResponseDto, OK);
-    }
-
-    /**
      * 회원 추천 수 업데이트 (게시물에 받은 추천수를 맴버로 업데이트 {Mapping} 초기 구현)
      * @param memberRequestDto
      * @param recommend
@@ -100,6 +78,11 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
         MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
         return new ResponseEntity<>(memberResponseDto, OK);
+    }
+
+    @Override
+    public ResponseEntity<MemberResponseDto> memberBlackListPenaltyCount(MemberRequestDto memberRequestDto) {
+        return null;
     }
 
     /**
