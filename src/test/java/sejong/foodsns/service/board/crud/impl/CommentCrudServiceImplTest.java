@@ -31,8 +31,6 @@ import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @SpringBootTest
-@Transactional
-//@Rollback(value = false)
 public class CommentCrudServiceImplTest {
 
     @Autowired
@@ -61,153 +59,160 @@ public class CommentCrudServiceImplTest {
         boardRepository.save(board);
     }
 
-    @Test
-    @DisplayName("댓글 등록")
-    void commentCreate() {
+    @Nested
+    @DisplayName("서비스 성공")
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    class ServiceSuccess {
+        @Test
+        @DisplayName("댓글 등록")
+        void commentCreate() {
 
-        //given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-        CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
+            //given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+            CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
 
-        //when
-        ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService.commentCreate(commentRequestDto);
+            //when
+            ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService.commentCreate(commentRequestDto);
 
-        //then
-        assertThat(commentCreate.getStatusCode()).isEqualTo(CREATED);
-        assertThat(getBody(commentCreate).getContent()).isEqualTo(commentRequestDto.getContent());
-        assertThat(getBody(commentCreate).getBoard()).isEqualTo(commentRequestDto.getBoard()); // Response / Request
+            //then
+            assertThat(commentCreate.getStatusCode()).isEqualTo(CREATED);
+            assertThat(getBody(commentCreate).getContent()).isEqualTo(commentRequestDto.getContent());
+            assertThat(getBody(commentCreate).getBoard()).isEqualTo(commentRequestDto.getBoard()); // Response / Request
+        }
+
+        @Test
+        @DisplayName("댓글 찾기")
+        void findComment() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
+            commentCrudService.commentCreate(commentRequestDto);
+
+            // when
+            ResponseEntity<Optional<CommentResponseDto>> findComment = commentCrudService.findComment(board.getTitle(), commentRequestDto.getContent());
+
+            // then
+            assertThat(findComment.getStatusCode()).isEqualTo(OK);
+            assertTrue(getFindCommentBody(findComment).isPresent());
+        }
+
+        @Test
+        @DisplayName("댓글 목록")
+        void commentList() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+
+            // when
+            ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.allCommentList();
+
+            // then
+            assertThat(commentList.getStatusCode()).isEqualTo(OK);
+            assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
+            assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("회원 이름으로 검색한 댓글 목록")
+        void commentListByUsername() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+
+            // when
+            ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(member.getUsername());
+
+            // then
+            assertThat(commentList.getStatusCode()).isEqualTo(OK);
+            assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
+            assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("게시물 제목으로 검색한 댓글 목록")
+        void commentListByBoardTitle() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
+            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+
+            // when
+            ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(board.getTitle());
+
+            // then
+            assertThat(commentList.getStatusCode()).isEqualTo(OK);
+            assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
+        }
+
+        private List<CommentResponseDto> getCommentResponseDtos(ResponseEntity<Optional<List<CommentResponseDto>>> commentList) {
+            return commentList.getBody().get();
+        }
+
+        @Test
+        @DisplayName("댓글 내용 수정")
+        void commentContentUpdate() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            String updateContent = "레시피가 업데이트 됐네요?";
+            CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
+            commentCrudService.commentCreate(commentRequestDto);
+
+            ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate =
+                    commentCrudService.commentContentUpdate(board.getTitle(), updateContent, commentRequestDto.getContent());
+
+            Comment comment = commentRepository.findByBoardTitleAndContainingContent(board.getTitle(), "레시피").get();
+            // then
+            assertThat(commentContentUpdate.getStatusCode()).isEqualTo(OK);
+            assertThat(comment.getContent()).isEqualTo(updateContent);
+        }
+
+        @Test
+        @DisplayName("댓글 삭제")
+        void commentDelete() {
+            // given
+            Member member = memberRepository.findMemberByUsername("하윤").get();
+            Board board = boardRepository.findBoardByTitle("레시피1").get();
+
+            CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
+            commentCrudService.commentCreate(commentRequestDto);
+
+            // when
+            commentCrudService.commentDelete(commentRequestDto);
+
+            // then
+            // 찾으려는 댓글이 없어야한다.
+            assertThatThrownBy(() -> {
+                ResponseEntity<Optional<CommentResponseDto>> comment =
+                        commentCrudService.findComment("레시피1", commentRequestDto.getContent());
+
+                assertThat(comment.getStatusCode()).isEqualTo(NO_CONTENT);
+            }).isInstanceOf(NoSuchElementException.class);
+        }
+
+        @AfterEach
+        void deleteInit() {
+            memberRepository.deleteAll();
+            boardRepository.deleteAll();
+            commentRepository.deleteAll();
+        }
     }
 
-    @Test
-    @DisplayName("댓글 찾기")
-    void findComment() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-        commentCrudService.commentCreate(commentRequestDto);
-
-        // when
-        ResponseEntity<Optional<CommentResponseDto>> findComment = commentCrudService.findComment(board.getTitle(), commentRequestDto.getContent());
-
-        // then
-        assertThat(findComment.getStatusCode()).isEqualTo(OK);
-        assertTrue(getFindCommentBody(findComment).isPresent());
-    }
-
-    @Test
-    @DisplayName("댓글 목록")
-    void commentList() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
-
-        // when
-        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.allCommentList();
-
-        // then
-        assertThat(commentList.getStatusCode()).isEqualTo(OK);
-        assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
-        assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
-    }
-
-    @Test
-    @DisplayName("회원이름으로 검색한 댓글 목록")
-    void commentListByUsername() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
-
-        // when
-        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(member.getUsername());
-
-        // then
-        assertThat(commentList.getStatusCode()).isEqualTo(OK);
-        assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
-        assertThat(getCommentResponseDtos(commentList).size()).isEqualTo(2);
-    }
-
-    @Test
-    @DisplayName("게시물 제목으로 검색한 댓글 목록")
-    void commentListByBoardTitle() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-        list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
-
-        // when
-        ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(board.getTitle());
-
-        // then
-        assertThat(commentList.getStatusCode()).isEqualTo(OK);
-        assertThat(list.size()).isEqualTo(getCommentResponseDtos(commentList).size());
-    }
-
-    private List<CommentResponseDto> getCommentResponseDtos(ResponseEntity<Optional<List<CommentResponseDto>>> commentList) {
-        return commentList.getBody().get();
-    }
-
-    @Test
-    @DisplayName("댓글 내용 수정")
-    void commentContentUpdate() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        String updateContent = "레시피가 업데이트 됐네요?";
-        CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-        commentCrudService.commentCreate(commentRequestDto);
-
-        ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate =
-                commentCrudService.commentContentUpdate(board.getTitle(), updateContent, commentRequestDto.getContent());
-
-        Comment comment = commentRepository.findByBoardTitleAndContainingContent(board.getTitle(), "레시피").get();
-        // then
-        assertThat(commentContentUpdate.getStatusCode()).isEqualTo(OK);
-        assertThat(comment.getContent()).isEqualTo(updateContent);
-    }
-
-    @Test
-    @DisplayName("댓글 삭제")
-    void commentDelete() {
-        // given
-        Member member = memberRepository.findMemberByUsername("하윤").get();
-        Board board = boardRepository.findBoardByTitle("레시피1").get();
-
-        CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-        commentCrudService.commentCreate(commentRequestDto);
-
-        // when
-        commentCrudService.commentDelete(commentRequestDto);
-
-        // then
-        // 찾으려는 댓글이 없어야한다.
-        assertThatThrownBy(() -> {
-            ResponseEntity<Optional<CommentResponseDto>> comment =
-                    commentCrudService.findComment("레시피1", commentRequestDto.getContent());
-
-            assertThat(comment.getStatusCode()).isEqualTo(NO_CONTENT);
-        }).isInstanceOf(NoSuchElementException.class);
-    }
-//
-//    @AfterEach
-//    void deleteInit() {
-//        boardRepository.deleteAll();
-//    }
-//
     @Nested
     @DisplayName("서비스 실패")
     class serviceFail {
@@ -229,10 +234,12 @@ public class CommentCrudServiceImplTest {
                     .isInstanceOf(NoSuchElementException.class);
         }
 
-//        @AfterEach
-//        void deleteInit() {
-//            memberRepository.deleteAll();
-//        }
+        @AfterEach
+        void deleteInit() {
+            memberRepository.deleteAll();
+            boardRepository.deleteAll();
+            commentRepository.deleteAll();
+        }
     }
 
     private CommentRequestDto getCommentRequestDto(int idx, Member member, Board board) {
