@@ -72,12 +72,12 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
 
     /**
      * 블랙리스트 회원 상세 정보 조회
-     * @param id 회원 id
+     * @param id 블랙리스트 회원 id
      * @return 블랙리스트 회원 사유와 상세정보
      */
     @Override
     public ResponseEntity<MemberBlackListDetailDto> blackListMemberDetailSearch(Long id) {
-        Optional<BlackList> blackList = of(blackListRepository.findBlackListById(id)
+        Optional<BlackList> blackList = of(blackListRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원을 찾을 수 없습니다.")));
 
         return new ResponseEntity<>(new MemberBlackListDetailDto(blackList.get()), OK);

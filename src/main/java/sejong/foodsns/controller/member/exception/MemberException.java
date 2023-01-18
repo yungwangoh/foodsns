@@ -54,6 +54,18 @@ public class MemberException {
     }
 
     /**
+     * IllegalStateException 에 대한 API status 예외 처리
+     * @param e
+     * @return 요청한 것을 수행할 수 없음 404, Message
+     */
+    @ExceptionHandler
+    @ResponseStatus(NOT_FOUND)
+    public ResponseEntity<ErrorResult> NotFoundException(IllegalStateException e) {
+        log.info("[Not Found Exception]", e);
+        return getErrorResultResponseEntity(NOT_FOUND, e);
+    }
+
+    /**
      * JWT 토큰 만료에 대한 예외처리
      * @param e
      * @return 요청한 것을 수행할 수 없음 404, Message

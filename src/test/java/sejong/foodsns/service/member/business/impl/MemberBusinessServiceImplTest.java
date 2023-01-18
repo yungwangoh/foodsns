@@ -57,7 +57,9 @@ class MemberBusinessServiceImplTest {
         memberRepository.save(member.get());
 
         // when
-        ResponseEntity<MemberResponseDto> memberRankService = memberBusinessService.memberRankService(memberRequestDto);
+        ResponseEntity<MemberResponseDto> memberRankService =
+                memberBusinessService.memberRankService(memberRequestDto.getEmail());
+
         MemberResponseDto memberResponseDto = getBody(memberRankService);
 
         // then
@@ -86,7 +88,8 @@ class MemberBusinessServiceImplTest {
         // given
 
         // when
-        ResponseEntity<MemberResponseDto> memberReportCount = memberBusinessService.memberReportCount(memberRequestDto);
+        ResponseEntity<MemberResponseDto> memberReportCount =
+                memberBusinessService.memberReportCount(memberRequestDto.getEmail());
 
         // then
         assertThat(getBody(memberReportCount).getReportCount()).isEqualTo(1);
@@ -100,7 +103,9 @@ class MemberBusinessServiceImplTest {
         MemberType memberType = MemberType.BLACKLIST;
 
         // when
-        ResponseEntity<MemberResponseDto> memberBlackListTypeConvert = memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
+        ResponseEntity<MemberResponseDto> memberBlackListTypeConvert =
+                memberBusinessService.memberBlackListTypeConvert(memberRequestDto.getEmail());
+
         Optional<Member> member = memberRepository.findMemberByEmail(getBody(memberBlackListTypeConvert).getEmail());
 
         // then

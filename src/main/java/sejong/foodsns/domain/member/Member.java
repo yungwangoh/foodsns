@@ -12,7 +12,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
@@ -183,13 +182,11 @@ public class Member extends BaseEntity {
 
     /**
      * 유저 추천 수
+     *
      * @param recommendCount
-     * @return
      */
-    public Member memberRecommendCount(int recommendCount) {
-        negativeNumExceptionCheck(recommendCount);
-        this.recommendCount = recommendCount;
-        return this;
+    public void memberRecommendCount() {
+        this.recommendCount++;
     }
 
     public void memberBlackListType(MemberType memberType) {
@@ -208,7 +205,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean bronzeRank(int recommendCount) {
+    private static boolean bronzeRank(int recommendCount) {
         return recommendCount >= bronzeNumOfRecommend && recommendCount < silverNumOfRecommend;
     }
 
@@ -217,7 +214,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean silverRank(int recommendCount) {
+    private static boolean silverRank(int recommendCount) {
         return recommendCount >= silverNumOfRecommend && recommendCount < goldNumOfRecommend;
     }
 
@@ -226,7 +223,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean goldRank(int recommendCount) {
+    private static boolean goldRank(int recommendCount) {
         return recommendCount >= goldNumOfRecommend && recommendCount < platinumNumOfRecommend;
     }
 
@@ -235,7 +232,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean platinumRank(int recommendCount) {
+    private static boolean platinumRank(int recommendCount) {
         return recommendCount >= platinumNumOfRecommend && recommendCount < diamondNumOfRecommend;
     }
 
@@ -244,7 +241,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean diamondRank(int recommendCount) {
+    private static boolean diamondRank(int recommendCount) {
         return recommendCount >= diamondNumOfRecommend && recommendCount < vipNumOfRecommend;
     }
 
@@ -253,7 +250,7 @@ public class Member extends BaseEntity {
      * @param recommendCount
      * @return
      */
-    private boolean vipRank(int recommendCount) {
+    private static boolean vipRank(int recommendCount) {
         return recommendCount >= vipNumOfRecommend;
     }
 
@@ -261,7 +258,7 @@ public class Member extends BaseEntity {
      * 회원 추천수가 음수일 떄 예외
      * @param recommendCount
      */
-    private void negativeNumExceptionCheck(int recommendCount) {
+    private static void negativeNumExceptionCheck(int recommendCount) {
         if(recommendCount < 0) {
             throw new IllegalArgumentException("잘못된 추천 수 입니다.");
         }

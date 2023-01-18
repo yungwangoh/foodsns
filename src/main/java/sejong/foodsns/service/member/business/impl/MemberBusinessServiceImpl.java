@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.member.BlackListRepository;
 import sejong.foodsns.repository.member.MemberRepository;
@@ -33,9 +32,9 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberRankService(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<MemberResponseDto> memberRankService(String email) {
 
-        Optional<Member> member = getMember(memberRequestDto);
+        Optional<Member> member = getMember(email);
 
         getMember(member).memberRankUp(getMember(member).getRecommendCount());
 
@@ -51,8 +50,8 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberReportCount(MemberRequestDto memberRequestDto) {
-        Optional<Member> member = getMember(memberRequestDto);
+    public ResponseEntity<MemberResponseDto> memberReportCount(String email) {
+        Optional<Member> member = getMember(email);
 
         getMember(member).reportCount();
 
@@ -63,17 +62,17 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
     /**
      * 회원 추천 수 업데이트 (게시물에 받은 추천수를 맴버로 업데이트 {Mapping} 초기 구현)
+     *
      * @param memberRequestDto
-     * @param recommend
      * @return 회원 정보, OK
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberRecommendUpdate(MemberRequestDto memberRequestDto, int recommend) {
+    public ResponseEntity<MemberResponseDto> memberRecommendUp(String email) {
 
-        Optional<Member> member = getMember(memberRequestDto);
+        Optional<Member> member = getMember(email);
 
-        getMember(member).memberRecommendCount(recommend);
+        getMember(member).memberRecommendCount();
 
         MemberResponseDto memberResponseDto = getMemberResponseDto(getMember(member));
 
@@ -82,14 +81,14 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
 
     /**
      * 회원 타입 블랙리스트로 변경
-     * @param memberRequestDto
-     * @return 회원 응답 Dto, OK
+     *
+     * @param email@return 회원 응답 Dto, OK
      */
     @Override
     @Transactional
-    public ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(String email) {
 
-        Optional<Member> member = getMember(memberRequestDto);
+        Optional<Member> member = getMember(email);
 
         if(getMember(member).getReportCount() >= 30) {
             getMember(member).memberBlackListType(BLACKLIST);
@@ -127,8 +126,8 @@ public class MemberBusinessServiceImpl implements MemberBusinessService {
      * @param memberRequestDto
      * @return Optional Member
      */
-    private Optional<Member> getMember(MemberRequestDto memberRequestDto) {
-        return ofNullable(memberRepository.findMemberByEmail(memberRequestDto.getEmail())
+    private Optional<Member> getMember(String email) {
+        return ofNullable(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
     }
 }

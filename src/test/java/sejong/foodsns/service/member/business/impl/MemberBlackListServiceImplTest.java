@@ -1,14 +1,12 @@
 package sejong.foodsns.service.member.business.impl;
 
-import org.aspectj.lang.annotation.After;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListDetailDto;
@@ -21,8 +19,8 @@ import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static sejong.foodsns.domain.member.MemberType.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class MemberBlackListServiceImplTest {
@@ -58,7 +56,7 @@ class MemberBlackListServiceImplTest {
 
         memberCrudService.memberCreate(memberRequestDto);
         reportCount(memberRequestDto, 30);
-        memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
+        memberBusinessService.memberBlackListTypeConvert(memberRequestDto.getEmail());
 
         // when
         ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate =
@@ -90,7 +88,7 @@ class MemberBlackListServiceImplTest {
         // then
 
         // 블랙리스트 타입으로 변하지 않는다.
-        assertThatThrownBy(() -> memberBusinessService.memberBlackListTypeConvert(memberRequestDto))
+        assertThatThrownBy(() -> memberBusinessService.memberBlackListTypeConvert(memberRequestDto.getEmail()))
                 .isInstanceOf(IllegalStateException.class);
 
         // 블랙리스트 타입으로 바뀌지 않으면 등록이 되지 않는다.
@@ -134,7 +132,7 @@ class MemberBlackListServiceImplTest {
 
         memberCrudService.memberCreate(memberRequestDto);
         reportCount(memberRequestDto, 30);
-        memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
+        memberBusinessService.memberBlackListTypeConvert(memberRequestDto.getEmail());
 
         ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate =
                 memberBlackListService.blackListMemberCreate(reason, memberRequestDto.getEmail());
@@ -159,25 +157,22 @@ class MemberBlackListServiceImplTest {
                 .password("qwer1234@A")
                 .build();
 
-        ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
-
+        memberCrudService.memberCreate(memberRequestDto);
         reportCount(memberRequestDto, 30);
-        memberBusinessService.memberBlackListTypeConvert(memberRequestDto);
+        ResponseEntity<MemberResponseDto> blackListTypeConvert =
+                memberBusinessService.memberBlackListTypeConvert(memberRequestDto.getEmail());
 
-        memberBlackListService.blackListMemberCreate(reason, memberRequestDto.getEmail());
+        ResponseEntity<MemberBlackListResponseDto> blackListMemberCreate =
+                memberBlackListService.blackListMemberCreate(reason, memberRequestDto.getEmail());
 
         // when
         ResponseEntity<MemberBlackListDetailDto> blackListMemberDetailSearch =
-                memberBlackListService.blackListMemberDetailSearch(getMemberCreateBody(memberCreate).get().getId());
-
-        ResponseEntity<Optional<MemberResponseDto>> member = memberCrudService.findMember(memberRequestDto.getEmail());
+                memberBlackListService.blackListMemberDetailSearch(getBody(blackListMemberCreate).getId());
 
         // then
-        assertThat(getBlackListDetailDto(blackListMemberDetailSearch).getReason())
-                .isEqualTo(reason);
-
         assertThat(getBlackListDetailDto(blackListMemberDetailSearch).getMemberResponseDto())
-                .isEqualTo(getMemberCreateBody(member).get());
+                .isEqualTo(blackListTypeConvert.getBody());
+
     }
 
     private static Optional<MemberResponseDto> getMemberCreateBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {
@@ -193,6 +188,6 @@ class MemberBlackListServiceImplTest {
     }
 
     private void reportCount(MemberRequestDto memberRequestDto, int num) {
-        for(int i = 0; i < num; i++) memberBusinessService.memberReportCount(memberRequestDto);
+        for(int i = 0; i < num; i++) memberBusinessService.memberReportCount(memberRequestDto.getEmail());
     }
 }

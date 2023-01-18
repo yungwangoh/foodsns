@@ -44,7 +44,7 @@ public class MemberController {
 
     /**
      * 회원 조회
-     * @param memberFindDto
+     * @param email 회원 이메일
      * @return 회원 정보, OK
      */
     @GetMapping("/member/{email}")
@@ -91,7 +91,7 @@ public class MemberController {
     @GetMapping("/members")
     public ResponseEntity<List<MemberResponseDto>> members() {
 
-        ResponseEntity<Optional<List<MemberResponseDto>>> memberList = memberCrudService.memberList();
+        ResponseEntity<List<MemberResponseDto>> memberList = memberCrudService.memberList();
 
         return new ResponseEntity<>(getMemberResponseDtos(memberList), memberList.getStatusCode());
     }
@@ -146,12 +146,48 @@ public class MemberController {
     }
 
     /**
+     * 회원 랭크 업데이트
+     * @param email 회원 이메일
+     * @return 회원 응답 Dto
+     */
+    @GetMapping("/member/rank/{email}")
+    public ResponseEntity<MemberResponseDto> memberRankUp(@PathVariable("email") String email) {
+        ResponseEntity<MemberResponseDto> memberRankService = memberBusinessService.memberRankService(email);
+
+        return new ResponseEntity<>(memberRankService.getBody(), memberRankService.getStatusCode());
+    }
+
+    /**
+     * 회원 블랙리스트로 타입 변경
+     * @param email 회원 이메일
+     * @return 회원 응답 Dto
+     */
+    @GetMapping("/member/blackList/type/{email}")
+    public ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(@PathVariable("email") String email) {
+        ResponseEntity<MemberResponseDto> blackListTypeConvert = memberBusinessService.memberBlackListTypeConvert(email);
+
+        return new ResponseEntity<>(blackListTypeConvert.getBody(), blackListTypeConvert.getStatusCode());
+    }
+
+    /**
+     * 회원 추천 수 증가
+     * @param email 회원 이메일
+     * @return 회원 응답 Dto
+     */
+    @GetMapping("/member/recommend/{email}")
+    public ResponseEntity<MemberResponseDto> memberRecommendUp(@PathVariable("email") String email) {
+        ResponseEntity<MemberResponseDto> memberRecommendUp = memberBusinessService.memberRecommendUp(email);
+
+        return new ResponseEntity<>(memberRecommendUp.getBody(), memberRecommendUp.getStatusCode());
+    }
+
+    /**
      * 회원 목록 Optional Wrapping 해제 후 반환
      * @param memberList
      * @return 회원 목록
      */
-    private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<Optional<List<MemberResponseDto>>> memberList) {
-        return memberList.getBody().get();
+    private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<List<MemberResponseDto>> memberList) {
+        return memberList.getBody();
     }
 
     /**

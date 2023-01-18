@@ -68,8 +68,8 @@ public class MemberBlackListController {
      * @param id 회원 id
      * @return 블랙리스트 회원 상세정보 Dto
      */
-    @GetMapping("/member/blackList/{memberId}")
-    ResponseEntity<MemberBlackListDetailDto> memberBlackListDetailSearch(@PathVariable("memberId") Long id) {
+    @GetMapping("/member/blackList/search/{id}")
+    ResponseEntity<MemberBlackListDetailDto> memberBlackListDetailSearch(@PathVariable("id") Long id) {
         ResponseEntity<MemberBlackListDetailDto> blackListMemberDetailSearch =
                 memberBlackListService.blackListMemberDetailSearch(id);
 
