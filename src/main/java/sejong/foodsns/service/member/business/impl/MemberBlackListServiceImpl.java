@@ -3,12 +3,10 @@ package sejong.foodsns.service.member.business.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.foodsns.domain.member.BlackList;
-import sejong.foodsns.domain.member.MemberNumberOfCount;
-import sejong.foodsns.domain.member.ReportMember;
+import sejong.foodsns.domain.member.*;
+import sejong.foodsns.dto.member.blacklist.MemberBlackListCreateRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
 import sejong.foodsns.repository.member.BlackListRepository;
@@ -23,6 +21,7 @@ import java.util.Optional;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
+import static sejong.foodsns.domain.member.MemberType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,20 +35,18 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
 
     /**
      * 블랙리스트 회원 등록
-     *
-     * @param reason                    블랙리스트 추가한 사유
-     * @param memberBlackListRequestDto 블랙리스트 회원 DTO
+     * @param memberBlackListCreateRequestDto 블랙리스트 회원 DTO
      * @return 성공 : CREATE, 예외 : ACCEPTED (패널티를 초과하지 않은 회원이면 요청은 성공 그러나 처리되지 않음을 명시)
      * 실패 : NOT_FOUND
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(@Nullable String reason, MemberBlackListRequestDto memberBlackListRequestDto) {
+    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto) {
 
-        Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(memberBlackListRequestDto.getId())
+        Optional<ReportMember> reportMember = ofNullable(reportMemberRepository.findById(memberBlackListCreateRequestDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("신고 회원이 존재하지 않습니다.")));
 
-        BlackList blackList = new BlackList(reason, getReportMember(reportMember));
+        BlackList blackList = new BlackList(memberBlackListCreateRequestDto.getReason(), getReportMember(reportMember));
 
         if(TheNumberOfPenaltyIsThreeOrMore(reportMember)) {
 
@@ -61,34 +58,15 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
     }
 
     /**
-     * 블랙리스트 회원 탈퇴
-     *
-     * @param memberBlackListRequestDto 블랙리스트 회원 DTO
-     * @return 성공 : OK, 실패 : NOT_FOUND
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberDelete(MemberBlackListRequestDto memberBlackListRequestDto) {
-
-        ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne =
-                blackListMemberFindOne(memberBlackListRequestDto);
-
-        MemberBlackListResponseDto member = getMember(blackListMemberFindOne);
-        memberRepository.delete(member.getReportMember().getMember());
-
-        return blackListMemberFindOne;
-    }
-
-    /**
      * 블랙리스트 회원 찾기
      *
-     * @param memberBlackListRequestDto 블랙리스트 회원 DTO
+     * @param memberBlackListCreateRequestDto 블랙리스트 회원 DTO
      * @return 성공 : OK, 실패 : NOT_FOUND
      */
     @Override
-    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto) {
+    public ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id) {
 
-        Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(memberBlackListRequestDto.getId())
+        Optional<BlackList> blackListMember = ofNullable(blackListRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("블랙리스트 회원이 존재하지 않습니다.")));
 
         MemberBlackListResponseDto memberBlackListResponseDto = MemberBlackListResponseDto.builder()
@@ -139,8 +117,7 @@ public class MemberBlackListServiceImpl implements MemberBlackListService {
      */
     private BlackList blackListProcessAndSave(Optional<ReportMember> reportMember, BlackList blackList) {
         blackList.blackListMember(getReportMember(reportMember));
-        BlackList save = blackListRepository.save(blackList);
-        return save;
+        return blackListRepository.save(blackList);
     }
 
     /**

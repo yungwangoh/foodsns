@@ -11,8 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static javax.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
@@ -63,8 +63,13 @@ public class Member extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommendCount;
 
+    // 친구 목록
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Friend> friends;
+
     // 회원 게시물
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Board> boards;
 
@@ -82,22 +87,58 @@ public class Member extends BaseEntity {
         this.penalty = 0;
         this.reportCount = 0L;
         this.boards = new ArrayList<>();
+        this.friends = new ArrayList<>(5);
     }
 
-    // 연관 관계 편의 메서드, 비즈니스 로직
-    public void setBoards(Board boards) {
-        this.boards.add(boards);
-        if(boards.getMember() != this) {
-            boards.setMember(this);
+    /**
+     * 게시물 연관 관계 편의 메서드, 비즈니스 로직
+     * @param board
+     */
+    public void setBoards(Board board) {
+        this.boards.add(board);
+        if(board.getMember() != this) {
+            board.setMember(this);
         }
     }
-    // 추천 수 -> 회원 등급
+
+    /**
+     * 친구 추가 연관 관계 편의 메서드
+     * @param friend
+     */
+    public void setFriends(Friend friend) {
+        if(!this.username.equals(friend.getFriendName())) {
+
+            // 친구 중복 체크.
+            if(duplicatedCheck(friend))
+                throw new IllegalArgumentException("같은 친구를 추가할 수 없습니다.");
+
+            this.friends.add(friend);
+        } else {
+            throw new IllegalArgumentException("자신을 친구 추가할 수 없습니다.");
+        }
+    }
+
+    /**
+     * 중복 체크 로직
+     * @param friend 친구
+     * @return 중복이면 true, 아니면 false
+     */
+    private boolean duplicatedCheck(Friend friend) {
+        for(Friend f : this.getFriends()) {
+            if(friend.getFriendName().equals(f.getFriendName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 유저 회원 등급
      * @param recommendCount
      */
-    public void memberRecommendUp(int recommendCount) {
+    public void memberRankUp(int recommendCount) {
+        negativeNumExceptionCheck(recommendCount);
+
         if(bronzeRank(recommendCount)) {
             this.memberRank = BRONZE;
         } else if (silverRank(recommendCount)) {
@@ -151,8 +192,13 @@ public class Member extends BaseEntity {
      * @return
      */
     public Member memberRecommendCount(int recommendCount) {
+        negativeNumExceptionCheck(recommendCount);
         this.recommendCount = recommendCount;
         return this;
+    }
+
+    public void memberBlackListType(MemberType memberType) {
+        this.memberType = memberType;
     }
 
     /**
@@ -163,11 +209,9 @@ public class Member extends BaseEntity {
     }
 
     /**
-     * 유저 패널티 수 증가
+     * 유저 패널티 수
      */
-    public void penaltyCount() {
-        this.penalty++;
-    }
+    public void setPenalty(int penalty) { this.penalty = penalty; }
 
     /**
      * 유저 브론즈 등급 추천 수 10 ~ 29
@@ -221,5 +265,15 @@ public class Member extends BaseEntity {
      */
     private boolean vipRank(int recommendCount) {
         return recommendCount >= vipNumOfRecommend;
+    }
+
+    /**
+     * 회원 추천수가 음수일 떄 예외
+     * @param recommendCount
+     */
+    private void negativeNumExceptionCheck(int recommendCount) {
+        if(recommendCount < 0) {
+            throw new IllegalArgumentException("잘못된 추천 수 입니다.");
+        }
     }
 }

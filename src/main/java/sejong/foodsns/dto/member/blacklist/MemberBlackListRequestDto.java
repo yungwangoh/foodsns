@@ -3,12 +3,6 @@ package sejong.foodsns.dto.member.blacklist;
 import lombok.*;
 import sejong.foodsns.domain.member.BlackList;
 import sejong.foodsns.domain.member.ReportMember;
-import sejong.foodsns.dto.member.report.MemberReportRequestDto;
-
-import java.util.Optional;
-
-import static java.util.Optional.*;
-import static java.util.Optional.of;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

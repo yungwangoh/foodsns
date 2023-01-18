@@ -1,5 +1,6 @@
 package sejong.foodsns.controller.member.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.log.error.ErrorResult;
 
 import static org.springframework.http.HttpStatus.*;
@@ -49,6 +50,18 @@ public class MemberException {
     @ResponseStatus(NOT_FOUND)
     public ResponseEntity<ErrorResult> NotFoundException(IllegalArgumentException e) {
         log.info("[Not found Exception]", e);
+        return getErrorResultResponseEntity(NOT_FOUND, e);
+    }
+
+    /**
+     * JWT 토큰 만료에 대한 예외처리
+     * @param e
+     * @return 요청한 것을 수행할 수 없음 404, Message
+     */
+    @ExceptionHandler
+    @ResponseStatus(NOT_FOUND)
+    public ResponseEntity<ErrorResult> ExpiredJwtException(ExpiredJwtException e) {
+        log.info("[ExpiredJwtException]", e);
         return getErrorResultResponseEntity(NOT_FOUND, e);
     }
 

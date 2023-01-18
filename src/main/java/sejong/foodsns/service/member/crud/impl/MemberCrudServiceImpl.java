@@ -10,7 +10,7 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
@@ -62,9 +62,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         Member updateMember = getMember(member).memberPasswordUpdate(passwordEncoder.encode(password));
 
-        Member save = memberRepository.save(updateMember);
-
-        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**
@@ -81,9 +79,7 @@ public class MemberCrudServiceImpl implements MemberCrudService {
 
         Member updateMember = getMember(member).memberNameUpdate(username);
 
-        Member save = memberRepository.save(updateMember);
-
-        return new ResponseEntity<>(of(new MemberResponseDto(save)), OK);
+        return new ResponseEntity<>(of(new MemberResponseDto(updateMember)), OK);
     }
 
     /**

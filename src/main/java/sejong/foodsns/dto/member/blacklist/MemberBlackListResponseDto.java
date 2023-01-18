@@ -11,12 +11,10 @@ public class MemberBlackListResponseDto {
 
     private Long id;
     private String reason;
-    private ReportMember reportMember;
 
     @Builder
     public MemberBlackListResponseDto(BlackList blackList) {
         this.id = blackList.getId();
         this.reason = blackList.getReason();
-        this.reportMember = blackList.getReportMember();
     }
 }

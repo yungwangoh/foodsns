@@ -3,20 +3,15 @@ package sejong.foodsns.service.board.crud.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
-import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
-import sejong.foodsns.dto.member.MemberRequestDto;
-import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
-import sejong.foodsns.service.member.crud.impl.MemberCrudServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +19,6 @@ import java.util.Optional;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
-import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +73,9 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     public ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto) {
 
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(boardRequestDto.getTitle());
+
+        //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
+        boardRepository.delete(getBoard(board));
 
         return new ResponseEntity<>(NO_CONTENT);
     }
@@ -154,7 +151,6 @@ public class BoardCrudServiceImpl implements BoardCrudService {
                 .recommCount(0)
                 .foodTag(null)
                 .member(boardRequestDto.getMember())
-                .comments(null)
                 .build();
     }
 
@@ -165,6 +161,6 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      */
     private Optional<Board> getBoardReturnByOptionalBoardTitle(String title) {
         return of(boardRepository.findBoardByTitle(title)
-                .orElseThrow(() -> new NoSearchMemberException("게시물이 존재하지 않습니다.")));
+                .orElseThrow(() -> new NoSearchBoardException("게시물이 존재하지 않습니다.")));
     }
 }

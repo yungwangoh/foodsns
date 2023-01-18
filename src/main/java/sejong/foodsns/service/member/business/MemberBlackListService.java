@@ -1,6 +1,7 @@
 package sejong.foodsns.service.member.business;
 
 import org.springframework.http.ResponseEntity;
+import sejong.foodsns.dto.member.blacklist.MemberBlackListCreateRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListRequestDto;
 import sejong.foodsns.dto.member.blacklist.MemberBlackListResponseDto;
 
@@ -9,11 +10,13 @@ import java.util.Optional;
 
 public interface MemberBlackListService {
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(String reason, MemberBlackListRequestDto memberBlackListRequestDto);
+    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberCreate(MemberBlackListCreateRequestDto memberBlackListCreateRequestDto);
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberDelete(MemberBlackListRequestDto memberBlackListRequestDto);
+    default ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberTypeChange(MemberBlackListRequestDto memberBlackListRequestDto) {
+        return null;
+    }
 
-    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(MemberBlackListRequestDto memberBlackListRequestDto);
+    ResponseEntity<Optional<MemberBlackListResponseDto>> blackListMemberFindOne(Long id);
 
     ResponseEntity<Optional<List<MemberBlackListResponseDto>>> blackListMemberList();
 }

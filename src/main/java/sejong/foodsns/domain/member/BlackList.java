@@ -28,7 +28,7 @@ public class BlackList extends BaseEntity {
     private String reason;
 
     // 신고 당한 회원
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "report_id")
     private ReportMember reportMember;
 

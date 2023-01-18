@@ -130,7 +130,7 @@ class MemberCrudServiceImplTest {
             ResponseEntity<Optional<MemberResponseDto>> nameUpdate =
                     memberCrudService.memberNameUpdate(memberRequestDto.getEmail(), "하윤");
 
-            Optional<Member> member = memberRepository.findMemberByEmail(getBody(nameUpdate).getEmail());
+            Optional<Member> member = memberRepository.findMemberByUsername(getBody(nameUpdate).getEmail());
 
             //then
             assertThat(nameUpdate.getStatusCode()).isEqualTo(OK);

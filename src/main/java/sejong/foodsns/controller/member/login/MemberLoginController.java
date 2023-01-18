@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.foodsns.dto.member.login.MemberLoginDto;
 import sejong.foodsns.service.member.login.jwt.MemberLoginService;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class MemberLoginController {
 
     private final MemberLoginService memberLoginService;

@@ -188,7 +188,7 @@ class MemberRepositoryTest {
         Member member = new Member(username, email, password, MemberType.NORMAL);
 
         // when
-        member.memberRecommendUp(bronzeNumOfRecommend);
+        member.memberRankUp(bronzeNumOfRecommend);
         Member save = memberRepository.save(member);
 
         // then

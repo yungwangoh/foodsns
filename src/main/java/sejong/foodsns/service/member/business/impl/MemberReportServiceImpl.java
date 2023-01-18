@@ -9,8 +9,7 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.ReportMember;
 import sejong.foodsns.dto.member.report.MemberReportRequestDto;
 import sejong.foodsns.dto.member.report.MemberReportResponseDto;
-import sejong.foodsns.exception.http.DuplicatedException;
-import sejong.foodsns.exception.http.NoSearchMemberException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.member.ReportMemberRepository;
 import sejong.foodsns.service.member.business.MemberReportService;
@@ -35,15 +34,14 @@ public class MemberReportServiceImpl implements MemberReportService {
     /**
      * 신고 회원 저장
      * 유의 사항 -> (10개 미만은 에러가 아님 -> 203으로 처리되지 않음을 표시.)
-     *
-     * @param memberReportRequestDto 신고 회원 DTO
+     * @param email 본인 이메일
      * @return 성공 : (신고회원 리스폰, Create), 실패 : (Exception)
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(MemberReportRequestDto memberReportRequestDto) {
+    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate(String email) {
 
-        Optional<Member> member = of(memberRepository.findMemberByEmail(getMember(memberReportRequestDto).getEmail())
+        Optional<Member> member = of(memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다.")));
 
         ReportMember reportMember = new ReportMember(getMember(member));
@@ -63,14 +61,12 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @return 성공 : (신고회원 리스폰, OK), 실패 : (Exception)
      */
     @Override
-    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) throws IllegalArgumentException{
+    public ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne(Long id) {
 
         Optional<ReportMember> reportMember = of(reportMemberRepository.findById(id)
                 .orElseThrow(() -> new NoSearchMemberException("신고 회원이 존재하지 않습니다.")));
 
-        MemberReportResponseDto memberReportResponseDto = MemberReportResponseDto.builder()
-                .reportMember(getReportMember(reportMember))
-                .build();
+        MemberReportResponseDto memberReportResponseDto = new MemberReportResponseDto(getReportMember(reportMember));
 
         return new ResponseEntity<>(of(memberReportResponseDto), OK);
     }
@@ -121,7 +117,7 @@ public class MemberReportServiceImpl implements MemberReportService {
      * @param reportMember
      * @return reportMember
      */
-    private ReportMember getReportMember(Optional<ReportMember> reportMember) {
+    private static ReportMember getReportMember(Optional<ReportMember> reportMember) {
         return reportMember.get();
     }
 

@@ -49,7 +49,7 @@ class MemberReportServiceImplTest {
 
             // when
             ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate =
-                    memberReportService.reportMemberCreate(memberReportRequestDto);
+                    memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail());
 
             // then
             assertThat(reportMemberCreate.getStatusCode()).isEqualTo(ACCEPTED);
@@ -64,7 +64,7 @@ class MemberReportServiceImplTest {
 
             // when
             ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate =
-                    memberReportService.reportMemberCreate(memberReportRequestDto);
+                    memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail());
 
             // then
             assertThat(reportMemberCreate.getStatusCode()).isEqualTo(CREATED);
@@ -78,7 +78,7 @@ class MemberReportServiceImplTest {
             MemberReportRequestDto memberReportRequestDto = getMemberReportRequestDto(memberReportTenOrMoreInit(getMember()));
 
             ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate =
-                    memberReportService.reportMemberCreate(memberReportRequestDto);
+                    memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail());
 
             // when
             ResponseEntity<Optional<MemberReportResponseDto>> reportMemberFindOne =
@@ -100,7 +100,7 @@ class MemberReportServiceImplTest {
                                             getMemberReportRequestDto(memberReportTenOrMoreInit(getMemberThree())));
 
             for (MemberReportRequestDto memberReportRequestDto : memberReportRequestDtos)
-                memberReportService.reportMemberCreate(memberReportRequestDto);
+                memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail());
 
             // when
             ResponseEntity<Optional<List<MemberReportResponseDto>>> reportMemberList =
@@ -141,7 +141,7 @@ class MemberReportServiceImplTest {
 
             // when
             ResponseEntity<Optional<MemberReportResponseDto>> reportMemberCreate =
-                    memberReportService.reportMemberCreate(memberReportRequestDto);
+                    memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail());
 
             // then
             // 찾는 신고 회원이 존재하지 않아야 함.
@@ -162,7 +162,7 @@ class MemberReportServiceImplTest {
             // when
 
             // then
-            assertThatThrownBy(() -> memberReportService.reportMemberCreate(memberReportRequestDto))
+            assertThatThrownBy(() -> memberReportService.reportMemberCreate(memberReportRequestDto.getMember().getEmail()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

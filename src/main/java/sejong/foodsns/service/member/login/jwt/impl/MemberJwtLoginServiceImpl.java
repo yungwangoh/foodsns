@@ -33,8 +33,7 @@ public class MemberJwtLoginServiceImpl implements MemberLoginService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<String> jwtLogin(MemberLoginDto loginDto)
-            throws JsonProcessingException {
+    public ResponseEntity<String> jwtLogin(MemberLoginDto loginDto) throws JsonProcessingException {
 
         Optional<Member> member = memberRepository.findMemberByEmail(loginDto.getEmail());
         String password = getMember(member).getPassword();
