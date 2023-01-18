@@ -123,7 +123,7 @@ public class MemberController {
         if(emailExistValidation) {
             return new ResponseEntity<>(emailExistValidation.toString(), OK);
         } else {
-            return new ResponseEntity<>(emailExistValidation.toString(), NOT_FOUND);
+            throw new IllegalArgumentException(emailExistValidation.toString());
         }
     }
 
@@ -141,7 +141,7 @@ public class MemberController {
         if(nameExistValidation) {
             return new ResponseEntity<>(nameExistValidation.toString(), OK);
         } else {
-            return new ResponseEntity<>(nameExistValidation.toString(), NOT_FOUND);
+            throw new IllegalArgumentException(nameExistValidation.toString());
         }
     }
 
@@ -186,7 +186,7 @@ public class MemberController {
      * @param memberList
      * @return 회원 목록
      */
-    private List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<List<MemberResponseDto>> memberList) {
+    private static List<MemberResponseDto> getMemberResponseDtos(ResponseEntity<List<MemberResponseDto>> memberList) {
         return memberList.getBody();
     }
 
@@ -195,7 +195,7 @@ public class MemberController {
      * @param member
      * @return 회원 응답 Dto
      */
-    private MemberResponseDto getMember(ResponseEntity<Optional<MemberResponseDto>> member) {
+    private static MemberResponseDto getMember(ResponseEntity<Optional<MemberResponseDto>> member) {
         return getBody(member).get();
     }
 
@@ -204,7 +204,7 @@ public class MemberController {
      * @param memberCreate
      * @return Optionally Wrapped 회원 응답 Dto
      */
-    private Optional<MemberResponseDto> getBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {
+    private static Optional<MemberResponseDto> getBody(ResponseEntity<Optional<MemberResponseDto>> memberCreate) {
         return memberCreate.getBody();
     }
 }

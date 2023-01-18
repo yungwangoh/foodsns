@@ -1,6 +1,7 @@
 package sejong.foodsns.service.member.login.jwt.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class MemberJwtLoginServiceImpl implements MemberLoginService {
             TokenResponseDto token = jwtProvider.createTokenByLogin(loginDto.getEmail());
             return new ResponseEntity<>(token.getAccessToken(), OK);
         } else {
-            throw new IllegalArgumentException(LOGIN_FAIL);
+            throw new IllegalStateException(LOGIN_FAIL);
         }
     }
 

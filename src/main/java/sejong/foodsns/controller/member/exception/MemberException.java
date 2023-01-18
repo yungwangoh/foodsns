@@ -11,6 +11,8 @@ import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.log.error.ErrorResult;
 
+import javax.validation.ConstraintViolationException;
+
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -78,12 +80,24 @@ public class MemberException {
     }
 
     /**
+     * 유효성 검사 오류
+     * @param e
+     * @return 잘못된 요청에 대한 상태 코드 401, Message
+     */
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ResponseEntity<ErrorResult> ConstraintViolationException(ConstraintViolationException e) {
+        log.info("[ConstrainViolationException]", e);
+        return getErrorResultResponseEntity(BAD_REQUEST, e);
+    }
+
+    /**
      * Http 상태 코드와 Exception을 Json 형식으로 변환 후 반환하는 코드.
      * @param status
      * @param exception
      * @return ResponseEntity -> errorResult (Json 형식), status
      */
-    private ResponseEntity<ErrorResult> getErrorResultResponseEntity(HttpStatus status, Exception exception) {
+    private static ResponseEntity<ErrorResult> getErrorResultResponseEntity(HttpStatus status, Exception exception) {
         ErrorResult errorResult = new ErrorResult(status, exception.getMessage());
         return new ResponseEntity<>(errorResult, status);
     }

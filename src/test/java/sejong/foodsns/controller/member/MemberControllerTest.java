@@ -148,6 +148,35 @@ class MemberControllerTest {
     }
 
     @Test
+    @Order(6)
+    @DisplayName("회원 랭크 업 -> OK")
+    void memberRankUp() throws Exception {
+        // given
+        String member = objectMapper.writeValueAsString(memberRequestDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/member/rank/{email}", memberRequestDto.getEmail()));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("회원 추천 수 업 -> OK")
+    void memberRecommendUp() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/member/recommend/{email}", memberRequestDto.getEmail()));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
     @Order(10)
     @DisplayName("회원 탈퇴 NO_CONTENT")
     void memberDeleteNoContent() throws Exception{

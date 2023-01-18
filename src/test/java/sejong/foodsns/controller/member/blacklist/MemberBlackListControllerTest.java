@@ -154,6 +154,28 @@ class MemberBlackListControllerTest {
             resultActions.andExpect(status().isOk())
                     .andDo(print());
         }
+
+        @Test
+        @DisplayName("회원의 신고 수가 30개 이므로 블랙리스트로 타입 변경 API 테스트")
+        void memberRecommendThirtyBlackListTypeConvert() throws Exception {
+            // given
+            MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+                    .email("swager253@zzz.com")
+                    .password("qwer1234@A")
+                    .username("윤광오")
+                    .build();
+
+            // 블랙리스트 등록하기 위한 초기화
+            blackListInit(memberRequestDto, 30);
+
+            // when
+            ResultActions resultActions =
+                    mockMvc.perform(get("/member/blackList/type/{email}", memberRequestDto.getEmail()));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                    .andDo(print());
+        }
     }
 
     @Nested

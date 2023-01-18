@@ -53,7 +53,10 @@ class MemberBusinessServiceImplTest {
         Optional<Member> member = getMember();
 
         // 회원은 실버 등급
-        member.get().memberRecommendCount(30);
+        for(int i = 0; i < 30; i++) {
+            member.get().memberRecommendCount();
+        }
+
         memberRepository.save(member.get());
 
         // when
@@ -101,6 +104,9 @@ class MemberBusinessServiceImplTest {
     void memberBlackListTypeConvert() {
         // given
         MemberType memberType = MemberType.BLACKLIST;
+        for(int i = 0; i <30; i++) {
+            memberBusinessService.memberReportCount(memberRequestDto.getEmail());
+        }
 
         // when
         ResponseEntity<MemberResponseDto> memberBlackListTypeConvert =

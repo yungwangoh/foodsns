@@ -162,7 +162,7 @@ class MemberLoginControllerTest {
                     .accept(MediaType.APPLICATION_JSON));
 
             // then
-            resultActions.andExpect(status().isBadRequest())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(print());
 
         }
