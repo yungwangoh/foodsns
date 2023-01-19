@@ -175,7 +175,7 @@ public class JwtProvider {
         return new TokenResponseDto(reissueAccessToken);
     }
 
-    private Optional<MemberResponseDto> getBody(ResponseEntity<Optional<MemberResponseDto>> member) {
+    private static Optional<MemberResponseDto> getBody(ResponseEntity<Optional<MemberResponseDto>> member) {
         return member.getBody();
     }
 

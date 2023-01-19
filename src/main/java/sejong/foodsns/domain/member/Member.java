@@ -62,11 +62,6 @@ public class Member extends BaseEntity {
     @Column(name = "recommend_count")
     private int recommendCount;
 
-    // 친구 목록
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Friend> friends;
-
     // 회원 게시물
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -81,7 +76,6 @@ public class Member extends BaseEntity {
         this.memberRank = NORMAL;
         this.reportCount = 0L;
         this.boards = new ArrayList<>();
-        this.friends = new ArrayList<>(5);
     }
 
     /**
@@ -93,37 +87,6 @@ public class Member extends BaseEntity {
         if(board.getMember() != this) {
             board.setMember(this);
         }
-    }
-
-    /**
-     * 친구 추가 연관 관계 편의 메서드
-     * @param friend
-     */
-    public void setFriends(Friend friend) {
-        if(!this.username.equals(friend.getFriendName())) {
-
-            // 친구 중복 체크.
-            if(duplicatedCheck(friend))
-                throw new IllegalArgumentException("같은 친구를 추가할 수 없습니다.");
-
-            this.friends.add(friend);
-        } else {
-            throw new IllegalArgumentException("자신을 친구 추가할 수 없습니다.");
-        }
-    }
-
-    /**
-     * 중복 체크 로직
-     * @param friend 친구
-     * @return 중복이면 true, 아니면 false
-     */
-    private boolean duplicatedCheck(Friend friend) {
-        for(Friend f : this.getFriends()) {
-            if(friend.getFriendName().equals(f.getFriendName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
