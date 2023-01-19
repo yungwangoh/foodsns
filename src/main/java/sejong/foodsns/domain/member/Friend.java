@@ -43,13 +43,18 @@ public class Friend extends BaseEntity {
     }
 
     /**
-     * 연관 관계 메서드
+     * 친구 추가할 주최자
      * @param member 회원 (친구 추가하고자 하는 회원 아님).
      */
     public void setMember(Member member) {
-        if(this.member != null) {
-            this.member.getFriends().remove(this);
+        if(member != null) {
+            if(member != this.getMember()) {
+                this.member = member;
+            } else {
+                throw new IllegalArgumentException("친구가 본인이 될 수 없습니다.");
+            }
+        } else {
+            throw new IllegalArgumentException("본인 회원이 없습니다.");
         }
-        this.member = member;
     }
 }

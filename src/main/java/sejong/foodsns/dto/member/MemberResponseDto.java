@@ -32,8 +32,6 @@ public class MemberResponseDto {
     private int penaltyCount;
     private MemberType memberType;
 
-    private List<MemberFriendResponseDto> memberFriendResponseDtos;
-
     @Builder
     public MemberResponseDto(Member member) {
         this.id = member.getId();
@@ -43,8 +41,5 @@ public class MemberResponseDto {
         this.reportCount = member.getReportCount();
         this.memberRank = member.getMemberRank();
         this.memberType = member.getMemberType();
-        this.memberFriendResponseDtos = member.getFriends().stream()
-                .map(MemberFriendResponseDto::new)
-                .collect(toList());
     }
 }

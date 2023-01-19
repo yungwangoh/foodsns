@@ -3,6 +3,7 @@ package sejong.foodsns.domain.board;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import sejong.foodsns.domain.BaseEntity;
+import sejong.foodsns.domain.member.Member;
 
 import javax.persistence.*;
 
@@ -35,6 +36,9 @@ public class Comment extends BaseEntity {
     private List<Reply> reply;
 
     @ManyToOne(fetch = LAZY)
+    private Member member;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
@@ -45,6 +49,10 @@ public class Comment extends BaseEntity {
         this.reportCount = reportCount; // 신고수
         this.reply = reply; // 대댓글
         this.board = board; // 댓글을 달 게시물
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     // 비즈니스 로직

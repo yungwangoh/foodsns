@@ -234,7 +234,6 @@ class MemberRepositoryTest {
      */
     private Member getMember(Member save) {
         Optional<Member> memberId = memberRepository.findById(save.getId());
-        Member findMember = memberId.get();
-        return findMember;
+        return memberId.get();
     }
 }

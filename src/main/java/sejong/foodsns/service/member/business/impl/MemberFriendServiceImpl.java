@@ -53,8 +53,6 @@ public class MemberFriendServiceImpl implements MemberFriendService {
             Friend friend = new Friend(getMember(friendSearch));
             friend.setMember(getMember(member));
 
-            getMember(member).setFriends(friend);
-
             return new ResponseEntity<>(new MemberFriendResponseDto(friend), CREATED);
         } else
             // 추가하는 회원이 블랙리스트이면 예외 발생
@@ -71,11 +69,10 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Transactional
     public ResponseEntity<MemberFriendResponseDto> friendMemberDelete(String email, int index) {
 
-        Optional<Member> member = getMember(email);
-
         // 삭제 완료
         try {
-            Friend friend = getMember(member).getFriends().remove(index);
+            List<Friend> friends = friendRepository.findByMember_Email(email);
+            Friend friend = friends.remove(index);
 
             return new ResponseEntity<>(new MemberFriendResponseDto(friend), OK);
 
@@ -93,9 +90,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<List<MemberFriendResponseDto>> friendMemberList(String email) {
 
-        Optional<Member> member = getMember(email);
-
-        List<Friend> friends = friendRepository.findByMemberId(getMember(member).getId());
+        List<Friend> friends = friendRepository.findByMember_Email(email);
 
         List<MemberFriendResponseDto> collect =
                 friends.stream().map(MemberFriendResponseDto::new).collect(toList());
@@ -112,10 +107,9 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     @Override
     public ResponseEntity<MemberResponseDto> friendMemberDetailSearch(String email, int index) {
 
-        Optional<Member> member = getMember(email);
         try {
             // 친구 리스트 조회
-            List<Friend> friends = friendRepository.findByMemberId(getMember(member).getId());
+            List<Friend> friends = friendRepository.findByMember_Email(email);
 
             // 친구 리스트에서 몇 번째 index 인지 확인.
             Friend friend = friends.get(index);
@@ -148,29 +142,6 @@ public class MemberFriendServiceImpl implements MemberFriendService {
     private Optional<Member> getFriendSearch(String friendUsername) {
         return of(memberRepository.findMemberByUsername(friendUsername)
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다.")));
-    }
-
-    /**
-     * 친구 리스트를 회원 응답 Dto 로 매핑 (Convert)
-     * @param member 회원
-     * @return 회원 응답 Dto List
-     */
-    private List<MemberResponseDto> friendsMappedMemberResponseDtos(Optional<Member> member) {
-        List<Friend> friends = getMember(member).getFriends();
-
-        return friends.stream().map(friend -> new MemberResponseDto(friend.getMember()))
-                .collect(toList());
-    }
-
-    /**
-     * 친구를 회원 응답 Dto로 매핑
-     * @param friend 친구 객체
-     * @return 회원 응답 Dto
-     */
-    private static MemberResponseDto getMemberResponseDto(Friend friend) {
-        return MemberResponseDto.builder()
-                .member(friend.getMember())
-                .build();
     }
 
     /**
