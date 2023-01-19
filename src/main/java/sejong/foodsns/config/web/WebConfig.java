@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sejong.foodsns.jwt.JwtProvider;
 import sejong.foodsns.log.interceptor.member.JwtServiceInterceptor;
+import sejong.foodsns.log.interceptor.member.MemberAccessInterceptor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,6 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JwtServiceInterceptor(jwtProvider))
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/member/**");
+                .excludePathPatterns("/member/**", "/board/**");
     }
 }
