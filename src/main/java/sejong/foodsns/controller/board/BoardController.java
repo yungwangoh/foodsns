@@ -55,7 +55,7 @@ public class BoardController {
      * @param boardUpdateTitleDto
      * @return 게시물 제목 수정 완료, OK
      */
-    @PatchMapping("/board")
+    @PatchMapping("/board/title")
     public ResponseEntity<String> boardUpdateTitle(@RequestBody @Valid BoardUpdateTitleDto boardUpdateTitleDto) {
 
         ResponseEntity<Optional<BoardResponseDto>> titleUpdate =
