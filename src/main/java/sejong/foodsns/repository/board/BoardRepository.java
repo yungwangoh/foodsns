@@ -18,5 +18,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Boolean existsBoardByTitle(String title);
     void deleteBoardByMemberEmailAndMemberPassword(String email, String password);
 
-
 }

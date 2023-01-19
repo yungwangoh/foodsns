@@ -7,6 +7,7 @@ import sejong.foodsns.domain.board.FoodTag;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.domain.member.MemberType;
+import sejong.foodsns.dto.member.MemberResponseDto;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,15 +26,15 @@ public class BoardResponseDto {
 
     private int recommCount;
 
-    private Member member;
+    private MemberResponseDto memberResponseDto;
 
     @Builder
     public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.member = board.getMember();
-        this.memberRank = member.getMemberRank();
+        this.memberResponseDto = new MemberResponseDto(board.getMember());
+        this.memberRank = board.getMemberRank();
         this.check = board.getCheck();
         this.recommCount = board.getRecommCount();
     }

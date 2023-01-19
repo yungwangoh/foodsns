@@ -29,7 +29,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     private final BoardRepository boardRepository;
 
     /**
-     * 게시물 생성 -> 성공 ?, 실패 ?
+     * 게시물 생성 -> 성공 201, 실패 404
      * @param boardRequestDto
      * @return 게시물 DTO
      */
@@ -146,11 +146,11 @@ public class BoardCrudServiceImpl implements BoardCrudService {
         return Board.builder()
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
-                .memberRank(boardRequestDto.getMember().getMemberRank())
+                .memberRank(boardRequestDto.toEntity().getMemberRank())
                 .check(0L)
                 .recommCount(0)
                 .foodTag(null)
-                .member(boardRequestDto.getMember())
+                .member(boardRequestDto.toEntity().getMember())
                 .build();
     }
 

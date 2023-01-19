@@ -4,6 +4,7 @@ import lombok.*;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
+import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
 
@@ -15,14 +16,11 @@ public class BoardRequestDto {
 
     private Long id;
 
-    @NotBlank
     private String title;
 
-    @NotBlank
     private String content;
 
-    @NotBlank
-    private Member member;
+    private MemberRequestDto memberRequestDto;
 
     private Long check;
 
@@ -32,10 +30,10 @@ public class BoardRequestDto {
         return Board.builder()
                 .title(title)
                 .content(content)
-                .memberRank(member.getMemberRank())
+                .memberRank(memberRequestDto.toEntity().getMemberRank())
                 .check(0L)
                 .recommCount(0)
-                .member(member)
+                .member(memberRequestDto.toEntity())
                 .build();
     }
 }
