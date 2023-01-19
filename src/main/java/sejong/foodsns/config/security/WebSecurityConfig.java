@@ -24,7 +24,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.cors().configurationSource(configurationSource()).and()
-                .csrf().and()
+                .csrf().disable()
                 .formLogin().disable()
                 .headers().frameOptions().disable();
 

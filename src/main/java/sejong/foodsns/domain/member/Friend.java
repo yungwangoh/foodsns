@@ -34,12 +34,12 @@ public class Friend extends BaseEntity {
     private Member member;
 
     @Builder
-    public Friend(Member member) {
-        this.friendName = member.getUsername();
-        this.friendEmail = member.getEmail();
-        this.recommendCount = member.getRecommendCount();
-        this.memberRank = member.getMemberRank();
-        this.reportCount = member.getReportCount();
+    public Friend(Member friend) {
+        this.friendName = friend.getUsername();
+        this.friendEmail = friend.getEmail();
+        this.recommendCount = friend.getRecommendCount();
+        this.memberRank = friend.getMemberRank();
+        this.reportCount = friend.getReportCount();
     }
 
     /**
@@ -48,7 +48,7 @@ public class Friend extends BaseEntity {
      */
     public void setMember(Member member) {
         if(member != null) {
-            if(member != this.getMember()) {
+            if(!member.getUsername().equals(this.friendName)) {
                 this.member = member;
             } else {
                 throw new IllegalArgumentException("친구가 본인이 될 수 없습니다.");
