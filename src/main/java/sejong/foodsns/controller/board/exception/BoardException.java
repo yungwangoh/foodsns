@@ -10,8 +10,9 @@ import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.log.error.ErrorResult;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import javax.validation.ConstraintViolationException;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice("sejong.foodsns.controller.board")
@@ -27,7 +28,17 @@ public class BoardException {
         log.info("[duplicated exception]", e);
         return getErrorResultResponseEntity(BAD_REQUEST, e);
     }
-
+    /**
+     * 제목 글자수 제한
+     * @param e
+     * @return 요청된 데이터가 수정되지 않음 304, Message
+     */
+    @ExceptionHandler
+    @ResponseStatus(NOT_MODIFIED)
+    public ResponseEntity<ErrorResult> handlingLimitedOfCharactersError(ConstraintViolationException e) {
+        log.info("[handling Limited Of Characters Error]", e);
+        return getErrorResultResponseEntity(NOT_MODIFIED, e);
+    }
     private static ResponseEntity<ErrorResult> getErrorResultResponseEntity(HttpStatus status, Exception exception) {
         ErrorResult errorResult = new ErrorResult(status, exception.getMessage());
         return new ResponseEntity<>(errorResult, status);
