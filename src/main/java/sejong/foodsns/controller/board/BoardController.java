@@ -23,7 +23,7 @@ import static sejong.foodsns.service.board.crud.message.BoardSuccessOrFailedMess
 @Validated
 public class BoardController {
 
-    private BoardCrudService boardCrudService;
+    private final BoardCrudService boardCrudService;
 
     /**
      * 게시물 등록
