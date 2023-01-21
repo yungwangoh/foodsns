@@ -49,11 +49,19 @@ public class MemberFriendServiceImpl implements MemberFriendService {
 
         // 추가하려는 회원이 블랙리스트가 아니라면
         if(!getMember(friendSearch).getMemberType().equals(BLACKLIST)) {
-            // 친구 추가 (변경 감지) -> friend save 안시켜줘도 됨 영속성 전이..
-            Friend friend = new Friend(getMember(friendSearch));
-            friend.setMember(getMember(member));
 
-            return new ResponseEntity<>(new MemberFriendResponseDto(friend), CREATED);
+            List<Friend> friends = friendRepository.findByMemberId(getMember(member).getId());
+
+            // 중복 검증
+            friendDuplication(friends, getMember(friendSearch));
+
+            // 친구 리스트의 크기 검증
+            friendSizeCheck(friends, 5);
+
+            // 친구 추가
+            Friend friendSave = friendAdd(member, friendSearch);
+
+            return new ResponseEntity<>(new MemberFriendResponseDto(friendSave), CREATED);
         } else
             // 추가하는 회원이 블랙리스트이면 예외 발생
             throw new IllegalStateException("블랙리스트인 회원을 친구 추가 할 수 없습니다.");
@@ -73,6 +81,7 @@ public class MemberFriendServiceImpl implements MemberFriendService {
         try {
             List<Friend> friends = friendRepository.findByMember_Email(email);
             Friend friend = friends.remove(index);
+            friendRepository.delete(friend);
 
             return new ResponseEntity<>(new MemberFriendResponseDto(friend), OK);
 
@@ -151,5 +160,44 @@ public class MemberFriendServiceImpl implements MemberFriendService {
      */
     private static Member getMember(Optional<Member> member) {
         return member.get();
+    }
+
+    /**
+     * 친구 추가
+     * @param member 본인
+     * @param friendSearch 친구
+     * @return 추가한 친구
+     */
+    private Friend friendAdd(Optional<Member> member, Optional<Member> friendSearch) {
+        
+        Friend friend = new Friend(getMember(friendSearch));
+        friend.setMember(getMember(member));
+
+        return friendRepository.save(friend);
+    }
+
+    /**
+     * 친구 중복 검증
+     * @param friends 친구 리스트
+     * @param friend 추가할 친구
+     */
+    private static void friendDuplication(List<Friend> friends, Member friend) {
+
+        long count = friends.stream().filter(f -> f.getFriendName().equals(friend.getUsername())).count();
+        if(count > 0) {
+            throw new IllegalArgumentException("중복된 친구 입니다.");
+        }
+    }
+
+    /**
+     * 친구 리스트 사이즈 검증
+     * @param friends 친구 리스트
+     * @param size 친구 리스트의 사이즈
+     */
+    private static void friendSizeCheck(List<Friend> friends, int size) {
+
+        if(friends.size() > size) {
+            throw new IllegalArgumentException("최소 5명의 친구를 추가할 수 있습니다.");
+        }
     }
 }

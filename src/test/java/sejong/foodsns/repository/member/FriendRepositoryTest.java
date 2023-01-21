@@ -49,10 +49,64 @@ class FriendRepositoryTest {
     @DisplayName("친구 찾기")
     void myFriendSearch() {
         // given
+        Member friend = new Member("하윤", "qkfks1234@zzz.com", "qwer1234@A", NORMAL);
+        Member member = new Member("윤광오", "swager253@zzz.com", "qwer1234@A", NORMAL);
+        memberRepository.save(member);
+
+        Friend f = new Friend(friend);
+        f.setMember(member);
+
+        Friend save = friendRepository.save(f);
 
         // when
+        List<Friend> friends = friendRepository.findByMemberId(save.getMember().getId());
 
         // then
+        assertThat(friends.get(0)).isEqualTo(f);
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("친구 삭제")
+    void myFriendDelete() {
+        // given
+        Member friend = new Member("하윤", "qkfks1234@zzz.com", "qwer1234@A", NORMAL);
+        Member member = new Member("윤광오", "swager253@zzz.com", "qwer1234@A", NORMAL);
+        Member memberSave = memberRepository.save(member);
+
+        Friend f = new Friend(friend);
+        f.setMember(member);
+        friendRepository.save(f);
+
+        List<Friend> friends = friendRepository.findByMemberId(memberSave.getId());
+        Friend findFriend = friends.get(0);
+
+        // when
+        friendRepository.delete(findFriend);
+        List<Friend> friendList = friendRepository.findByMemberId(memberSave.getId());
+
+        // then
+        assertThat(friendList.size()).isEqualTo(0);
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("친구 목록 조회")
+    void myFriendList() {
+        // given
+        Member friend = new Member("하윤", "qkfks1234@zzz.com", "qwer1234@A", NORMAL);
+        Member member = new Member("윤광오", "swager253@zzz.com", "qwer1234@A", NORMAL);
+        Member memberSave = memberRepository.save(member);
+
+        Friend f = new Friend(friend);
+        f.setMember(member);
+        friendRepository.save(f);
+
+        // when
+        List<Friend> friends = friendRepository.findByMemberId(memberSave.getId());
+
+        // then
+        assertThat(friends.size()).isEqualTo(1);
     }
 
     @AfterEach
