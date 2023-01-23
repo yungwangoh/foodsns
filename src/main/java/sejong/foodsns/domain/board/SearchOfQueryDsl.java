@@ -4,7 +4,7 @@ public enum SearchOfQueryDsl {
 
     ALL(0), TITLE(1), CONTENT(2);
 
-    private int searchValue;
+    private final int searchValue;
 
     SearchOfQueryDsl(int searchValue) {
         this.searchValue = searchValue;
