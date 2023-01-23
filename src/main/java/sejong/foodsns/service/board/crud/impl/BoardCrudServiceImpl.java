@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
+import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
 import java.util.List;
@@ -27,6 +29,7 @@ import static org.springframework.http.HttpStatus.*;
 public class BoardCrudServiceImpl implements BoardCrudService {
 
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 게시물 생성 -> 성공 201, 실패 404
@@ -38,8 +41,8 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     public ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto) {
 
         duplicatedCheckBoardTitle(boardRequestDto);
-
-        Board board = boardClassCreated(boardRequestDto);
+        Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getMemberRequestDto().getUsername()).get();
+        Board board = boardClassCreated(boardRequestDto, findMember);
 
         Board save = boardRepository.save(board);
         return new ResponseEntity<>(of(new BoardResponseDto(save)), CREATED);
@@ -53,7 +56,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String orderTitle, String updateTitle) {
+    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String updateTitle, String orderTitle) {
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(orderTitle);
 
         Board updateBoard = getBoard(board).boardTitleUpdate(updateTitle);
@@ -142,7 +145,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      * @param boardRequestDto
      * @return 게시물
      */
-    private Board boardClassCreated(BoardRequestDto boardRequestDto) {
+    private Board boardClassCreated(BoardRequestDto boardRequestDto, Member member) {
         return Board.builder()
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
@@ -150,7 +153,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
                 .check(0L)
                 .recommCount(0)
                 .foodTag(null)
-                .member(boardRequestDto.toEntity().getMember())
+                .member(member)
                 .build();
     }
 

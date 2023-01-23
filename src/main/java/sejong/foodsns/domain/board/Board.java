@@ -11,6 +11,8 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,8 @@ public class Board extends BaseEntity {
     @Column(name = "board_id")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", length = 50)
+    @Size(min = 1, max = 50, message = "글자 제한 수는 50자 이내 입니다.")
     private String title;
 
     @Column(name = "content")

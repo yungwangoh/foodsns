@@ -15,6 +15,7 @@ import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
+import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +30,16 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 @SpringBootTest
 public class BoardCrudServiceImplTest {
 
-    @Autowired
-    private BoardCrudService boardCrudService;
-
-    @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private BoardCrudService boardCrudService;
+    @Autowired private BoardRepository boardRepository;
+    @Autowired private MemberRepository memberRepository;
 
     private BoardResponseDto boardResponseDto;
 
     @BeforeEach
     void initMember() {
-        Member member = new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL);
-        memberRepository.save(member);
+        Member member = new Member("하윤", "swager253@naver.com", "rhkddh77@A", NORMAL);
+        Member saveMember = memberRepository.save(member);
     }
 
     @Nested
@@ -68,11 +64,11 @@ public class BoardCrudServiceImplTest {
             ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
 
             //then
-//            assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
-//            assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
-//            assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
-//            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
-//            assertThat(getBody(boardCreate).getMemberRank()).isEqualTo(boardResponseDto.getMemberRank());
+            assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
+            assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
+            assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
+            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
+            assertThat(getBody(boardCreate).getMemberRank()).isEqualTo(boardResponseDto.getMemberRank());
         }
 
         @Test
@@ -160,7 +156,6 @@ public class BoardCrudServiceImplTest {
             boardRepository.deleteAll();
             memberRepository.deleteAll();
         }
-
     }
 
     @Nested
