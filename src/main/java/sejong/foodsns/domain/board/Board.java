@@ -60,6 +60,7 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    // 일단 주석 처리 단방향 매핑 우선.
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
@@ -78,8 +79,8 @@ public class Board extends BaseEntity {
         this.recommCount = recommCount; // 추천수
         this.foodTag = foodTag; //
         this.member = member; // 게시물작성자
-        this.comments = comments; // 댓글
-        this.boardFiles = boardFiles; // 첨부파일
+        /*this.comments = comments; // 댓글
+        this.boardFiles = boardFiles; // 첨부파일*/
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드
