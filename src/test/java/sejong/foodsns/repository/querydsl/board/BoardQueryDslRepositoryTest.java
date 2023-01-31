@@ -77,4 +77,23 @@ public class BoardQueryDslRepositoryTest {
         assertThat(boards.size()).isEqualTo(3);
         assertThat(boards1.size()).isEqualTo(3);
     }
+
+    @Test
+    @DisplayName("게시물 제목으로 조회하여 몇개의 게시물이 나오는지 확인 테스트")
+    void boardTitleCountBoardCheck() {
+        // given
+        String title = "안녕하세요";
+        QBoard qBoard = new QBoard("b");
+
+        // when
+        List<Board> boards = jpaQueryFactory.selectFrom(qBoard)
+                .where(qBoard.title.eq(title))
+                .fetch();
+
+        // then
+        assertThat(boards.size()).isEqualTo(3);
+        boards.forEach(board -> {
+            assertThat(board.getTitle()).isEqualTo(title);
+        });
+    }
 }
