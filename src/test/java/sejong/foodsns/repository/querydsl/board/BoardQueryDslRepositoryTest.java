@@ -1,28 +1,22 @@
 package sejong.foodsns.repository.querydsl.board;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.QBoard;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
-import sejong.foodsns.domain.member.QMember;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static sejong.foodsns.domain.member.MemberType.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @DataJpaTest
 public class BoardQueryDslRepositoryTest {
@@ -95,5 +89,27 @@ public class BoardQueryDslRepositoryTest {
         boards.forEach(board -> {
             assertThat(board.getTitle()).isEqualTo(title);
         });
+    }
+
+    @Test
+    @DisplayName("한가지 이상의 제목만 쳐도 연관된 제목의 게시물이 나오는 테스트")
+    void oneMoreTitleFetchBoard() {
+        // given
+        String title = "안";
+        String wrongTitle = "크크";
+        QBoard qBoard = new QBoard("b");
+
+        // when
+        List<Board> boards = jpaQueryFactory.selectFrom(qBoard)
+                .where(qBoard.title.contains(title))
+                .fetch();
+
+        List<Board> boards1 = jpaQueryFactory.selectFrom(qBoard)
+                .where(qBoard.title.contains(wrongTitle))
+                .fetch();
+
+        // then
+        assertThat(boards.size()).isEqualTo(3);
+        assertThat(boards1.size()).isEqualTo(0);
     }
 }
