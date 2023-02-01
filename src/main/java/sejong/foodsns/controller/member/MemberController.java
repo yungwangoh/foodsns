@@ -38,6 +38,7 @@ public class MemberController {
     public ResponseEntity<MemberResponseDto> memberCreate(@RequestBody @Valid MemberRequestDto memberRequestDto) {
 
         ResponseEntity<Optional<MemberResponseDto>> memberCreate = memberCrudService.memberCreate(memberRequestDto);
+        log.info("memberCreate = {}", memberCreate);
 
         return new ResponseEntity<>(getMember(memberCreate), memberCreate.getStatusCode());
     }

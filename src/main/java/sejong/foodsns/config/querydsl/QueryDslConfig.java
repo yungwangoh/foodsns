@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 @Configuration
 public class QueryDslConfig {
 
+    // QueryDsl jpaQueryFactory Bean injection
     @Bean
     JPAQueryFactory jpaQueryFactory(EntityManager em) {
         return new JPAQueryFactory(em);
