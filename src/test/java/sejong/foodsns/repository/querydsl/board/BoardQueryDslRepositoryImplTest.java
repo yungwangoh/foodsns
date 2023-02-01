@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.QBoard;
+import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
+import sejong.foodsns.repository.querydsl.board.impl.BoardQueryDslRepositoryImpl;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
 @DataJpaTest
-public class BoardQueryDslRepositoryTest {
+public class BoardQueryDslRepositoryImplTest {
 
     @Autowired
     private EntityManager em;
@@ -27,19 +29,21 @@ public class BoardQueryDslRepositoryTest {
     private MemberRepository memberRepository;
     @Autowired
     private BoardRepository boardRepository;
+    private BoardQueryDslRepository boardQueryDslRepository;
 
     private JPAQueryFactory jpaQueryFactory;
 
     @BeforeEach
     void init() {
         jpaQueryFactory = new JPAQueryFactory(em);
+        boardQueryDslRepository = new BoardQueryDslRepositoryImpl(em);
 
         Member member = new Member("윤광오", "swager253@fdsfds.com", "qwer1234@!", NORMAL);
-        Board board = new Board("안녕하세요", "안녕하세요", member.getMemberRank(),
+        Board board = new Board("안녕", "안녕하세요", member.getMemberRank(),
                 20L, 20, null, member);
-        Board board1 = new Board("안녕하세요", "안녕하세요", member.getMemberRank(),
+        Board board1 = new Board("안녕하세욧!", "안녕하세요", member.getMemberRank(),
                 20L, 20, null, member);
-        Board board2 = new Board("안녕하세요", "안녕하세요", member.getMemberRank(),
+        Board board2 = new Board("안녕하시렵니까", "안녕하세요", member.getMemberRank(),
                 20L, 20, null, member);
 
         memberRepository.save(member);
@@ -111,5 +115,24 @@ public class BoardQueryDslRepositoryTest {
         // then
         assertThat(boards.size()).isEqualTo(3);
         assertThat(boards1.size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("제목 또는 본문을 조회하여 관련된 게시물 검색 그리고 한가지 이상의 문자열을 검색할 경우도 포함")
+    void titleOrContentSearchBoard() {
+        // given
+        String title = "안녕";
+        String title1 = "안녕하시렵니까";
+        String content = "안녕하세";
+
+        // when
+        List<Board> boards = boardQueryDslRepository.search(SearchOption.ALL, title);
+        List<Board> boards1 = boardQueryDslRepository.search(SearchOption.CONTENT, content);
+        List<Board> boards2 = boardQueryDslRepository.search(SearchOption.ALL, title1);
+
+        // then
+        assertThat(boards.size()).isEqualTo(3);
+        assertThat(boards1.size()).isEqualTo(3);
+        assertThat(boards2.size()).isEqualTo(1);
     }
 }
