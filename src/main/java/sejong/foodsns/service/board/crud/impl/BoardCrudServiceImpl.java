@@ -1,11 +1,13 @@
 package sejong.foodsns.service.board.crud.impl;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
@@ -13,8 +15,10 @@ import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
+import sejong.foodsns.repository.querydsl.board.BoardQueryDslRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,8 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final BoardQueryDslRepository boardQueryDslRepository;
+
 
     /**
      * 게시물 생성 -> 성공 201, 실패 404
@@ -94,6 +100,21 @@ public class BoardCrudServiceImpl implements BoardCrudService {
         Optional<Board> board = getBoardReturnByOptionalBoardTitle(title);
 
         return new ResponseEntity<>(of(new BoardResponseDto(getBoard(board))), OK);
+    }
+
+    /**
+     * 검색 옵션을 통해 게시물 조회
+     * @param searchOption 제목, 본문, 제목 + 본문 검색 옵션
+     * @param content 조회할 제목, 본문 제목 + 본문 문자열
+     * @return 게시물 리스트, OK
+     */
+    @Override
+    public ResponseEntity<List<BoardResponseDto>> search(SearchOption searchOption, String content) {
+
+        List<Board> boards = boardQueryDslRepository.search(searchOption, content);
+        List<BoardResponseDto> collect = boards.stream().map(BoardResponseDto::new).collect(toList());
+
+        return new ResponseEntity<>(collect, OK);
     }
 
     /**

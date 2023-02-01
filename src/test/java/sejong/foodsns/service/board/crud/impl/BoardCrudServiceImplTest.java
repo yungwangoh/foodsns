@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.dto.board.BoardRequestDto;
@@ -149,6 +150,25 @@ public class BoardCrudServiceImplTest {
 
                 assertThat(board.getStatusCode()).isEqualTo(NO_CONTENT);
             }).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("검색 옵션을 통하여 게시물 조회 테스트")
+        void searchOptionBoardSearchTest() {
+            // given
+            Member findMember = memberRepository.findMemberByUsername("하윤").get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            boardCrudService.boardCreate(boardRequestDto);
+
+            // 이 문자열에 연관된 게시물을 통쨰로 조회한다.
+            String content = "레시피";
+
+            // when
+            // 제목이던 본문이던 상관없다. 검색 옵션 ALL로 조회
+            ResponseEntity<List<BoardResponseDto>> boards = boardCrudService.search(SearchOption.ALL, content);
+
+            // then
+            assertThat(boards.getBody().size()).isEqualTo(1);
         }
 
         @AfterEach

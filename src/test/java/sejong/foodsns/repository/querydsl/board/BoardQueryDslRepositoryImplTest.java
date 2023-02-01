@@ -29,6 +29,7 @@ public class BoardQueryDslRepositoryImplTest {
     private MemberRepository memberRepository;
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
     private BoardQueryDslRepository boardQueryDslRepository;
 
     private JPAQueryFactory jpaQueryFactory;
@@ -36,7 +37,6 @@ public class BoardQueryDslRepositoryImplTest {
     @BeforeEach
     void init() {
         jpaQueryFactory = new JPAQueryFactory(em);
-        boardQueryDslRepository = new BoardQueryDslRepositoryImpl(em);
 
         Member member = new Member("윤광오", "swager253@fdsfds.com", "qwer1234@!", NORMAL);
         Board board = new Board("안녕", "안녕하세요", member.getMemberRank(),
