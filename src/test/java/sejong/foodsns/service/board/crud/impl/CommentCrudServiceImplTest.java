@@ -10,9 +10,11 @@ import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
+import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
+import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.member.MemberRepository;
@@ -33,20 +35,11 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 @SpringBootTest
 public class CommentCrudServiceImplTest {
 
-    @Autowired
-    CommentCrudService commentCrudService;
-
-    @Autowired
-    private BoardCrudService boardCrudService;
-
-    @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired CommentCrudService commentCrudService;
+    @Autowired private BoardCrudService boardCrudService;
+    @Autowired private BoardRepository boardRepository;
+    @Autowired private CommentRepository commentRepository;
+    @Autowired private MemberRepository memberRepository;
 
     private BoardResponseDto boardResponseDto;
 
@@ -78,7 +71,7 @@ public class CommentCrudServiceImplTest {
             //then
             assertThat(commentCreate.getStatusCode()).isEqualTo(CREATED);
             assertThat(getBody(commentCreate).getContent()).isEqualTo(commentRequestDto.getContent());
-            assertThat(getBody(commentCreate).getBoard()).isEqualTo(commentRequestDto.getBoard()); // Response / Request
+            assertThat(getBody(commentCreate).getBoardResponseDto().getTitle()).isEqualTo(commentRequestDto.getBoardRequestDto().getTitle()); // Response / Request
         }
 
         @Test
@@ -246,15 +239,17 @@ public class CommentCrudServiceImplTest {
         if (idx == 1) {
             return CommentRequestDto.builder()
                     .content("맛있네요")
-                    .board(board)
-                    .member(member)
+                    .boardRequestDto(new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(),
+                            new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()), board.getCheck(), board.getRecommCount()))
+                    .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
                     .recommCount(13)
                     .build();
         }
         return CommentRequestDto.builder()
                 .content("맛없네요")
-                .board(board)
-                .member(member)
+                .boardRequestDto(new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(),
+                        new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()), board.getCheck(), board.getRecommCount()))
+                .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
                 .recommCount(13)
                 .build();
     }

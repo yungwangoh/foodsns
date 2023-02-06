@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchCommentException;
+import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
@@ -26,6 +28,7 @@ import static org.springframework.http.HttpStatus.*;
 public class CommentCrudServiceImpl implements CommentCrudService {
 
     private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
 
     /**
      * 댓글 생성 -> 성공 ?, 실패 ?
@@ -35,7 +38,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto) {
-        Comment comment = commentClassCreated(commentRequestDto);
+        Board board = boardRepository.findBoardByTitle(commentRequestDto.getBoardRequestDto().getTitle()).get();
+        Comment comment = commentClassCreated(commentRequestDto, board);
 
         Comment saveComment = commentRepository.save(comment);
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
@@ -131,7 +135,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentDelete(CommentRequestDto commentRequestDto) {
-        Optional<CommentResponseDto> comment = findComment(commentRequestDto.getBoard().getTitle(), commentRequestDto.getContent()).getBody();
+        Optional<CommentResponseDto> comment = findComment(commentRequestDto.getBoardRequestDto().getTitle(), commentRequestDto.getContent()).getBody();
         Optional<Comment> findComment = getCommentReturnByCommentId(comment.get().getId());
 
         //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
@@ -154,13 +158,13 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      * @param commentRequestDto
      * @return 게시물
      */
-    private Comment commentClassCreated(CommentRequestDto commentRequestDto) {
+    private Comment commentClassCreated(CommentRequestDto commentRequestDto, Board board) {
         return Comment.builder()
                 .content(commentRequestDto.getContent())
                 .recommCount(commentRequestDto.getRecommCount())
                 .reportCount(commentRequestDto.getReportCount())
                 .reply(commentRequestDto.getReply())
-                .board(commentRequestDto.getBoard())
+                .board(board)
                 .build();
     }
 

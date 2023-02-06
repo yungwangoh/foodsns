@@ -4,19 +4,15 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
-import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
-import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
-//@DataJpaTest
 @SpringBootTest
 public class BoardCrudServiceImplTest {
 

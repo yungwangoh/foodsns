@@ -29,7 +29,6 @@ public class CommentController {
      * @param commentRequestDto
      * @return 댓글, CREATE
      */
-
     @PostMapping("/comment")
     public ResponseEntity<CommentResponseDto> commentCreate(@RequestBody @Valid CommentRequestDto commentRequestDto) {
         ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService.commentCreate(commentRequestDto);
@@ -54,7 +53,7 @@ public class CommentController {
      * @param username
      * @return 댓글 목록, OK
      */
-    @GetMapping("/comments/{username}")
+    @GetMapping("/comment/{username}")
     public ResponseEntity<List<CommentResponseDto>> commentsSearchByUsername(@PathVariable String username) {
 
         ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(username);
@@ -67,7 +66,7 @@ public class CommentController {
      * @param title
      * @return 댓글 목록, OK
      */
-    @GetMapping("/comments/{title}")
+    @GetMapping("/comment/{title}")
     public ResponseEntity<List<CommentResponseDto>> commentsSearchByTitle(@PathVariable String title) {
 
         ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(title);
