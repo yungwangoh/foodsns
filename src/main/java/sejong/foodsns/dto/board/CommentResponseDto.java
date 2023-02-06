@@ -26,7 +26,7 @@ public class CommentResponseDto {
 
     private List<Reply> reply;
 
-    private Board board;
+    private BoardResponseDto boardResponseDto;
 
     @Builder
     public CommentResponseDto(Comment comment) {
@@ -35,6 +35,6 @@ public class CommentResponseDto {
         this.recommCount = comment.getRecommCount();
         this.reportCount = comment.getReportCount();
         this.reply = comment.getReply();
-        this.board = comment.getBoard();
+        this.boardResponseDto = new BoardResponseDto(comment.getBoard());
     }
 }

@@ -5,6 +5,7 @@ import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
 import sejong.foodsns.domain.member.Member;
+import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CommentRequestDto {
     @NotBlank
     private String content;
 
-    private Member member;
+    private MemberRequestDto memberRequestDto;
 
     private int recommCount;
 
@@ -28,8 +29,7 @@ public class CommentRequestDto {
 
     private List<Reply> reply;
 
-    private Board board;
-
+    private BoardRequestDto boardRequestDto;
 
     public Comment toEntity() {
         return Comment.builder()
@@ -37,7 +37,7 @@ public class CommentRequestDto {
                 .recommCount(recommCount)
                 .reportCount(reportCount)
                 .reply(reply)
-                .board(board)
+                .board(boardRequestDto.toEntity())
                 .build();
     }
 }
