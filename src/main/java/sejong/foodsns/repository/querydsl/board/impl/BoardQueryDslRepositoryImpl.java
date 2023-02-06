@@ -28,4 +28,24 @@ public class BoardQueryDslRepositoryImpl implements BoardQueryDslRepository {
                 .orderBy(board.createTime.desc())
                 .fetch();
     }
+
+    // 최소 추천 수가 1 이상인 게시물 중 가장 높은 추천수부터 내림차순 정렬
+    @Override
+    public List<Board> searchByHighestRecommendCount() {
+        return jpaQueryFactory
+                .selectFrom(board)
+                .where(board.recommCount.goe(1))
+                .orderBy(board.recommCount.desc())
+                .fetch();
+    }
+
+    // 최소 댓글 수가 1 이상인 게시물 중 가장 많은 댓글수부터 내림차순 정렬
+    @Override
+    public List<Board> searchByHighestCommentCount() {
+        return jpaQueryFactory
+                .selectFrom(board)
+                .where(board.comments.size().goe(1))
+                .orderBy(board.recommCount.desc())
+                .fetch();
+    }
 }

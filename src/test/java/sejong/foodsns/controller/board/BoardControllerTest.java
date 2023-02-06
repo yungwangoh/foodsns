@@ -67,6 +67,8 @@ public class BoardControllerTest {
      * @return 게시물, CREATE
      */
     @Test
+    @Order(0)
+    @DisplayName("게시물 등록 컨트롤러")
     void registerBoard() throws Exception {
 
         String s = objectMapper.writeValueAsString(boardRequestDto);
@@ -86,6 +88,8 @@ public class BoardControllerTest {
      * @return 게시물, BADREQUEST
      */
     @Test
+    @Order(1)
+    @DisplayName("게시물 제목중복으로 인한 등록실패 컨트롤러")
     void registerBoardBadRequest() throws Exception {
 
         String save = objectMapper.writeValueAsString(boardRequestDto);
@@ -114,6 +118,7 @@ public class BoardControllerTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("게시물 찾기 OK")
     void boardSearchOK() throws Exception {
         // given
@@ -129,9 +134,23 @@ public class BoardControllerTest {
     }
 
     @Test
-//    @Order(5)
+    @Order(3)
+    @DisplayName("전체 게시물 조회")
+    void findAllBoards() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/boards"));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("게시물 제목 수정 실패")
-    void memberNameUpdate() throws Exception {
+    void memberNameUpdateFailed() throws Exception {
         // given
         boardCrudService.boardCreate(boardRequestDto);
 
@@ -150,6 +169,30 @@ public class BoardControllerTest {
 
         // then
         resultActions.andExpect(status().isNotModified())
+                .andDo(print());
+    }
+    @Test
+    @Order(5)
+    @DisplayName("게시물 제목 수정 성공 OK")
+    void memberNameUpdate() throws Exception {
+        // given
+        boardCrudService.boardCreate(boardRequestDto);
+
+        BoardUpdateTitleDto boardUpdateTitleDto = BoardUpdateTitleDto.builder()
+                .updateTitle("test2")
+                .orderTitle("test1")
+                .build();
+
+        String updateTitle = objectMapper.writeValueAsString(boardUpdateTitleDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(patch("/board/title")
+                .content(updateTitle)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isOk())
                 .andDo(print());
     }
 
