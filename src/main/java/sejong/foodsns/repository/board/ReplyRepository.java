@@ -13,13 +13,13 @@ import java.util.Optional;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
-    @Query(value = "select r from Reply r join fetch r.comment.board b join fetch b.member m where m.username = :username")
+    @Query(value = "select r from Reply r join fetch r.comment c join fetch c.board b join fetch b.member m where m.username = :username")
     List<Reply> findRepliesByUsername(@Param("username") String username);
 
-    @Query(value = "select r from Reply r join fetch r.comment.board b where b.title =:title")
+    @Query(value = "select r from Reply r join fetch r.comment c join fetch c.board b where b.title =:title")
     List<Reply> findRepliesByBoardTitle(@Param("title") String title);
 
-    @Query(value = "select r from Reply r join fetch r.comment.board b where b.title = :title and r.content like %:content%")
+    @Query(value = "select r from Reply r join fetch r.comment c join fetch c.board b where b.title = :title and r.content like %:content%")
     Optional<Reply> findByBoardTitleAndContainingContent(@Param("title") String boardTitle, @Param("content") String content);
 
     List<Reply> findByContentLike(String content);

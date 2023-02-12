@@ -1,5 +1,6 @@
 package sejong.foodsns.dto.member.blacklist;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import sejong.foodsns.domain.member.BlackList;
 import sejong.foodsns.domain.member.Member;
