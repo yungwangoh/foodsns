@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import sejong.foodsns.service.member.business.MemberFriendService;
 
 import javax.validation.Valid;
 import java.util.List;
+
 
 @RestController
 @Slf4j
@@ -56,8 +58,7 @@ public class MemberFriendController {
      */
     @Operation(summary = "친구 조회", description = "본인 이메일과 친구 리스트의 index로 친구를 조회한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "친구 조회 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "친구 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "친구 조회 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @GetMapping("/member/friend")
     ResponseEntity<MemberResponseDto> memberFriendDetailSearch(@RequestParam("email") String email,
@@ -92,8 +93,7 @@ public class MemberFriendController {
      */
     @Operation(summary = "친구 삭제", description = "본인 이메일과 친구 리스트의 번호(index)로 친구 삭제한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "친구 삭제 성공", content = @Content(schema = @Schema(implementation = MemberFriendResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "친구 삭제 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "친구 삭제 성공", content = @Content(schema = @Schema(implementation = MemberFriendResponseDto.class)))
     })
     @DeleteMapping("/member/friends")
     ResponseEntity<MemberFriendResponseDto> memberFriendDelete(@RequestParam("email") String email,

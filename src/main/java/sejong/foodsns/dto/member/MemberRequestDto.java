@@ -18,7 +18,6 @@ import static sejong.foodsns.domain.member.MemberType.*;
 @AllArgsConstructor
 public class MemberRequestDto {
 
-    @Schema(description = "회원 id", defaultValue = "0")
     private Long id;
     @Schema(description = "회원 닉네임", example = "오광광박")
     private String username;

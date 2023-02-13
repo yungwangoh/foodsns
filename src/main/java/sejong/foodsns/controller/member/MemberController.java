@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 가입", description = "이메일, 닉네임, 비밀번호로 회원 가입을 진행한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "회원 가입 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "회원 가입 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "201", description = "회원 가입 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @PostMapping("/member")
     public ResponseEntity<MemberResponseDto> memberCreate(@RequestBody @Valid MemberRequestDto memberRequestDto) {
@@ -61,8 +61,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 조회", description = "이메일로 회원을 조회한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 조회 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "회원 조회 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 조회 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @GetMapping("/member/{email}")
     public ResponseEntity<MemberResponseDto> memberSearch(@PathVariable("email") String email) {
@@ -79,8 +78,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 비밀번호 수정", description = "회원 비밀번호를 수정한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 비밀번호 수정 성공", content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "회원 비밀번호 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 비밀번호 수정 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
     @PatchMapping("/member/password")
     public ResponseEntity<String> memberUpdatePassword(@RequestBody @Valid MemberUpdatePwdDto memberUpdatePwdDto) {
@@ -99,8 +97,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 닉네임 수정", description = "회원 닉네임을 수정한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "회원 닉네임 수정 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 닉네임 수정 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
     @PatchMapping("/member/username")
     public ResponseEntity<String> memberUpdateUsername(@RequestBody @Valid MemberUpdateUserNameDto memberUpdateUserNameDto) {
@@ -134,8 +131,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 탈퇴", description = "회원 이메일로 회원 탈퇴를 진행한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "회원 탈퇴 성공", content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "회원 탈퇴 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "204", description = "회원 탈퇴 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
     @DeleteMapping("/member")
     public ResponseEntity<String> memberDelete(@RequestBody @Valid MemberRequestDto memberRequestDto) {
@@ -154,7 +150,6 @@ public class MemberController {
     @Operation(summary = "회원 이메일 중복 검사", description = "회원 이메일로 이메일 중복을 검증한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 이메일 중복 검사 성공", content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "회원 이메일 중복 검사 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
     })
     @PostMapping("/member/duplicated/email")
     public ResponseEntity<String> memberDuplicatedEmailCheck(@RequestBody @Valid MemberRequestDto memberRequestDto) {
@@ -176,8 +171,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 닉네임 중복 검사", description = "회원 닉네임으로 닉네임 중복 검증을 한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 닉네임 중복 검사 성공", content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "회원 닉네임 중복 검사 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 닉네임 중복 검사 성공", content = @Content(schema = @Schema(implementation = String.class)))
     })
     @PostMapping("/member/duplicated/username")
     public ResponseEntity<String> memberDuplicatedNameCheck(@RequestBody @Valid MemberRequestDto memberRequestDto) {
@@ -198,8 +192,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 랭크 업데이트", description = "이메일로 회원 랭크를 업데이트 시킨다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 랭크 업데이트 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "회원 랭크 업데이트 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 랭크 업데이트 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @GetMapping("/member/rank/{email}")
     public ResponseEntity<MemberResponseDto> memberRankUp(@PathVariable("email") String email) {
@@ -215,8 +208,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 블랙리스트 타입 변경", description = "회원은 일반 타입, 관리자 타입, 블랙리스트 타입이 존재한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 블랙리스트 타입 변경 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "회원 블랙리스트 타입 변경 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 블랙리스트 타입 변경 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @GetMapping("/member/blackList/type/{email}")
     public ResponseEntity<MemberResponseDto> memberBlackListTypeConvert(@PathVariable("email") String email) {
@@ -232,8 +224,7 @@ public class MemberController {
      */
     @Operation(summary = "회원 추천 수 증가", description = "회원 추천 수를 증가시킨다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 추천 수 증가 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "회원 추천 수 증가 실패", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+            @ApiResponse(responseCode = "200", description = "회원 추천 수 증가 성공", content = @Content(schema = @Schema(implementation = MemberResponseDto.class)))
     })
     @GetMapping("/member/recommend/{email}")
     public ResponseEntity<MemberResponseDto> memberRecommendUp(@PathVariable("email") String email) {
