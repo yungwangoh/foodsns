@@ -140,6 +140,7 @@ public class JwtProvider {
         }
     }
 
+    // barer split get jwt token
     public String getFormatToken(String accessToken) {
         return accessToken.split(" ")[1];
     }
