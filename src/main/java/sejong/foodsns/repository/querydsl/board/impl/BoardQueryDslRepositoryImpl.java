@@ -35,6 +35,8 @@ public class BoardQueryDslRepositoryImpl implements BoardQueryDslRepository {
         return jpaQueryFactory
                 .selectFrom(board)
                 .where(board.recommCount.goe(1))
+                .offset(0)
+                .limit(3)
                 .orderBy(board.recommCount.desc())
                 .fetch();
     }
