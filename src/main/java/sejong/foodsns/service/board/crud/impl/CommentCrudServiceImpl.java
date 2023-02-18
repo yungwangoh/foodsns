@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
+import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchCommentException;
@@ -38,8 +39,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto) {
-        Board board = boardRepository.findBoardByTitle(commentRequestDto.getBoardRequestDto().getTitle()).get();
-        Comment comment = commentClassCreated(commentRequestDto, board);
+        Comment comment = commentClassCreated(commentRequestDto, commentRequestDto.getBoardRequestDto());
 
         Comment saveComment = commentRepository.save(comment);
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
@@ -48,9 +48,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     /**
      * 댓글 찾기 -> 성공 ?, 실패 ?
      * @param title
-     * @return 게시물, HTTP OK
+     * @return 댓글, HTTP OK
      */
-
     @Override
     public ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content) {
         Optional<Comment> comment = commentRepository.findByBoardTitleAndContainingContent(title, content);
@@ -60,9 +59,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     /**
      * 모든 댓글 목록 -> 성공 ?
-     * @return 게시물 리스트, HTTP OK
+     * @return 댓글 리스트, HTTP OK
      */
-
     @Override
     public ResponseEntity<Optional<List<CommentResponseDto>>> allCommentList() {
         List<Comment> comments = commentRepository.findAll();
@@ -76,7 +74,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     /**
      * 회원이 작성한 댓글 목록 -> 성공 ?
-     * @return 게시물 리스트, HTTP OK
+     * @return 회원이 작성한 댓글 리스트, HTTP OK
      */
 
     @Override
@@ -92,18 +90,18 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     /**
      * 게시물에 작성된 댓글 목록 -> 성공 ?
-     * @return 게시물 리스트, HTTP OK
+     * @return 게시물에 작성된 댓글 리스트, HTTP OK
      */
 
     @Override
     public ResponseEntity<Optional<List<CommentResponseDto>>> commentListByBoardTitle(String title) {
         List<Comment> comments = commentRepository.findCommentsByBoardTitle(title);
 
-        Optional<List<CommentResponseDto>> collect = of(comments.stream()
+        Optional<List<CommentResponseDto>> commentList = of(comments.stream()
                 .map(CommentResponseDto::new)
                 .collect(toList()));
 
-        return new ResponseEntity<>(collect, OK);
+        return new ResponseEntity<>(commentList, OK);
     }
 
     /**
@@ -138,7 +136,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
         Optional<CommentResponseDto> comment = findComment(commentRequestDto.getBoardRequestDto().getTitle(), commentRequestDto.getContent()).getBody();
         Optional<Comment> findComment = getCommentReturnByCommentId(comment.get().getId());
 
-        //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
+        //Token으로 할 것이므로 JPA delete 작동하는지만 임시 확인.
         commentRepository.delete(getComment(findComment));
 
         return new ResponseEntity<>(NO_CONTENT);
@@ -156,15 +154,14 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     /**
      * 댓글 객체 생성
      * @param commentRequestDto
-     * @return 게시물
+     * @return 댓글
      */
-    private Comment commentClassCreated(CommentRequestDto commentRequestDto, Board board) {
+    private Comment commentClassCreated(CommentRequestDto commentRequestDto, BoardRequestDto boardRequestDto) {
         return Comment.builder()
                 .content(commentRequestDto.getContent())
                 .recommCount(commentRequestDto.getRecommCount())
                 .reportCount(commentRequestDto.getReportCount())
-                .reply(commentRequestDto.getReply())
-                .board(board)
+                .board(boardRequestDto.toEntity())
                 .build();
     }
 
