@@ -27,7 +27,7 @@ public class CommentRequestDto {
 
     private int reportCount;
 
-    private List<Reply> reply;
+//    private List<Reply> reply;
 
     private BoardRequestDto boardRequestDto;
 
@@ -36,7 +36,6 @@ public class CommentRequestDto {
                 .content(content)
                 .recommCount(recommCount)
                 .reportCount(reportCount)
-                .reply(reply)
                 .board(boardRequestDto.toEntity())
                 .build();
     }
