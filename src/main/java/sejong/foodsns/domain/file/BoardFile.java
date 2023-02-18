@@ -1,6 +1,5 @@
 package sejong.foodsns.domain.file;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,8 @@ import static lombok.AccessLevel.*;
 @NoArgsConstructor(access = PROTECTED)
 public class BoardFile extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "file_id")
     private Long id;
 
@@ -27,16 +27,24 @@ public class BoardFile extends BaseEntity {
     private UUID uuid;
 
     @Column(name = "file_name")
-    private String fileName;
+    private String originFilename;
+
+    private String storeFileName;
+
+    @Enumerated(EnumType.STRING)
+    private BoardFileType boardFileType;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder
-    public BoardFile(UUID uuid, String fileName, Board board) {
+    public BoardFile(UUID uuid, String originFileName, String storePath,
+                     Board board, BoardFileType boardFileType) {
         this.uuid = uuid;
-        this.fileName = fileName;
+        this.originFilename = originFileName;
+        this.storeFileName = storePath;
         this.board = board;
+        this.boardFileType = boardFileType;
     }
 }
