@@ -67,7 +67,7 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<BoardFile> boardFiles = new ArrayList<>();
+    private List<BoardFile> boardFiles;
 
     @Builder
     public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
@@ -79,8 +79,8 @@ public class Board extends BaseEntity {
         this.recommCount = recommCount; // 추천수
         this.foodTag = foodTag; //
         this.member = member; // 게시물작성자
-        /*this.comments = comments; // 댓글
-        this.boardFiles = boardFiles; // 첨부파일*/
+        //this.comments = comments; // 댓글
+        this.boardFiles = new ArrayList<>(); // 첨부파일
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드
