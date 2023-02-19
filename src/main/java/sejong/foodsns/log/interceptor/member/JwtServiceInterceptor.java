@@ -1,5 +1,6 @@
 package sejong.foodsns.log.interceptor.member;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,11 +33,10 @@ public class JwtServiceInterceptor implements HandlerInterceptor {
 
         if(accessToken != null) {
             String token = jwtProvider.getFormatToken(accessToken);
-            if(jwtProvider.isValidTokenCheck(token)) {
-                return true;
-            }
+            return jwtProvider.isValidTokenCheck(token);
         }
 
+        response.sendRedirect("/");
         return false;
     }
 

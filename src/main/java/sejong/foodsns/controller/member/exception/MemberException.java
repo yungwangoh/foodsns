@@ -1,6 +1,10 @@
 package sejong.foodsns.controller.member.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,9 @@ public class MemberException {
      * @return 잘못된 요청 400, Message
      */
     @ExceptionHandler
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 값", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
     @ResponseStatus(BAD_REQUEST)
     public ResponseEntity<ErrorResult> duplicatedExceptionHandler(DuplicatedException e) {
         log.info("[duplicated exception]", e);
@@ -37,6 +44,9 @@ public class MemberException {
      * @return 서버에 요청한 것을 찾을 수 없음 404, Message
      */
     @ExceptionHandler
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "요청한 것을 수행할 수 없음, 혹은 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
     @ResponseStatus(NOT_FOUND)
     public ResponseEntity<ErrorResult> NoSearchMemberExceptionHandler(NoSearchMemberException e) {
         log.info("[no search member exception]", e);
@@ -49,6 +59,9 @@ public class MemberException {
      * @return 요청한 것을 찾을 수 없음 404, Message
      */
     @ExceptionHandler
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "요청한 것을 수행할 수 없음, 혹은 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
     @ResponseStatus(NOT_FOUND)
     public ResponseEntity<ErrorResult> NotFoundException(IllegalArgumentException e) {
         log.info("[Not found Exception]", e);
@@ -61,6 +74,9 @@ public class MemberException {
      * @return 요청한 것을 수행할 수 없음 404, Message
      */
     @ExceptionHandler
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "요청한 것을 수행할 수 없음, 혹은 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
     @ResponseStatus(NOT_FOUND)
     public ResponseEntity<ErrorResult> NotFoundException(IllegalStateException e) {
         log.info("[Not Found Exception]", e);
@@ -73,10 +89,13 @@ public class MemberException {
      * @return 요청한 것을 수행할 수 없음 404, Message
      */
     @ExceptionHandler
-    @ResponseStatus(NOT_FOUND)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "요청한 것을 수행할 수 없음, 혹은 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
+    @ResponseStatus(FORBIDDEN)
     public ResponseEntity<ErrorResult> ExpiredJwtException(ExpiredJwtException e) {
         log.info("[ExpiredJwtException]", e);
-        return getErrorResultResponseEntity(NOT_FOUND, e);
+        return getErrorResultResponseEntity(FORBIDDEN, e);
     }
 
     /**
@@ -85,6 +104,9 @@ public class MemberException {
      * @return 잘못된 요청에 대한 상태 코드 401, Message
      */
     @ExceptionHandler
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "요청한 것을 수행할 수 없음, 혹은 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResult.class)))
+    })
     @ResponseStatus(BAD_REQUEST)
     public ResponseEntity<ErrorResult> ConstraintViolationException(ConstraintViolationException e) {
         log.info("[ConstrainViolationException]", e);

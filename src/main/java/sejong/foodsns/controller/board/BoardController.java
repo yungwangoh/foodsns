@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.file.util.BoardFileStorage;
+import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
+import sejong.foodsns.dto.board.querydsl.SearchOptionDto;
 import sejong.foodsns.dto.board.update.BoardUpdateTitleDto;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
@@ -88,6 +90,18 @@ public class BoardController {
         ResponseEntity<Optional<List<BoardResponseDto>>> boardList = boardCrudService.boardList();
 
         return new ResponseEntity<>(getBoardResponseDtos(boardList), boardList.getStatusCode());
+    }
+
+    /**
+     * 검색 옵션을 통해서 게시물 조회
+     * @param searchOption 검색 옵션
+     * @param content 검색할 문자열
+     * @return 게시물 리스트
+     */
+    @GetMapping("/board/{search-option}/{content}")
+    public ResponseEntity<List<BoardResponseDto>> searchOptionBoard(@PathVariable("search-option") SearchOption searchOption,
+                                                                    @PathVariable("content") String content) {
+        return boardCrudService.search(searchOption, content);
     }
 
     /**

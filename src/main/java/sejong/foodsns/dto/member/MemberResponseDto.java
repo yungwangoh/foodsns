@@ -29,7 +29,6 @@ public class MemberResponseDto {
     private MemberRank memberRank;
     private int recommendCount;
     private Long reportCount;
-    private int penaltyCount;
     private MemberType memberType;
 
     @Builder

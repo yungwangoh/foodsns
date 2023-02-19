@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.board.BoardRequestDto;
@@ -189,6 +190,23 @@ public class BoardControllerTest {
                 .content(updateTitle)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("검색 옵션을 통한 게시물 API 테스트")
+    void searchOptionBoardApiTest() throws Exception{
+        // given
+        boardCrudService.boardCreate(boardRequestDto);
+        String content = "test";
+        String content1 = "hi";
+
+        // when
+        ResultActions resultActions = mockMvc
+                .perform(get("/board/{search-option}/{content}", SearchOption.ALL, content));
 
         // then
         resultActions.andExpect(status().isOk())
