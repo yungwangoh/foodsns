@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.file.BoardFile;
+import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 
@@ -71,7 +72,7 @@ public class Board extends BaseEntity {
 
     @Builder
     public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
-                 @Nullable FoodTag foodTag, Member member) {
+                 @Nullable FoodTag foodTag, Member member, @Nullable List<BoardFile> boardFiles) {
         this.title = title; // 게시물
         this.content = content; // 요리메뉴
         this.memberRank = memberRank; //멤버랭크
@@ -80,7 +81,7 @@ public class Board extends BaseEntity {
         this.foodTag = foodTag; //
         this.member = member; // 게시물작성자
         //this.comments = comments; // 댓글
-        this.boardFiles = new ArrayList<>(); // 첨부파일
+        this.boardFiles = boardFiles; // 첨부파일
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드
