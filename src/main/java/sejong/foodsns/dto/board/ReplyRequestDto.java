@@ -16,7 +16,6 @@ public class ReplyRequestDto {
 
     private Long id;
     private String content;
-    private MemberRequestDto memberRequestDto;
     private int recommCount;
     private int reportCount;
     private CommentRequestDto commentRequestDto;

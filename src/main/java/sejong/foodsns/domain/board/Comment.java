@@ -7,6 +7,7 @@ import sejong.foodsns.domain.member.Member;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.*;
@@ -31,6 +32,7 @@ public class Comment extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
+
     @OneToMany(mappedBy = "comment")
     @JsonIgnore
     private List<Reply> reply;
@@ -43,21 +45,28 @@ public class Comment extends BaseEntity {
     private Board board;
 
     @Builder
-    public Comment(String content, int recommCount, int reportCount, List<Reply> reply, Board board) {
+    public Comment(String content, int recommCount, int reportCount, Board board) {
         this.content = content;
         this.recommCount = recommCount; // 추천수
         this.reportCount = reportCount; // 신고수
-        this.reply = reply; // 대댓글
         this.board = board; // 댓글을 달 게시물
+        this.reply = new ArrayList<>();
     }
 
+    // 비즈니스 로직
     public void setMember(Member member) {
         this.member = member;
     }
 
-    // 비즈니스 로직
     public void setBoard(Board board) {
         board.getComments().add(this);
+    }
+
+    public void setReply(Reply reply) {
+        this.reply.add(reply);
+        if(reply.getComment() != this) {
+            reply.setComment(this);
+        }
     }
 
     /**

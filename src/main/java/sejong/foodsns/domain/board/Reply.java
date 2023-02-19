@@ -41,4 +41,19 @@ public class Reply extends BaseEntity {
         this.reportCount = reportCount;
         this.comment = comment;
     }
+
+    // 비즈니스 로직
+    public void setComment(Comment comment) {
+        comment.getReply().add(this);
+    }
+
+    /**
+     * 대댓글 내용 수정
+     * @param content
+     * @return
+     */
+    public Reply replyContentUpdate(String content) {
+        this.content = content;
+        return this;
+    }
 }

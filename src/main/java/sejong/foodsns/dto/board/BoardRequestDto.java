@@ -2,11 +2,13 @@ package sejong.foodsns.dto.board;
 
 import lombok.*;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 @Builder
@@ -25,6 +27,8 @@ public class BoardRequestDto {
     private Long check;
 
     private int recommCount;
+
+    private List<BoardFile> boardFiles;
 
     public Board toEntity() {
         return Board.builder()
