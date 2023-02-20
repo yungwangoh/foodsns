@@ -15,7 +15,7 @@ import java.util.UUID;
 @Component
 public class BoardFileStorage {
 
-    @Value("${file.dir}/")
+    @Value("${file.dir: /Users/hayoon/foodsns/src/main/resources/static/post_upload}/")
     private String boardFileDirPath;
 
     // 파일 확장자명 추출
