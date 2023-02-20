@@ -21,7 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = "select c from Comment c join fetch c.board b where b.title = :title and c.content like %:content%")
     Optional<Comment> findByBoardTitleAndContainingContent(@Param("title") String boardTitle, @Param("content") String content);
 
-    List<Comment> findByContentLike(String content);
+    List<Comment> findByContentContaining(String content);
 
     Optional<Comment> findCommentById(Long id);
 
