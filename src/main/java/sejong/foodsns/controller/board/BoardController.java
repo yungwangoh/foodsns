@@ -17,6 +17,7 @@ import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.board.querydsl.SearchOptionDto;
 import sejong.foodsns.dto.board.update.BoardUpdateTitleDto;
 import sejong.foodsns.service.board.crud.BoardCrudService;
+import sejong.foodsns.service.board.crud.BoardFileCrudService;
 
 import javax.validation.Valid;
 import java.io.IOException;
