@@ -159,8 +159,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     private Comment commentClassCreated(CommentRequestDto commentRequestDto, BoardRequestDto boardRequestDto) {
         return Comment.builder()
                 .content(commentRequestDto.getContent())
-                .recommCount(commentRequestDto.getRecommCount())
-                .reportCount(commentRequestDto.getReportCount())
+                .reportCount(0)
+                .recommCount(0)
                 .board(boardRequestDto.toEntity())
                 .build();
     }
