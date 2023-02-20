@@ -2,6 +2,7 @@ package sejong.foodsns.service.board.crud.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,10 +159,11 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @return 대댓글
      */
     private Reply replyClassCreated(ReplyRequestDto replyRequestDto, CommentRequestDto commentRequestDto) {
+
         return Reply.builder()
                 .content(replyRequestDto.getContent())
-                .recommCount(replyRequestDto.getRecommCount())
-                .reportCount(replyRequestDto.getReportCount())
+                .recommCount(0)
+                .reportCount(0)
                 .comment(commentRequestDto.toEntity())
                 .build();
     }
