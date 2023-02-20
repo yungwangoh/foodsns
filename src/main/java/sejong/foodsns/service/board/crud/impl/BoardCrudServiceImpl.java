@@ -177,7 +177,6 @@ public class BoardCrudServiceImpl implements BoardCrudService {
                 .recommCount(0)
                 .foodTag(null)
                 .member(member)
-                .boardFiles(boardFiles)
                 .build();
     }
 

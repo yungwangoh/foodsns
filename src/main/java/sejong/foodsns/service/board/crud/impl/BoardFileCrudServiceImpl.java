@@ -6,15 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.file.util.BoardFileStorage;
 import sejong.foodsns.dto.board.BoardFileRequestDto;
 import sejong.foodsns.dto.board.BoardFileResponseDto;
-import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.repository.file.BoardFileRepository;
-import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardFileCrudService;
 
 import java.io.IOException;
@@ -35,6 +32,7 @@ public class BoardFileCrudServiceImpl implements BoardFileCrudService {
     private final BoardFileStorage boardFileStorage;
 
     @Override
+    @Transactional
     public List<BoardFile> saveBoardFiles(Map<BoardFileType, List<MultipartFile>> multipartFileListMap) throws IOException {
         List<BoardFile> imageFiles = boardFileStorage.storeFiles(multipartFileListMap.get(BoardFileType.IMAGE), BoardFileType.IMAGE);
         List<BoardFile> generalFiles = boardFileStorage.storeFiles(multipartFileListMap.get(BoardFileType.GENERAL), BoardFileType.GENERAL);
@@ -54,7 +52,7 @@ public class BoardFileCrudServiceImpl implements BoardFileCrudService {
 
     @Override
     public ResponseEntity<Optional<BoardFileResponseDto>> boardFileGet(BoardFileRequestDto boardFileRequestDto) {
-        BoardFile boardFile = boardFileRepository.findById(boardFileRequestDto.getId()).get();
+        BoardFile boardFile = boardFileRepository.findByOriginFilename(boardFileRequestDto.getOriginFilename());
 
         BoardFile build = BoardFile.builder()
                 .originFileName(boardFile.getOriginFilename())
