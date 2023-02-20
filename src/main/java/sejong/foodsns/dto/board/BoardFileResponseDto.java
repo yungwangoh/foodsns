@@ -1,9 +1,6 @@
 package sejong.foodsns.dto.board;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.file.BoardFile;
 
@@ -17,12 +14,13 @@ public class BoardFileResponseDto {
     private Long id;
     private UUID uuid;
     private String fileName;
-    private Board board;
+    private BoardResponseDto boardResponseDto;
 
+    @Builder
     public BoardFileResponseDto(BoardFile boardFile) {
         this.id = boardFile.getId();
         this.uuid = boardFile.getUuid();
         this.fileName = boardFile.getOriginFilename();
-        this.board = boardFile.getBoard();
+        this.boardResponseDto = new BoardResponseDto(boardFile.getBoard());
     }
 }

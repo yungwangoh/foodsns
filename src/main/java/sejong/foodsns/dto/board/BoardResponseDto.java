@@ -46,7 +46,7 @@ public class BoardResponseDto {
         return BoardRequestDto.builder()
                 .title(title)
                 .content(content)
-                .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
+                .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
                 .boardFiles(boardFiles)
                 .build();
     }
