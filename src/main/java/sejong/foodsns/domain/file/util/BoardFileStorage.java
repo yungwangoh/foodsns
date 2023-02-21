@@ -15,7 +15,7 @@ import java.util.UUID;
 @Component
 public class BoardFileStorage {
 
-    @Value("${file.dir}/")
+    @Value("${file.dir: /Users/hayoon/foodsns/src/main/resources/static/post_upload}/")
     private String boardFileDirPath;
 
     // 파일 확장자명 추출
@@ -42,7 +42,9 @@ public class BoardFileStorage {
     }
 
     public BoardFile storeFile(MultipartFile multipartFile, BoardFileType boardFileType) throws IOException {
-        if (multipartFile.isEmpty()) return null;
+        if (multipartFile.isEmpty()) {
+            return null;
+        }
 
         String originalFilename = multipartFile.getOriginalFilename();
         String saveFilename = createStoreFilename(originalFilename);
@@ -63,6 +65,7 @@ public class BoardFileStorage {
                 boardFiles.add(storeFile(multipartFile, boardFileType));
             }
         }
+
         return boardFiles;
     }
 }

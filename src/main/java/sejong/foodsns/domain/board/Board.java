@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import sejong.foodsns.domain.BaseEntity;
 import sejong.foodsns.domain.file.BoardFile;
+import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
 
@@ -67,7 +68,7 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<BoardFile> boardFiles;
+    private List<BoardFile> boardFiles = new ArrayList<>();
 
     @Builder
     public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
@@ -80,7 +81,6 @@ public class Board extends BaseEntity {
         this.foodTag = foodTag; //
         this.member = member; // 게시물작성자
         //this.comments = comments; // 댓글
-        this.boardFiles = new ArrayList<>(); // 첨부파일
     }
 
     // 비즈니스 로직, 연관관계 편의 메서드

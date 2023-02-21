@@ -33,7 +33,7 @@ public class Comment extends BaseEntity {
     private int reportCount;
 
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Reply> reply;
 
