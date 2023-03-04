@@ -1,6 +1,8 @@
 package sejong.foodsns.dto.board.update;
 
 import lombok.*;
+import lombok.extern.java.Log;
+import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -11,6 +13,8 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class BoardUpdateTitleDto {
 
+    private Long id;
+    private MemberRequestDto memberRequestDto;
     private String orderTitle;
     private String updateTitle;
 }

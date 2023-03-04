@@ -117,7 +117,9 @@ public class JwtProvider {
      * @param accessToken
      */
     public void logout(String email, String accessToken) {
-        long expireTime = getTokenExpireTime(accessToken).getTime() - new Date().getTime();
+        String formatToken = getFormatToken(accessToken);
+
+        long expireTime = getTokenExpireTime(formatToken).getTime() - new Date().getTime();
         redisService.setValues(blackList + accessToken, email, Duration.ofMillis(expireTime));
         redisService.deleteValues(email);
     }
@@ -128,9 +130,10 @@ public class JwtProvider {
      * @return 유효함 true, 유효하지 않음 false
      */
     public boolean isValidTokenCheck(String accessToken) {
+        String formatToken = getFormatToken(accessToken);
 
         try {
-            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody();
+            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(formatToken).getBody();
             log.info("[expireTime] = {}", claims.getExpiration());
             log.info("[subject] = {}", claims.getSubject());
             return true;
@@ -141,7 +144,7 @@ public class JwtProvider {
     }
 
     // barer split get jwt token
-    public String getFormatToken(String accessToken) {
+    public static String getFormatToken(String accessToken) {
         return accessToken.split(" ")[1];
     }
 
@@ -151,9 +154,11 @@ public class JwtProvider {
      * @return subject
      */
     public String isValidToken(String accessToken) {
+
+        String formatToken = getFormatToken(accessToken);
         String subject;
         try {
-            subject = Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody().getSubject();
+            subject = Jwts.parser().setSigningKey(key).parseClaimsJws(formatToken).getBody().getSubject();
         } catch (ExpiredJwtException e) { // 토큰 만료 예외.
             return null;
         }

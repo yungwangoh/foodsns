@@ -53,14 +53,13 @@ public class BoardController {
 
     /**
      * 게시물 검색
-     *
-     * @param title
-     * @return 회원 정보, OK
+     * @param id 게시물 id
+     * @return 게시물 정보, 성공 - OK, - 실패 - NOT_FOUND
      */
-    @GetMapping("/board/{title}")
-    public ResponseEntity<BoardResponseDto> boardSearch(@PathVariable String title) {
+    @GetMapping("/board/{id}")
+    public ResponseEntity<BoardResponseDto> boardSearchById(@PathVariable Long id) {
 
-        ResponseEntity<Optional<BoardResponseDto>> board = boardCrudService.findBoard(title);
+        ResponseEntity<Optional<BoardResponseDto>> board = boardCrudService.findBoardById(id);
 
         return new ResponseEntity<>(getBoard(board), board.getStatusCode());
     }
@@ -75,7 +74,9 @@ public class BoardController {
     public ResponseEntity<String> boardUpdateTitle(@RequestBody @Valid BoardUpdateTitleDto boardUpdateTitleDto) {
 
         ResponseEntity<Optional<BoardResponseDto>> titleUpdate =
-                boardCrudService.boardTitleUpdate(boardUpdateTitleDto.getUpdateTitle(), boardUpdateTitleDto.getOrderTitle());
+                boardCrudService.boardTitleUpdate(boardUpdateTitleDto.getId(),
+                        boardUpdateTitleDto.getMemberRequestDto().getUsername(),
+                        boardUpdateTitleDto.getUpdateTitle());
 
         return new ResponseEntity<>(BOARD_TITLE_UPDATE_SUCCESS, titleUpdate.getStatusCode());
     }
@@ -114,7 +115,8 @@ public class BoardController {
     @DeleteMapping("/board")
     public ResponseEntity<String> boardDelete(@RequestBody @Valid BoardRequestDto boardRequestDto) {
 
-        ResponseEntity<Optional<BoardResponseDto>> boardDelete = boardCrudService.boardDelete(boardRequestDto);
+        ResponseEntity<Optional<BoardResponseDto>> boardDelete =
+                boardCrudService.boardDelete(boardRequestDto.getId(), boardRequestDto.getMemberRequestDto().getUsername());
 
         return new ResponseEntity<>(BOARD_DELETE_SUCCESS, boardDelete.getStatusCode());
     }

@@ -21,6 +21,8 @@ import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
+import java.io.IOException;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,23 +44,24 @@ public class CommentControllerTest {
     private CommentRequestDto commentRequestDto;
 
     @BeforeEach
-    public void initComment() {
+    public void initComment() throws IOException {
         Member postMember = new Member("윤광오", "swager253@naver.com", "qwer1234@A", MemberType.NORMAL);
         Member savePostMember = memberRepository.save(postMember);
+
         Member commentMember = new Member("하윤", "gkdbssla97@naver.com", "asdf1997@BA", MemberType.NORMAL);
         Member saveCommentMember = memberRepository.save(commentMember);
+
         boardRequestDto = BoardRequestDto.builder()
                 .title("자취 레시피 공유합니다.")
-                .memberRequestDto(new MemberRequestDto(savePostMember.getId(), savePostMember.getUsername(), savePostMember.getEmail(), savePostMember.getPassword()))
-                .check(0L)
-                .recommCount(0)
+                .memberRequestDto(new MemberRequestDto(savePostMember.getUsername(), savePostMember.getEmail(), savePostMember.getPassword()))
                 .content("김치찌개 레시피 1....")
                 .build();
+
         boardCrudService.boardCreate(boardRequestDto);
 
         commentRequestDto = CommentRequestDto.builder()
                 .content("돈까스 맛있네요!")
-                .memberRequestDto(new MemberRequestDto(saveCommentMember.getId(), saveCommentMember.getUsername(), saveCommentMember.getEmail(), saveCommentMember.getPassword()))
+                .memberRequestDto(new MemberRequestDto(saveCommentMember.getUsername(), saveCommentMember.getEmail(), saveCommentMember.getPassword()))
                 .boardRequestDto(boardRequestDto)
                 .build();
     }

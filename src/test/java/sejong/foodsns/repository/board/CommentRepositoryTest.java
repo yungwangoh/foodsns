@@ -64,7 +64,7 @@ class CommentRepositoryTest {
         @Test
         void registerComment() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, null, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
             assertThat(saveComment).isEqualTo(comment);
@@ -78,7 +78,7 @@ class CommentRepositoryTest {
         @Test
         void findCommentByContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, null, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
             findBoard.setComment(comment);
             commentRepository.save(comment);
 
@@ -109,7 +109,7 @@ class CommentRepositoryTest {
         @Test
         void updateCommentContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, null, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
 
@@ -126,7 +126,7 @@ class CommentRepositoryTest {
         @Test
         void deleteCommentByContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, null, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
 
@@ -152,9 +152,9 @@ class CommentRepositoryTest {
 
         Board findBoardByTitle = boardRepository.findBoardByTitle(title.get(0)).get();
 
-        Comment comment1 = new Comment("1빠", 0, 0, null, findBoardByTitle);
-        Comment comment2 = new Comment("2빠", 0, 0, null, findBoardByTitle);
-        Comment comment3 = new Comment("3빠", 0, 0, null, findBoardByTitle);
+        Comment comment1 = new Comment("1빠", 0, 0, findBoardByTitle);
+        Comment comment2 = new Comment("2빠", 0, 0, findBoardByTitle);
+        Comment comment3 = new Comment("3빠", 0, 0, findBoardByTitle);
 
         comments.add(comment1);
         comments.add(comment2);

@@ -46,6 +46,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto) throws IOException {
+
         duplicatedCheckBoardTitle(boardRequestDto);
         List<BoardFile> boardFiles = boardFileCrudService.saveBoardFiles(boardRequestDto.getBoardFiles());
         Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getMemberRequestDto().getUsername()).get();
@@ -57,48 +58,59 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
     /**
      * 게시물 제목 수정 -> 성공 ?, 실패 ?
+     * @param id
+     * @param username
      * @param updateTitle
-     * @param orderTitle
      * @return 게시물 DTO, HTTP OK
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String updateTitle, String orderTitle) {
-        Optional<Board> board = getBoardReturnByOptionalBoardTitle(orderTitle);
+    public ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(Long id, String username, String updateTitle) {
+        Optional<Board> board = getBoardReturnByOptionalBoardId(id);
 
-        Board updateBoard = getBoard(board).boardTitleUpdate(updateTitle);
+        if(!getBoard(board).getMember().getUsername().equals(username)) {
+            throw new IllegalArgumentException("수정 하려는 게시물 작성자가 본인과 다릅니다.");
+        } else {
+            Board updateBoard = getBoard(board).boardTitleUpdate(updateTitle);
 
-        Board save = boardRepository.save(updateBoard);
+            Board save = boardRepository.save(updateBoard);
 
-        return new ResponseEntity<>(of(new BoardResponseDto(save)), OK);
+            return new ResponseEntity<>(of(new BoardResponseDto(save)), OK);
+        }
     }
 
     /**
      * 게시물 삭제 -> 성공 ?, 실패 ?
-     * @param boardRequestDto
+     * @param id
+     * @param username
      * @return HTTP OK
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto) {
+    public ResponseEntity<Optional<BoardResponseDto>> boardDelete(Long id, String username) {
 
-        Optional<Board> board = getBoardReturnByOptionalBoardTitle(boardRequestDto.getTitle());
+        Optional<Board> board = getBoardReturnByOptionalBoardId(id);
 
-        //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
-        boardRepository.delete(getBoard(board));
+        // 게시물 작성자와 본인이 다르면 삭제 불가능.
+        if(!getBoard(board).getMember().getUsername().equals(username)) {
+            throw new IllegalArgumentException("삭제 하려는 게시물 작성자가 본인과 다릅니다.");
+        }
+        else { // 게시물 작성자와 본인이 동일하면 삭제.
+            //Token으로 할 것이므로 Jpa delete 작동하는지만 임시 확인.
+            boardRepository.delete(getBoard(board));
 
-        return new ResponseEntity<>(NO_CONTENT);
+            return new ResponseEntity<>(NO_CONTENT);
+        }
     }
 
     /**
-     * 게시물 찾기 -> 성공 ?, 실패 ?
-     * @param title
-     * @return 게시물, HTTP OK
+     * id를 통한 게시물 조회
+     * @param id
+     * @return 게시물, OK
      */
     @Override
-    public ResponseEntity<Optional<BoardResponseDto>> findBoard(String title) {
-
-        Optional<Board> board = getBoardReturnByOptionalBoardTitle(title);
+    public ResponseEntity<Optional<BoardResponseDto>> findBoardById(Long id) {
+        Optional<Board> board = getBoardOptionalById(id);
 
         return new ResponseEntity<>(of(new BoardResponseDto(getBoard(board))), OK);
     }
@@ -185,8 +197,18 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      * @param title
      * @return 게시물 존재 X -> Exception
      */
-    private Optional<Board> getBoardReturnByOptionalBoardTitle(String title) {
-        return of(boardRepository.findBoardByTitle(title)
+    private Optional<Board> getBoardReturnByOptionalBoardId(Long id) {
+        return of(boardRepository.findById(id)
                 .orElseThrow(() -> new NoSearchBoardException("게시물이 존재하지 않습니다.")));
+    }
+
+    /**
+     * 게시물 반환하는 로직 Optional
+     * @param id 게시물 id
+     * @return 게시물 존재 X -> Exception
+     */
+    private Optional<Board> getBoardOptionalById(Long id) {
+        return of(boardRepository.findById(id))
+                .orElseThrow(() -> new NoSearchBoardException("게시물이 존재하지 않습니다,"));
     }
 }

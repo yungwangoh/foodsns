@@ -14,6 +14,7 @@ import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시물 등록")
         @Order(0)
-        void boardCreate() {
+        void boardCreate() throws IOException {
 
             //given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
@@ -70,14 +71,14 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시물 찾기")
         @Order(1)
-        void findBoard() {
+        void findBoard() throws IOException {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            boardCrudService.boardCreate(boardRequestDto);
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
 
             // when
-            ResponseEntity<Optional<BoardResponseDto>> findBoard = boardCrudService.findBoard(boardRequestDto.getTitle());
+            ResponseEntity<Optional<BoardResponseDto>> findBoard = boardCrudService.findBoardById(getBody(boardCreate).getId());
 
             // then
             assertThat(findBoard.getStatusCode()).isEqualTo(OK);
@@ -87,7 +88,7 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시판 목록")
         @Order(2)
-        void boardList() {
+        void boardList() throws IOException{
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             List<ResponseEntity<Optional<BoardResponseDto>>> list = new ArrayList<>();
@@ -109,15 +110,15 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시판 제목 수정")
         @Order(3)
-        void boardTitleUpdate() {
+        void boardTitleUpdate() throws IOException{
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             String updateTitle = "검은콩나물무침";
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            boardCrudService.boardCreate(boardRequestDto);
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
 
             ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate =
-                    boardCrudService.boardTitleUpdate(boardRequestDto.getTitle(), updateTitle);
+                    boardCrudService.boardTitleUpdate(getBody(boardCreate).getId(), findMember.getUsername(), updateTitle);
 
             Board board = boardRepository.findBoardByTitle(getBody(boardTitleUpdate).getTitle()).get();
             // then
@@ -128,20 +129,20 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시물 삭제")
         @Order(4)
-        void boardDelete() {
+        void boardDelete() throws IOException {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            boardCrudService.boardCreate(boardRequestDto);
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
 
             // when
-            boardCrudService.boardDelete(boardRequestDto);
+            boardCrudService.boardDelete(getBody(boardCreate).getId(), findMember.getUsername());
 
             // then
             // 찾으려는 게시물이 없어야한다.
             assertThatThrownBy(() -> {
                 ResponseEntity<Optional<BoardResponseDto>> board =
-                        boardCrudService.findBoard(boardRequestDto.getTitle());
+                        boardCrudService.findBoardById(getBody(boardCreate).getId());
 
                 assertThat(board.getStatusCode()).isEqualTo(NO_CONTENT);
             }).isInstanceOf(IllegalArgumentException.class);
@@ -149,7 +150,7 @@ public class BoardCrudServiceImplTest {
 
         @Test
         @DisplayName("검색 옵션을 통하여 게시물 조회 테스트")
-        void searchOptionBoardSearchTest() {
+        void searchOptionBoardSearchTest() throws IOException {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
@@ -181,7 +182,7 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("게시물 제목 중복 -> 게시물 등록 실패")
         @Order(0)
-        void boardDuplicatedValidationFail() {
+        void boardDuplicatedValidationFail() throws IOException {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
@@ -198,7 +199,7 @@ public class BoardCrudServiceImplTest {
         @Test
         @DisplayName("찾으려는 게시물이 존재하지 않을때 예외")
         @Order(1)
-        void boardFindException() {
+        void boardFindException() throws IOException {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
@@ -207,7 +208,7 @@ public class BoardCrudServiceImplTest {
             boardCrudService.boardCreate(boardRequestDto);
 
             // then
-            assertThatThrownBy(() -> boardCrudService.findBoard(getBoardRequestDto(2, findMember).getTitle()))
+            assertThatThrownBy(() -> boardCrudService.findBoardById(0L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -222,17 +223,13 @@ public class BoardCrudServiceImplTest {
             return BoardRequestDto.builder()
                     .title("레시피1")
                     .content("콩나물무침")
-                    .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
-                    .check(13L)
-                    .recommCount(13)
+                    .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
                     .build();
         }
         return BoardRequestDto.builder()
                 .title("레시피2")
                 .content("시금치무침")
-                .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
-                .check(13L)
-                .recommCount(13)
+                .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
                 .build();
     }
 

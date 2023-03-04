@@ -53,7 +53,7 @@ public class BoardQueryDslRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("회원의 어떤 게시물을 작성했는지 확인하는 테스트")
+    @DisplayName("회원이 어떤 게시물을 작성했는지 확인하는 테스트")
     void memberBoardCreateCheck() {
         // given
         String email = "swager253@fdsfds.com";

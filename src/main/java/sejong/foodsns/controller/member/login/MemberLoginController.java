@@ -56,7 +56,9 @@ public class MemberLoginController {
     @GetMapping("/member/logout")
     public ResponseEntity<String> logout(@RequestParam("email") String email, HttpServletRequest request) {
 
-        String accessToken = request.getHeader("X-AUTH-TOKEN");
+        String accessToken = request.getHeader("Authorization");
+
+        log.info("access Token : {} ", accessToken);
 
         ResponseEntity<String> jwtLogout = memberLoginService.jwtLogout(email, accessToken);
 

@@ -236,21 +236,21 @@ public class CommentCrudServiceImplTest {
     }
 
     private CommentRequestDto getCommentRequestDto(int idx, Member member, Board board) {
+
+        MemberRequestDto memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
+        BoardRequestDto boardRequestDto = new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(), memberRequestDto, null);
+
         if (idx == 1) {
             return CommentRequestDto.builder()
                     .content("맛있네요")
-                    .boardRequestDto(new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(),
-                            new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()), board.getCheck(), board.getRecommCount()))
-                    .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
-                    .recommCount(13)
+                    .boardRequestDto(boardRequestDto)
+                    .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
                     .build();
         }
         return CommentRequestDto.builder()
                 .content("맛없네요")
-                .boardRequestDto(new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(),
-                        new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()), board.getCheck(), board.getRecommCount()))
-                .memberRequestDto(new MemberRequestDto(member.getId(), member.getUsername(), member.getEmail(), member.getPassword()))
-                .recommCount(13)
+                .boardRequestDto(boardRequestDto)
+                .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
                 .build();
     }
 

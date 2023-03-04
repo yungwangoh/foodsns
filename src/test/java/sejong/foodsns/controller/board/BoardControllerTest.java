@@ -57,7 +57,7 @@ public class BoardControllerTest {
         boardRequestDto = BoardRequestDto.builder()
                 .title("test1")
                 .content("hi")
-                .memberRequestDto(new MemberRequestDto(saveMember.getId(), saveMember.getUsername(),
+                .memberRequestDto(new MemberRequestDto(saveMember.getUsername(),
                         saveMember.getEmail(), saveMember.getPassword()))
                 .build();
     }

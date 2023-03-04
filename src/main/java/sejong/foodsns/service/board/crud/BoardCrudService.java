@@ -15,11 +15,11 @@ public interface BoardCrudService {
 
     ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto) throws IOException;
 
-    ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(String updateTitle, String orderTitle);
+    ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate(Long id, String username, String updateTitle);
 
-    ResponseEntity<Optional<BoardResponseDto>> boardDelete(BoardRequestDto boardRequestDto);
+    ResponseEntity<Optional<BoardResponseDto>> boardDelete(Long id, String username);
 
-    ResponseEntity<Optional<BoardResponseDto>> findBoard(String title);
+    ResponseEntity<Optional<BoardResponseDto>> findBoardById(Long id);
 
     ResponseEntity<List<BoardResponseDto>> search(SearchOption searchOption, String content);
 

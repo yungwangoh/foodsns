@@ -25,6 +25,8 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 @AllArgsConstructor
 public class BoardRequestDto {
 
+    @Schema(description = "게시물 id")
+    private Long id;
     @Schema(description = "게시물 제목", example = "김치찌개 레시피")
     private String title;
     @Schema(description = "게시물 내용", example = "김치찌개 레시피 메뉴얼")
@@ -35,7 +37,8 @@ public class BoardRequestDto {
     private Map<BoardFileType, List<MultipartFile>> boardFiles;
 
     @Builder
-    public BoardRequestDto(String title, String content, Member member, @Nullable Map<BoardFileType, List<MultipartFile>> boardFiles) {
+    public BoardRequestDto(Long id, String title, String content, Member member, @Nullable Map<BoardFileType, List<MultipartFile>> boardFiles) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
