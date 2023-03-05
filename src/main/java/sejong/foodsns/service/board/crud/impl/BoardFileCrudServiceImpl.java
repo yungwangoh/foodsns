@@ -34,10 +34,8 @@ public class BoardFileCrudServiceImpl implements BoardFileCrudService {
 
     @Override
     @Transactional
-    public List<BoardFile> saveBoardFiles(List<MultipartFile> multipartFiles) throws IOException {
-        List<BoardFile> boardFiles = boardFileStorage.storeFiles(multipartFiles);
+    public List<BoardFile> saveBoardFiles(List<MultipartFile> multipartFiles, Board board) throws IOException {
 
-
-        return boardFiles;
+        return boardFileStorage.storeFiles(multipartFiles, board);
     }
 }

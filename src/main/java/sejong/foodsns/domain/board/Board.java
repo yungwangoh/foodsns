@@ -92,6 +92,10 @@ public class Board extends BaseEntity {
         member.getBoards().add(this);
     }
 
+    public void setBoardFiles(List<BoardFile> boardFiles) {
+        this.boardFiles = boardFiles;
+    }
+
     public void setComment(Comment comment) {
         this.comments.add(comment);
         if(comment.getBoard() != this) {

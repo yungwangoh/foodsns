@@ -15,6 +15,7 @@ import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
+import sejong.foodsns.repository.file.BoardFileRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.querydsl.board.BoardQueryDslRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
@@ -50,11 +51,16 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
         duplicatedCheckBoardTitle(boardRequestDto);
 
-        List<BoardFile> boardFiles = boardFileCrudService.saveBoardFiles(multipartFiles);
         Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getMemberRequestDto().getUsername()).get();
-        Board board = boardClassCreated(boardRequestDto, findMember, boardFiles);
+        Board board = boardClassCreated(boardRequestDto, findMember);
+
+        // 게시물 파일 추가
+        List<BoardFile> boardFiles = boardFileCrudService.saveBoardFiles(multipartFiles, board);
+
+        if(boardFiles.size() != 0) board.setBoardFiles(boardFiles);
 
         Board save = boardRepository.save(board);
+
         return new ResponseEntity<>(of(new BoardResponseDto(save)), CREATED);
     }
 
@@ -181,12 +187,11 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      * @param boardRequestDto
      * @return 게시물
      */
-    private Board boardClassCreated(BoardRequestDto boardRequestDto, Member member,
-                                    List<BoardFile> boardFiles) {
+    private Board boardClassCreated(BoardRequestDto boardRequestDto, Member member) {
+
         return Board.builder()
                 .title(boardRequestDto.getTitle())
                 .content(boardRequestDto.getContent())
-                .memberRank(boardRequestDto.toEntity().getMemberRank())
                 .check(0L)
                 .recommCount(0)
                 .foodTag(null)
@@ -196,7 +201,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
     /**
      * 게시물 반환하는 로직 Optional
-     * @param title
+     * @param id
      * @return 게시물 존재 X -> Exception
      */
     private Optional<Board> getBoardReturnByOptionalBoardId(Long id) {

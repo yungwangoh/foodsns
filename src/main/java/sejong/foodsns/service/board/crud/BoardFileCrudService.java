@@ -15,5 +15,5 @@ import java.util.Optional;
 
 public interface BoardFileCrudService {
 
-    List<BoardFile> saveBoardFiles(List<MultipartFile> multipartFiles) throws IOException;
+    List<BoardFile> saveBoardFiles(List<MultipartFile> multipartFiles, Board board) throws IOException;
 }

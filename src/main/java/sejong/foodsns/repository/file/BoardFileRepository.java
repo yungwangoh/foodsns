@@ -5,7 +5,5 @@ import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.file.BoardFile;
 
 @Repository
-public interface BoardFileRepository extends JpaRepository<BoardFile, Long> {
-
-    BoardFile findByOriginFilename(String originFilename);
+public interface BoardFileRepository extends JpaRepository<Long, BoardFile> {
 }

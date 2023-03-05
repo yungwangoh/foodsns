@@ -3,6 +3,7 @@ package sejong.foodsns.domain.file.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.file.BoardFileType;
 
@@ -51,7 +52,7 @@ public class BoardFileStorage {
         return boardFileDirPath + storeFilename;
     }
 
-    public BoardFile storeFile(MultipartFile multipartFile) throws IOException {
+    public BoardFile storeFile(MultipartFile multipartFile, Board board) throws IOException {
         if (multipartFile.isEmpty()) {
             return null;
         }
@@ -63,15 +64,16 @@ public class BoardFileStorage {
         return BoardFile.builder()
                 .originFileName(originalFilename)
                 .storePath(saveFilename)
+                .board(board)
                 .build();
 
     }
 
-    public List<BoardFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
+    public List<BoardFile> storeFiles(List<MultipartFile> multipartFiles, Board board) throws IOException {
         List<BoardFile> boardFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
-                boardFiles.add(storeFile(multipartFile));
+                boardFiles.add(storeFile(multipartFile, board));
             }
         }
 
