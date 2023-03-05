@@ -22,29 +22,22 @@ public class BoardFile extends BaseEntity {
     @GeneratedValue
     @Column(name = "file_id")
     private Long id;
-
-    @Column(name = "uuid")
-    private UUID uuid;
-
     @Column(name = "file_name")
     private String originFilename;
-
+    @Column(name = "store_name")
     private String storeFileName;
-
-    @Enumerated(EnumType.STRING)
-    private BoardFileType boardFileType;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder
-    public BoardFile(UUID uuid, String originFileName, String storePath,
-                     Board board, BoardFileType boardFileType) {
-        this.uuid = uuid;
+    public BoardFile(String originFileName, String storePath, Board board) {
         this.originFilename = originFileName;
         this.storeFileName = storePath;
         this.board = board;
-        this.boardFileType = boardFileType;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

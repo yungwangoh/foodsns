@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.file.util.BoardFileStorage;
@@ -45,8 +46,10 @@ public class BoardController {
      * @return 게시물, CREATE
      */
     @PostMapping("/board")
-    public ResponseEntity<BoardResponseDto> boardCreate(@RequestBody @Valid BoardRequestDto boardRequestDto) throws IOException {
-        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
+    public ResponseEntity<BoardResponseDto> boardCreate(@RequestPart("board") @Valid BoardRequestDto boardRequestDto,
+                                                        @RequestPart(value = "image-file", required = false) List<MultipartFile> multipartFiles) throws IOException {
+
+        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
         return new ResponseEntity<>(getBoard(boardCreate), boardCreate.getStatusCode());
     }
@@ -167,24 +170,6 @@ public class BoardController {
      */
     private Optional<BoardResponseDto> getBody(ResponseEntity<Optional<BoardResponseDto>> boardCreate) {
         return boardCreate.getBody();
-    }
-
-    @ResponseBody
-    @GetMapping("/images/{filename}")
-    public Resource processImg(@PathVariable String filename) throws MalformedURLException {
-        return new UrlResource("file: " + boardFileStorage.createPath(filename, BoardFileType.IMAGE));
-    }
-
-    @GetMapping("/boardFiles/{filename}")
-    public ResponseEntity<Resource> processAttaches(@PathVariable String filename, @RequestParam String originName) throws MalformedURLException {
-        UrlResource urlResource = new UrlResource("file:" + boardFileStorage.createPath(filename, BoardFileType.GENERAL));
-
-        String encodedUploadFileName = UriUtils.encode(originName, StandardCharsets.UTF_8);
-        String contentDisposition = "attachment; filename=\"" + encodedUploadFileName + "\"";
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                .body(urlResource);
     }
 }
 

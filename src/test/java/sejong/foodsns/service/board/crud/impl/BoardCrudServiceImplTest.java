@@ -4,8 +4,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
+import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
@@ -15,9 +17,7 @@ import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,11 +50,14 @@ public class BoardCrudServiceImplTest {
 
             //given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
+
             Board board = new Board("레시피1", "콩나물무침", findMember.getMemberRank(), 13L, 13, null,
                     findMember);
+
             boardResponseDto = BoardResponseDto.builder()
                     .board(board)
                     .build();
+
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
 
             //when
@@ -219,11 +222,13 @@ public class BoardCrudServiceImplTest {
     }
 
     private BoardRequestDto getBoardRequestDto(int idx, Member member) {
+
         if(idx == 1) {
             return BoardRequestDto.builder()
                     .title("레시피1")
                     .content("콩나물무침")
                     .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
+                    .boardFiles()
                     .build();
         }
         return BoardRequestDto.builder()

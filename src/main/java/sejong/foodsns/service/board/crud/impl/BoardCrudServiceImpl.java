@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.file.BoardFile;
@@ -45,10 +46,11 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto) throws IOException {
+    public ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto, List<MultipartFile> multipartFiles) throws IOException {
 
         duplicatedCheckBoardTitle(boardRequestDto);
-        List<BoardFile> boardFiles = boardFileCrudService.saveBoardFiles(boardRequestDto.getBoardFiles());
+
+        List<BoardFile> boardFiles = boardFileCrudService.saveBoardFiles(multipartFiles);
         Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getMemberRequestDto().getUsername()).get();
         Board board = boardClassCreated(boardRequestDto, findMember, boardFiles);
 

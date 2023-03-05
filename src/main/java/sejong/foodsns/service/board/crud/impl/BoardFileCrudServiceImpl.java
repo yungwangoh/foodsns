@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.file.util.BoardFileStorage;
@@ -33,34 +34,10 @@ public class BoardFileCrudServiceImpl implements BoardFileCrudService {
 
     @Override
     @Transactional
-    public List<BoardFile> saveBoardFiles(Map<BoardFileType, List<MultipartFile>> multipartFileListMap) throws IOException {
-        List<BoardFile> imageFiles = boardFileStorage.storeFiles(multipartFileListMap.get(BoardFileType.IMAGE), BoardFileType.IMAGE);
-        List<BoardFile> generalFiles = boardFileStorage.storeFiles(multipartFileListMap.get(BoardFileType.GENERAL), BoardFileType.GENERAL);
+    public List<BoardFile> saveBoardFiles(List<MultipartFile> multipartFiles) throws IOException {
+        List<BoardFile> boardFiles = boardFileStorage.storeFiles(multipartFiles);
 
-        return Stream.of(imageFiles, generalFiles)
-                .flatMap(Collection::stream).toList();
+
+        return boardFiles;
     }
-
-    @Override
-    public Map<BoardFileType, List<BoardFile>> findBoardFiles() {
-        List<BoardFile> boardFiles = boardFileRepository.findAll();
-        Map<BoardFileType, List<BoardFile>> result = boardFiles.stream()
-                .collect(Collectors.groupingBy(BoardFile::getBoardFileType));
-
-        return result;
-    }
-
-    @Override
-    public ResponseEntity<Optional<BoardFileResponseDto>> boardFileGet(BoardFileRequestDto boardFileRequestDto) {
-        BoardFile boardFile = boardFileRepository.findByOriginFilename(boardFileRequestDto.getOriginFilename());
-
-        BoardFile build = BoardFile.builder()
-                .originFileName(boardFile.getOriginFilename())
-                .uuid(boardFile.getUuid())
-                .board(boardFile.getBoard())
-                .build();
-
-        return new ResponseEntity<>(of(new BoardFileResponseDto(build)), CREATED);
-    }
-
 }

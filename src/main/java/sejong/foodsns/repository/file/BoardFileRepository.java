@@ -7,5 +7,5 @@ import sejong.foodsns.domain.file.BoardFile;
 @Repository
 public interface BoardFileRepository extends JpaRepository<BoardFile, Long> {
 
-    public BoardFile findByOriginFilename(String originFilename);
+    BoardFile findByOriginFilename(String originFilename);
 }

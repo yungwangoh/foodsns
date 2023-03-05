@@ -33,26 +33,12 @@ public class BoardRequestDto {
     private String content;
     @Schema(description = "게시물 작성자", example = "하윤")
     private MemberRequestDto memberRequestDto;
-    @Schema(description = "게시물 첨부파일", example = "완성된 김치찌개.jpg")
-    private Map<BoardFileType, List<MultipartFile>> boardFiles;
 
     @Builder
-    public BoardRequestDto(Long id, String title, String content, Member member, @Nullable Map<BoardFileType, List<MultipartFile>> boardFiles) {
+    public BoardRequestDto(Long id, String title, String content, Member member) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
-        this.boardFiles = boardFiles;
-    }
-
-    public Board toEntity() {
-        return Board.builder()
-                .title(title)
-                .content(content)
-                .memberRank(memberRequestDto.toEntity().getMemberRank())
-                .check(0L)
-                .recommCount(0)
-                .member(memberRequestDto.toEntity())
-                .build();
     }
 }
