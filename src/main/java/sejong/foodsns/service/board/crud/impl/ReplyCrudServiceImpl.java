@@ -3,6 +3,7 @@ package sejong.foodsns.service.board.crud.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +52,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(ReplyRequestDto replyRequestDto) {
-        Reply reply = replyClassCreated(replyRequestDto, replyRequestDto.getCommentRequestDto());
+
+        Reply reply = replyClassCreated(replyRequestDto.getContent(), replyRequestDto.getCommentRequestDto().getId());
         Reply saveReply = replyRepository.save(reply);
 
         return new ResponseEntity<>(of(new ReplyResponseDto(saveReply)), CREATED);
@@ -71,9 +73,7 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
         Reply updateReply = getReply(findReply).replyContentUpdate(updateContent);
 
-        Reply saveReply = replyRepository.save(updateReply);
-
-        return new ResponseEntity<>(of(new ReplyResponseDto(saveReply)), OK);
+        return new ResponseEntity<>(of(new ReplyResponseDto(updateReply)), OK);
     }
 
     /**
@@ -93,7 +93,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
     /**
      * 대댓글 찾기 -> 성공 200, 실패 404
-     * @param title,content
+     * @param title 제목
+     * @param content 내용
      * @return 게시물, HTTP OK
      */
     @Override
@@ -101,6 +102,18 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
         Optional<Reply> reply = replyRepository.findByBoardTitleAndContainingContent(title, content);
         return new ResponseEntity<>(of(new ReplyResponseDto(getReply(reply))), OK);
 
+    }
+
+    /**
+     * id를 통해서 대댓글 찾기
+     * @param id 대댓글 id
+     * @return 대댓글, HTTP OK
+     */
+    @Override
+    public ResponseEntity<Optional<ReplyResponseDto>> findReplyById(Long id) {
+        Optional<Reply> reply = replyRepository.findReplyById(id);
+
+        return ResponseEntity.status(OK).body(of(new ReplyResponseDto(getReply(reply))));
     }
 
     /**
@@ -158,13 +171,15 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @param replyRequestDto
      * @return 대댓글
      */
-    private Reply replyClassCreated(ReplyRequestDto replyRequestDto, CommentRequestDto commentRequestDto) {
+    private Reply replyClassCreated(String content, Long id) {
+
+        Optional<Comment> comment = commentRepository.findById(id);
 
         return Reply.builder()
-                .content(replyRequestDto.getContent())
+                .content(content)
                 .recommCount(0)
                 .reportCount(0)
-                .comment(commentRequestDto.toEntity())
+                .comment(comment.get())
                 .build();
     }
 

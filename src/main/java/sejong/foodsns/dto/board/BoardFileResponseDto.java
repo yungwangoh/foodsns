@@ -12,14 +12,12 @@ import java.util.UUID;
 public class BoardFileResponseDto {
 
     private Long id;
-    private UUID uuid;
     private String fileName;
     private BoardResponseDto boardResponseDto;
 
     @Builder
     public BoardFileResponseDto(BoardFile boardFile) {
         this.id = boardFile.getId();
-        this.uuid = boardFile.getUuid();
         this.fileName = boardFile.getOriginFilename();
         this.boardResponseDto = new BoardResponseDto(boardFile.getBoard());
     }

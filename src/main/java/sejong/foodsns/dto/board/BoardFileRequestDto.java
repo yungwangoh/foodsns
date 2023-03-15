@@ -13,18 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class BoardFileRequestDto {
+
     @NotBlank
     private String originFilename;
-    private UUID uuid;
     private String filePath;
     private Board board;
-
-    public BoardFile toEntity() {
-        return BoardFile.builder()
-                .originFileName(originFilename)
-                .uuid(uuid)
-                .board(board)
-                .build();
-    }
-
 }

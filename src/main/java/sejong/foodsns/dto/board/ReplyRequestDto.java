@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReplyRequestDto {
 
+    private Long id;
     @Schema(description = "대댓글 내용", example = "댓글 믿고 레시피 감사인사 남겨요.")
     private String content;
     @Schema(description = "대댓글 달린 댓글", example = "이거 레시피 좋네요.")
@@ -27,14 +28,5 @@ public class ReplyRequestDto {
         this.content = content;
         this.commentRequestDto = commentRequestDto;
         this.boardRequestDto = boardRequestDto;
-    }
-
-    public Reply toEntity() {
-        return Reply.builder()
-                .content(content)
-                .comment(commentRequestDto.toEntity())
-                .reportCount(0)
-                .recommCount(0)
-                .build();
     }
 }

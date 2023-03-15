@@ -39,7 +39,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto) {
-        Comment comment = commentClassCreated(commentRequestDto, commentRequestDto.getBoardRequestDto());
+        Comment comment = commentClassCreated(commentRequestDto.getContent(), commentRequestDto.getBoardRequestDto().getId());
 
         Comment saveComment = commentRepository.save(comment);
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
@@ -156,12 +156,15 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      * @param commentRequestDto
      * @return 댓글
      */
-    private Comment commentClassCreated(CommentRequestDto commentRequestDto, BoardRequestDto boardRequestDto) {
+    private Comment commentClassCreated(String content, Long id) {
+
+        Optional<Board> board = boardRepository.findById(id);
+
         return Comment.builder()
-                .content(commentRequestDto.getContent())
+                .content(content)
                 .reportCount(0)
                 .recommCount(0)
-                .board(boardRequestDto.toEntity())
+                .board(board.get())
                 .build();
     }
 

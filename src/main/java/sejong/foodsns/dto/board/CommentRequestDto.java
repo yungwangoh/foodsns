@@ -20,26 +20,11 @@ import java.util.Map;
 @AllArgsConstructor
 public class CommentRequestDto {
 
+    private Long id;
     @Schema(description = "댓글 내용", example = "레시피 후기 Good.")
     private String content;
     @Schema(description = "댓글 작성자", example = "Mr.광")
     private MemberRequestDto memberRequestDto;
     @Schema(description = "댓글 달린 게시물", example = "김치찌개 레시피 게시물")
     private BoardRequestDto boardRequestDto;
-
-    @Builder
-    public CommentRequestDto(String content, BoardRequestDto boardRequestDto, MemberRequestDto memberRequestDto) {
-        this.content = content;
-        this.memberRequestDto = memberRequestDto;
-        this.boardRequestDto = boardRequestDto;
-    }
-
-    public Comment toEntity() {
-        return Comment.builder()
-                .content(content)
-                .board(boardRequestDto.toEntity())
-                .reportCount(0)
-                .recommCount(0)
-                .build();
-    }
 }
