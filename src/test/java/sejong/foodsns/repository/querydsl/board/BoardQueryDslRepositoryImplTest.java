@@ -39,11 +39,11 @@ public class BoardQueryDslRepositoryImplTest {
         jpaQueryFactory = new JPAQueryFactory(em);
 
         Member member = new Member("윤광오", "swager253@fdsfds.com", "qwer1234@!", NORMAL);
-        Board board = new Board("안녕", "안녕하세요", member.getMemberRank(),
+        Board board = new Board("안녕", "안녕하세요",
                 20L, 20, null, member);
-        Board board1 = new Board("안녕하세욧!", "안녕하세요", member.getMemberRank(),
+        Board board1 = new Board("안녕하세욧!", "안녕하세요",
                 20L, 20, null, member);
-        Board board2 = new Board("안녕하시렵니까", "안녕하세요", member.getMemberRank(),
+        Board board2 = new Board("안녕하시렵니까", "안녕하세요",
                 20L, 20, null, member);
 
         memberRepository.save(member);

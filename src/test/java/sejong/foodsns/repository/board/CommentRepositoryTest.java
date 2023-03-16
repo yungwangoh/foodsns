@@ -53,7 +53,7 @@ class CommentRepositoryTest {
         Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
         memberRepository.save(member);
 
-        Board board = new Board(title.get(0), content.get(0), memberRank, 13L, 13, null, member);
+        Board board = new Board(title.get(0), content.get(0), 13L, 13, null, member);
         boardRepository.save(board);
     }
 

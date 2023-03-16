@@ -54,7 +54,7 @@ class BoardRepositoryTest {
         void registerBoard() {
 
             FoodTag foodTag = new FoodTag("gfd", "fds");
-            Board board = new Board(title.get(0), content.get(0), memberRank, 13L, 13, null,
+            Board board = new Board(title.get(0), content.get(0),13L, 13, null,
                     new Member(userName.get(0), email.get(0), password.get(0), memberType));
 
             Board saveData = boardRepository.save(board);
@@ -67,8 +67,7 @@ class BoardRepositoryTest {
     @Test
     void advancedRankByRecommending() {
         Member member = new Member(userName.get(1), email.get(1), password.get(1), memberType);
-        Board board = new Board(title.get(0), content.get(0), member.getMemberRank(),
-                13L, 0, null, member);
+        Board board = new Board(title.get(0), content.get(0), 13L, 0, null, member);
 
         //멤버 추천수 총 12개 일때, BRONZE.
         for (int i = 1; i <= 12; i++)
@@ -92,7 +91,7 @@ class BoardRepositoryTest {
             // given
             Long id = 1L;
             Member member = new Member(userName.get(1), email.get(1), password.get(1), memberType);
-            Board board = new Board(title.get(0), content.get(0), member.getMemberRank(), 13L, 0, null, member);
+            Board board = new Board(title.get(0), content.get(0), 13L, 0, null, member);
 
             memberRepository.save(member);
             Board boardSave = boardRepository.save(board);
@@ -102,22 +101,6 @@ class BoardRepositoryTest {
 
             // then
             assertThat(findBoard.getTitle()).isEqualTo(board.getTitle());
-        }
-
-        @Test
-        @DisplayName("등록된 게시물 \"랭크\"별 검색")
-        void findRegisterBoardsByMemberRank() {
-            // given
-            Long id = 1L;
-            initBoardRegister();
-
-            // when
-            List<Board> boardByMemberRank1 = getBoardByMemberRank(MemberRank.NORMAL);
-            List<Board> boardByMemberRank2 = getBoardByMemberRank(MemberRank.DIAMOND);
-
-            // then
-            assertThat(boardByMemberRank1.size()).isEqualTo(1);
-            assertThat(boardByMemberRank2.size()).isEqualTo(2);
         }
 
         /**
@@ -130,11 +113,11 @@ class BoardRepositoryTest {
             Member member2 = new Member(userName.get(1), email.get(1), password.get(1), memberType);
             member2.memberRankUp(130); // 멤버 랭크 -> Diamond
 
-            Board board1 = new Board(title.get(0), content.get(0), member1.getMemberRank(), 13L, 0, null, member1
+            Board board1 = new Board(title.get(0), content.get(0), 13L, 0, null, member1
                     );
-            Board board2 = new Board("Test3", "잔치국수", member2.getMemberRank(), 13L, 0, null, member2
+            Board board2 = new Board("Test3", "잔치국수", 13L, 0, null, member2
                     );
-            Board board3 = new Board("Test4", "김치전", member2.getMemberRank(), 13L, 0, null, member2
+            Board board3 = new Board("Test4", "김치전", 13L, 0, null, member2
                     );
 
             memberRepository.save(member1);
@@ -173,7 +156,7 @@ class BoardRepositoryTest {
             memberRepository.save(member);
 
             String updateBoardTitle = "김치찌개 레시피(업데이트)";
-            Board board = new Board(title.get(1), content.get(1), MemberRank.BRONZE, 13L, 13, null,
+            Board board = new Board(title.get(1), content.get(1),13L, 13, null,
                     member);
             Board save = boardRepository.save(board);
 
@@ -198,7 +181,7 @@ class BoardRepositoryTest {
             Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
             memberRepository.save(member);
 
-            Board board = new Board(title.get(1), content.get(1), MemberRank.BRONZE, 13L, 13, null,
+            Board board = new Board(title.get(1), content.get(1),13L, 13, null,
                     member);
             Board save = boardRepository.save(board);
 
@@ -222,10 +205,10 @@ class BoardRepositoryTest {
             Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
             memberRepository.save(member);
 
-            Board orderBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member);
+            Board orderBoard = new Board(title.get(0), content.get(0), 13L, 13, null, member);
             boardRepository.save(orderBoard);
 
-            Board saveNewBoard = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member);
+            Board saveNewBoard = new Board(title.get(0), content.get(0), 13L, 13, null, member);
 
             // when
             Board boardByTitle = getBoardByTitle(orderBoard);
@@ -255,16 +238,6 @@ class BoardRepositoryTest {
     }
 
     /**
-     * 랭크로 찾은 게시물을 리턴하는 테스트 메서드
-     *
-     * @return
-     */
-    private List<Board> getBoardByMemberRank(MemberRank memberRank) {
-        List<Board> boards = boardRepository.findBoardByMemberRank(memberRank);
-        return boards;
-    }
-
-    /**
      * 게시물을 담는 초기화 테스트 메서드
      *
      * @return
@@ -277,8 +250,8 @@ class BoardRepositoryTest {
         Member member1 = new Member(userName.get(0), email.get(0), password.get(0), memberType);
         Member member2 = new Member(userName.get(1), email.get(1), password.get(1), memberType);
 
-        Board board1 = new Board(title.get(0), content.get(0), memberRank.NORMAL, 13L, 13, null, member1);
-        Board board2 = new Board(title.get(1), content.get(1), memberRank.PLATINUM, 13L, 13, null, member2);
+        Board board1 = new Board(title.get(0), content.get(0),13L, 13, null, member1);
+        Board board2 = new Board(title.get(1), content.get(1),13L, 13, null, member2);
 
         addMember.add(member1);
         addMember.add(member2);

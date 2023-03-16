@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberType;
@@ -21,7 +23,10 @@ import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,13 +56,21 @@ public class CommentControllerTest {
         Member commentMember = new Member("하윤", "gkdbssla97@naver.com", "asdf1997@BA", MemberType.NORMAL);
         Member saveCommentMember = memberRepository.save(commentMember);
 
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+
         boardRequestDto = BoardRequestDto.builder()
                 .title("자취 레시피 공유합니다.")
                 .memberRequestDto(new MemberRequestDto(savePostMember.getUsername(), savePostMember.getEmail(), savePostMember.getPassword()))
                 .content("김치찌개 레시피 1....")
                 .build();
 
-        boardCrudService.boardCreate(boardRequestDto);
+        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
         commentRequestDto = CommentRequestDto.builder()
                 .content("돈까스 맛있네요!")

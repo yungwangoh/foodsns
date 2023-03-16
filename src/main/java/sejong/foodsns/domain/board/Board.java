@@ -42,10 +42,6 @@ public class Board extends BaseEntity {
     @Lob
     private String content;
 
-    @Enumerated(value = STRING)
-    @Column(name = "member_rank")
-    private MemberRank memberRank;
-
     // 조회수
     @Column(name = "num_check")
     private Long check;
@@ -71,11 +67,10 @@ public class Board extends BaseEntity {
     private List<BoardFile> boardFiles = new ArrayList<>();
 
     @Builder
-    public Board(String title, String content, MemberRank memberRank, Long check, int recommCount,
+    public Board(String title, String content, Long check, int recommCount,
                  @Nullable FoodTag foodTag, Member member) {
         this.title = title; // 게시물
         this.content = content; // 요리메뉴
-        this.memberRank = memberRank; //멤버랭크
         this.check = check; // 조회수
         this.recommCount = recommCount; // 추천수
         this.foodTag = foodTag; //

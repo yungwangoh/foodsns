@@ -14,7 +14,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 //    Optional<Board> findBoardByUsername(String name); // query dsl
     Optional<Board> findBoardByTitle(String title);
-    List<Board> findBoardByMemberRank(MemberRank memberRank); // 랭크별 게시물 조회
     Boolean existsBoardByTitle(String title);
     void deleteBoardByMemberEmailAndMemberPassword(String email, String password);
 

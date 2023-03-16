@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
@@ -25,6 +27,10 @@ import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
+
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -122,7 +128,15 @@ public class BoardControllerTest {
     @DisplayName("게시물 찾기 OK")
     void boardSearchOK() throws Exception {
         // given
-        boardCrudService.boardCreate(boardRequestDto);
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+
+        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
         String title = "test1";
 
         // when
@@ -152,7 +166,15 @@ public class BoardControllerTest {
     @DisplayName("게시물 제목 수정 실패")
     void memberNameUpdateFailed() throws Exception {
         // given
-        boardCrudService.boardCreate(boardRequestDto);
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+
+        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
         BoardUpdateTitleDto boardUpdateTitleDto = BoardUpdateTitleDto.builder()
                 .updateTitle("test2sadjfklasjfkl;dsjfkl;adjsfkl;jdsaklf;ajsdkl;fjsdaklfjsdalkfjasdkl;fjdaskl;jfkalds;fjdkls;ajfa")
@@ -176,7 +198,15 @@ public class BoardControllerTest {
     @DisplayName("게시물 제목 수정 성공 OK")
     void memberNameUpdate() throws Exception {
         // given
-        boardCrudService.boardCreate(boardRequestDto);
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+
+        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
         BoardUpdateTitleDto boardUpdateTitleDto = BoardUpdateTitleDto.builder()
                 .updateTitle("test2")
@@ -200,7 +230,15 @@ public class BoardControllerTest {
     @DisplayName("검색 옵션을 통한 게시물 API 테스트")
     void searchOptionBoardApiTest() throws Exception{
         // given
-        boardCrudService.boardCreate(boardRequestDto);
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+
+        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
         String content = "test";
         String content1 = "hi";
 

@@ -1,11 +1,13 @@
 package sejong.foodsns.domain.file.util;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.file.BoardFileType;
+import sejong.foodsns.repository.file.BoardFileRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +16,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class BoardFileStorage {
 
-    @Value("${file.dir: /Users/yungwang-o/Documents/board_file/")
+    @Value("/Users/yungwang-o/Documents/board_file/")
     private String boardFileDirPath;
-    private static final String PNG = "png";
-    private static final String JPEG = "jpeg";
+    private final BoardFileRepository boardFileRepository;
+    private static final String PNG = ".png";
+    private static final String JPEG = ".jpeg";
 
 
     // 파일 확장자명 추출
@@ -73,7 +77,8 @@ public class BoardFileStorage {
         List<BoardFile> boardFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
-                boardFiles.add(storeFile(multipartFile, board));
+                BoardFile boardFile = boardFileRepository.save(storeFile(multipartFile, board));
+                boardFiles.add(boardFile);
             }
         }
 

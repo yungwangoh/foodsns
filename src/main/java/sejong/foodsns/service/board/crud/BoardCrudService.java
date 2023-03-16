@@ -1,6 +1,7 @@
 package sejong.foodsns.service.board.crud;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.dto.board.BoardRequestDto;

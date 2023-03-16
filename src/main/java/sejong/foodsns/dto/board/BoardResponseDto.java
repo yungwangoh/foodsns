@@ -22,7 +22,6 @@ public class BoardResponseDto {
     private Long id;
     private String title;
     private String content;
-    private MemberRank memberRank;
     private Long check;
     private int recommCount;
     private MemberResponseDto memberResponseDto;
@@ -35,7 +34,6 @@ public class BoardResponseDto {
         this.title = board.getTitle();
         this.content = board.getContent();
         this.memberResponseDto = new MemberResponseDto(board.getMember());
-        this.memberRank = board.getMemberRank();
         this.check = board.getCheck();
         this.recommCount = board.getRecommCount();
         this.boardFiles = board.getBoardFiles();

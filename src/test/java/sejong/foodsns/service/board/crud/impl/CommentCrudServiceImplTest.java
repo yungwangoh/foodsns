@@ -47,7 +47,7 @@ public class CommentCrudServiceImplTest {
     void initMemberAndBoard() {
         Member member = new Member("하윤", "gkdbssla97@naver.com", "4321", NORMAL);
         memberRepository.save(member);
-        Board board = new Board("레시피1", "콩나물무침", MemberRank.BRONZE, 13L, 13, null,
+        Board board = new Board("레시피1", "콩나물무침", 13L, 13, null,
                 member);
         boardRepository.save(board);
     }
@@ -238,7 +238,7 @@ public class CommentCrudServiceImplTest {
     private CommentRequestDto getCommentRequestDto(int idx, Member member, Board board) {
 
         MemberRequestDto memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
-        BoardRequestDto boardRequestDto = new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(), memberRequestDto, null);
+        BoardRequestDto boardRequestDto = new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(), memberRequestDto);
 
         if (idx == 1) {
             return CommentRequestDto.builder()

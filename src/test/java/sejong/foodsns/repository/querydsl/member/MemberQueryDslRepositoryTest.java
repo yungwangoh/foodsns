@@ -42,7 +42,7 @@ class MemberQueryDslRepositoryTest {
 
         Member member = new Member("윤광오", "swager253@zzz.com", "qwer1234@A", NORMAL);
         Member friend = new Member("하윤", "qwer1234@zzz.com", "qwer1234@A", NORMAL);
-        Board board = new Board("test", "안녕하세요!", member.getMemberRank(), 130L,
+        Board board = new Board("test", "안녕하세요!", 130L,
                 10, null, member);
 
         memberRepository.save(member);

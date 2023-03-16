@@ -17,6 +17,7 @@ import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -49,9 +50,11 @@ public class BoardCrudServiceImplTest {
         @Order(0)
         void boardCreate() throws IOException {
             //given
+            List<MultipartFile> mockMultipartFiles = getMultipartFiles();
+
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
 
-            Board board = new Board("레시피1", "콩나물무침", findMember.getMemberRank(), 13L, 13, null,
+            Board board = new Board("레시피1", "콩나물무침",13L, 13, null,
                     findMember);
 
             boardResponseDto = BoardResponseDto.builder()
@@ -61,14 +64,14 @@ public class BoardCrudServiceImplTest {
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
 
             //when
-            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
             //then
             assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
             assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
             assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
             assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
-            assertThat(getBody(boardCreate).getMemberRank()).isEqualTo(boardResponseDto.getMemberRank());
+            assertThat(getBody(boardCreate).getMemberResponseDto().getMemberRank()).isEqualTo(boardResponseDto.getMemberResponseDto().getMemberRank());
         }
 
         @Test
@@ -76,9 +79,11 @@ public class BoardCrudServiceImplTest {
         @Order(1)
         void findBoard() throws IOException {
             // given
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             // when
             ResponseEntity<Optional<BoardResponseDto>> findBoard = boardCrudService.findBoardById(getBody(boardCreate).getId());
@@ -93,10 +98,12 @@ public class BoardCrudServiceImplTest {
         @Order(2)
         void boardList() throws IOException{
             // given
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             List<ResponseEntity<Optional<BoardResponseDto>>> list = new ArrayList<>();
-            list.add(boardCrudService.boardCreate(getBoardRequestDto(1, findMember)));
-            list.add(boardCrudService.boardCreate(getBoardRequestDto(2, findMember)));
+            list.add(boardCrudService.boardCreate(getBoardRequestDto(1, findMember), multipartFiles));
+            list.add(boardCrudService.boardCreate(getBoardRequestDto(2, findMember), multipartFiles));
 
             // when
             ResponseEntity<Optional<List<BoardResponseDto>>> boardList = boardCrudService.boardList();
@@ -118,7 +125,9 @@ public class BoardCrudServiceImplTest {
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             String updateTitle = "검은콩나물무침";
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate =
                     boardCrudService.boardTitleUpdate(getBody(boardCreate).getId(), findMember.getUsername(), updateTitle);
@@ -136,7 +145,9 @@ public class BoardCrudServiceImplTest {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             // when
             boardCrudService.boardDelete(getBody(boardCreate).getId(), findMember.getUsername());
@@ -148,7 +159,34 @@ public class BoardCrudServiceImplTest {
                         boardCrudService.findBoardById(getBody(boardCreate).getId());
 
                 assertThat(board.getStatusCode()).isEqualTo(NO_CONTENT);
-            }).isInstanceOf(IllegalArgumentException.class);
+            }).isInstanceOf(NoSuchElementException.class);
+        }
+
+        @Test
+        @DisplayName("게시물 등록할 떄 첨부파일 없이 등록")
+        void whenBoardIsCreatedNotFile() throws IOException {
+            // given
+            List<MultipartFile> multipartFiles = new ArrayList<>();
+            Member findMember = memberRepository.findMemberByUsername("하윤").get();
+
+            Board board = new Board("레시피1", "콩나물무침",13L, 13, null,
+                    findMember);
+
+            boardResponseDto = BoardResponseDto.builder()
+                    .board(board)
+                    .build();
+
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+
+            //when
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+            // then
+            assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
+            assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
+            assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
+            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
+            assertThat(getBody(boardCreate).getMemberResponseDto().getMemberRank()).isEqualTo(boardResponseDto.getMemberResponseDto().getMemberRank());
         }
 
         @Test
@@ -157,7 +195,9 @@ public class BoardCrudServiceImplTest {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            boardCrudService.boardCreate(boardRequestDto);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             // 이 문자열에 연관된 게시물을 통쨰로 조회한다.
             String content = "레시피";
@@ -190,7 +230,9 @@ public class BoardCrudServiceImplTest {
 
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
-            boardCrudService.boardCreate(boardRequestDto);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             // when
             Boolean boardTitleExistValidation = boardCrudService.boardTitleExistValidation(boardRequestDto);
@@ -207,13 +249,14 @@ public class BoardCrudServiceImplTest {
             // given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
 
             // when
-            boardCrudService.boardCreate(boardRequestDto);
+            boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
             // then
             assertThatThrownBy(() -> boardCrudService.findBoardById(0L))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @AfterEach
@@ -229,7 +272,6 @@ public class BoardCrudServiceImplTest {
                     .title("레시피1")
                     .content("콩나물무침")
                     .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
-                    .boardFiles()
                     .build();
         }
         return BoardRequestDto.builder()
@@ -245,5 +287,16 @@ public class BoardCrudServiceImplTest {
 
     private Optional<BoardResponseDto> getFindBoardBody(ResponseEntity<Optional<BoardResponseDto>> findBoard) {
         return findBoard.getBody();
+    }
+
+    private List<MultipartFile> getMultipartFiles() throws IOException {
+        String name = "image";
+        String originalFileName = "test.jpeg";
+        String contentType = "image/jpeg";
+        String fileUrl = "/Users/yungwang-o/Documents/test.jpeg";
+
+        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
+        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+        return mockMultipartFiles;
     }
 }
