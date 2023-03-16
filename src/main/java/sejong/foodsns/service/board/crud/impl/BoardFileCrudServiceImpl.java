@@ -28,8 +28,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 @Slf4j
 @Transactional(readOnly = true)
 public class BoardFileCrudServiceImpl implements BoardFileCrudService {
-
-    private final BoardFileRepository boardFileRepository;
     private final BoardFileStorage boardFileStorage;
 
     @Override

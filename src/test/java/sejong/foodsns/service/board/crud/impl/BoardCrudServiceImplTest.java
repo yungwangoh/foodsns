@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
@@ -47,7 +48,6 @@ public class BoardCrudServiceImplTest {
         @DisplayName("게시물 등록")
         @Order(0)
         void boardCreate() throws IOException {
-
             //given
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
 
@@ -187,6 +187,7 @@ public class BoardCrudServiceImplTest {
         @Order(0)
         void boardDuplicatedValidationFail() throws IOException {
             // given
+
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
             BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
             boardCrudService.boardCreate(boardRequestDto);

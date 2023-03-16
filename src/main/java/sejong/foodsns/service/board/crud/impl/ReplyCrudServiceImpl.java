@@ -83,9 +83,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<ReplyResponseDto>> replyDelete(ReplyRequestDto replyRequestDto) {
-        Optional<ReplyResponseDto> reply = findReply(replyRequestDto.getCommentRequestDto().getBoardRequestDto().getTitle(), replyRequestDto.getContent()).getBody();
-        Optional<Reply> findReply = getReplyReturnByReplyId(reply.get().getId());
+    public ResponseEntity<Optional<ReplyResponseDto>> replyDelete(Long id) {
+        Optional<Reply> findReply = getReplyReturnByReplyId(id);
 
         replyRepository.delete(getReply(findReply));
         return new ResponseEntity<>(NO_CONTENT);
@@ -162,7 +161,7 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @param reply
      * @return 대댓글
      */
-    private Reply getReply(Optional<Reply> reply) {
+    private static Reply getReply(Optional<Reply> reply) {
         return reply.get();
     }
 
