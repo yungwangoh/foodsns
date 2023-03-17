@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.foodsns.domain.BaseEntity;
+import sejong.foodsns.domain.member.Member;
 
 import javax.persistence.*;
 
@@ -34,12 +35,17 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public Reply(String content, int recommCount, int reportCount, Comment comment) {
+    public Reply(String content, int recommCount, int reportCount, Comment comment, Member member) {
         this.content = content;
         this.recommCount = recommCount;
         this.reportCount = reportCount;
         this.comment = comment;
+        this.member = member;
     }
 
     // 비즈니스 로직

@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.CommentRequestDto;
 import sejong.foodsns.dto.board.CommentResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchCommentException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
+import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 댓글 생성 -> 성공 ?, 실패 ?
@@ -39,7 +42,11 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto) {
-        Comment comment = commentClassCreated(commentRequestDto.getContent(), commentRequestDto.getBoardRequestDto().getId());
+        Comment comment = commentClassCreated(
+                commentRequestDto.getContent(),
+                commentRequestDto.getBoardRequestDto().getId(),
+                commentRequestDto.getMemberRequestDto().getEmail()
+        );
 
         Comment saveComment = commentRepository.save(comment);
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
@@ -156,15 +163,17 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      * @param commentRequestDto
      * @return 댓글
      */
-    private Comment commentClassCreated(String content, Long id) {
+    private Comment commentClassCreated(String content, Long id, String email) {
 
         Optional<Board> board = boardRepository.findById(id);
+        Optional<Member> member = memberRepository.findMemberByEmail(email);
 
         return Comment.builder()
                 .content(content)
                 .reportCount(0)
                 .recommCount(0)
                 .board(board.get())
+                .member(member.get())
                 .build();
     }
 

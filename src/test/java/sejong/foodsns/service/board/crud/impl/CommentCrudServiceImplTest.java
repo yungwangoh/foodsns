@@ -35,7 +35,7 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 @SpringBootTest
 public class CommentCrudServiceImplTest {
 
-    @Autowired CommentCrudService commentCrudService;
+    @Autowired private CommentCrudService commentCrudService;
     @Autowired private BoardCrudService boardCrudService;
     @Autowired private BoardRepository boardRepository;
     @Autowired private CommentRepository commentRepository;

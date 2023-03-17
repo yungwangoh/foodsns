@@ -43,8 +43,9 @@ public class BoardCrudServiceImplTest {
 
     @Nested
     @DisplayName("서비스 성공")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestClassOrder(ClassOrderer.OrderAnnotation.class)
     class ServiceSuccess {
+
         @Test
         @DisplayName("게시물 등록")
         @Order(0)
@@ -54,8 +55,7 @@ public class BoardCrudServiceImplTest {
 
             Member findMember = memberRepository.findMemberByUsername("하윤").get();
 
-            Board board = new Board("레시피1", "콩나물무침",13L, 13, null,
-                    findMember);
+            Board board = new Board("레시피1", "콩나물무침",13L, 13, null, findMember);
 
             boardResponseDto = BoardResponseDto.builder()
                     .board(board)
@@ -113,10 +113,6 @@ public class BoardCrudServiceImplTest {
             assertThat(list.size()).isEqualTo(getBoardResponseDtos(boardList).size());
         }
 
-        private List<BoardResponseDto> getBoardResponseDtos(ResponseEntity<Optional<List<BoardResponseDto>>> boardList) {
-            return boardList.getBody().get();
-        }
-
         @Test
         @DisplayName("게시판 제목 수정")
         @Order(3)
@@ -129,10 +125,12 @@ public class BoardCrudServiceImplTest {
 
             ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
+            // when
             ResponseEntity<Optional<BoardResponseDto>> boardTitleUpdate =
                     boardCrudService.boardTitleUpdate(getBody(boardCreate).getId(), findMember.getUsername(), updateTitle);
 
             Board board = boardRepository.findBoardByTitle(getBody(boardTitleUpdate).getTitle()).get();
+
             // then
             assertThat(boardTitleUpdate.getStatusCode()).isEqualTo(OK);
             assertThat(board.getTitle()).isEqualTo(updateTitle);
@@ -215,11 +213,15 @@ public class BoardCrudServiceImplTest {
             boardRepository.deleteAll();
             memberRepository.deleteAll();
         }
+
+        private List<BoardResponseDto> getBoardResponseDtos(ResponseEntity<Optional<List<BoardResponseDto>>> boardList) {
+            return boardList.getBody().get();
+        }
     }
 
     @Nested
     @DisplayName("서비스 실패")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @TestClassOrder(ClassOrderer.OrderAnnotation.class)
     class serviceFail {
 
         @Test

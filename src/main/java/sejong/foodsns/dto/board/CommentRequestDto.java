@@ -20,7 +20,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class CommentRequestDto {
 
-    private Long id;
     @Schema(description = "댓글 내용", example = "레시피 후기 Good.")
     private String content;
     @Schema(description = "댓글 작성자", example = "Mr.광")

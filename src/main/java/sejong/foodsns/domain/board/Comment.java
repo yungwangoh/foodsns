@@ -32,12 +32,12 @@ public class Comment extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
-
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Reply> reply;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = LAZY)
@@ -45,12 +45,13 @@ public class Comment extends BaseEntity {
     private Board board;
 
     @Builder
-    public Comment(String content, int recommCount, int reportCount, Board board) {
+    public Comment(String content, int recommCount, int reportCount, Board board, Member member) {
         this.content = content;
         this.recommCount = recommCount; // 추천수
         this.reportCount = reportCount; // 신고수
         this.board = board; // 댓글을 달 게시물
         this.reply = new ArrayList<>();
+        this.member = member;
     }
 
     // 비즈니스 로직

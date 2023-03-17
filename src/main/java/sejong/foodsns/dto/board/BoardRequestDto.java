@@ -35,8 +35,7 @@ public class BoardRequestDto {
     private MemberRequestDto memberRequestDto;
 
     @Builder
-    public BoardRequestDto(Long id, String title, String content, Member member) {
-        this.id = id;
+    public BoardRequestDto(String title, String content, Member member) {
         this.title = title;
         this.content = content;
         this.memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
