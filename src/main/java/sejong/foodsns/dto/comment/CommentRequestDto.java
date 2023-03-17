@@ -1,4 +1,4 @@
-package sejong.foodsns.dto.board;
+package sejong.foodsns.dto.comment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -8,6 +8,7 @@ import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.member.Member;
+import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
@@ -22,8 +23,8 @@ public class CommentRequestDto {
 
     @Schema(description = "댓글 내용", example = "레시피 후기 Good.")
     private String content;
-    @Schema(description = "댓글 작성자", example = "Mr.광")
-    private MemberRequestDto memberRequestDto;
-    @Schema(description = "댓글 달린 게시물", example = "김치찌개 레시피 게시물")
-    private BoardRequestDto boardRequestDto;
+    @Schema(description = "유저 이메일", example = "swager253@naver.com")
+    private String email;
+    @Schema(description = "게시물 아이디")
+    private Long boardId;
 }

@@ -32,10 +32,6 @@ public class Comment extends BaseEntity {
     @Column(name = "report_count")
     private int reportCount;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Reply> reply;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -50,7 +46,6 @@ public class Comment extends BaseEntity {
         this.recommCount = recommCount; // 추천수
         this.reportCount = reportCount; // 신고수
         this.board = board; // 댓글을 달 게시물
-        this.reply = new ArrayList<>();
         this.member = member;
     }
 
@@ -61,13 +56,6 @@ public class Comment extends BaseEntity {
 
     public void setBoard(Board board) {
         board.getComments().add(this);
-    }
-
-    public void setReply(Reply reply) {
-        this.reply.add(reply);
-        if(reply.getComment() != this) {
-            reply.setComment(this);
-        }
     }
 
     /**

@@ -2,30 +2,19 @@ package sejong.foodsns.service.board.crud.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
-import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.CommentResponseDto;
-import sejong.foodsns.dto.board.ReplyRequestDto;
-import sejong.foodsns.dto.board.ReplyResponseDto;
-import sejong.foodsns.exception.http.board.NoSearchCommentException;
+import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchReplyException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.board.ReplyRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.service.board.crud.CommentCrudService;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,9 +40,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(ReplyRequestDto replyRequestDto) {
+    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId) {
 
-        Reply reply = replyClassCreated(replyRequestDto.getContent(), replyRequestDto.getCommentRequestDto().getId());
+        Reply reply = replyClassCreated(content, commentId);
         Reply saveReply = replyRepository.save(reply);
 
         return new ResponseEntity<>(of(new ReplyResponseDto(saveReply)), CREATED);
@@ -83,8 +72,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<ReplyResponseDto>> replyDelete(Long id) {
-        Optional<Reply> findReply = getReplyReturnByReplyId(id);
+    public ResponseEntity<Optional<ReplyResponseDto>> replyDelete(Long replyId) {
+        Optional<Reply> findReply = getReplyReturnByReplyId(replyId);
 
         replyRepository.delete(getReply(findReply));
         return new ResponseEntity<>(NO_CONTENT);
@@ -105,12 +94,12 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
     /**
      * id를 통해서 대댓글 찾기
-     * @param id 대댓글 id
+     * @param replyId 대댓글 id
      * @return 대댓글, HTTP OK
      */
     @Override
-    public ResponseEntity<Optional<ReplyResponseDto>> findReplyById(Long id) {
-        Optional<Reply> reply = replyRepository.findReplyById(id);
+    public ResponseEntity<Optional<ReplyResponseDto>> findReplyById(Long replyId) {
+        Optional<Reply> reply = replyRepository.findReplyById(replyId);
 
         return ResponseEntity.status(OK).body(of(new ReplyResponseDto(getReply(reply))));
     }
@@ -170,9 +159,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @param replyRequestDto
      * @return 대댓글
      */
-    private Reply replyClassCreated(String content, Long id) {
+    private Reply replyClassCreated(String content, Long commentId) {
 
-        Optional<Comment> comment = commentRepository.findById(id);
+        Optional<Comment> comment = commentRepository.findById(commentId);
 
         return Reply.builder()
                 .content(content)

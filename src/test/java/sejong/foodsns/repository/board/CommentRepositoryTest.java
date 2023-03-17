@@ -28,17 +28,18 @@ import static org.junit.jupiter.api.Assertions.*;
 //@Rollback(value = false)
 class CommentRepositoryTest {
 
-    @Autowired CommentRepository commentRepository;
-    @Autowired BoardRepository boardRepository;
-    @Autowired MemberRepository memberRepository;
+    @Autowired private CommentRepository commentRepository;
+    @Autowired private BoardRepository boardRepository;
+    @Autowired private MemberRepository memberRepository;
 
-    List<String> title;
-    List<String> content;
-    List<String> userName;
-    List<String> email;
-    List<String> password;
-    MemberType memberType;
-    MemberRank memberRank;
+    private List<String> title;
+    private List<String> content;
+    private List<String> userName;
+    private List<String> email;
+    private List<String> password;
+    private MemberType memberType;
+    private MemberRank memberRank;
+    private Member saveMember;
 
     @BeforeEach
     void initCommentSetting() {
@@ -51,7 +52,7 @@ class CommentRepositoryTest {
         this.memberRank = MemberRank.NORMAL;
 
         Member member = new Member(userName.get(0), email.get(0), password.get(0), memberType);
-        memberRepository.save(member);
+        saveMember = memberRepository.save(member);
 
         Board board = new Board(title.get(0), content.get(0), 13L, 13, null, member);
         boardRepository.save(board);
@@ -64,7 +65,7 @@ class CommentRepositoryTest {
         @Test
         void registerComment() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard, saveMember);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
             assertThat(saveComment).isEqualTo(comment);
@@ -78,7 +79,7 @@ class CommentRepositoryTest {
         @Test
         void findCommentByContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard, saveMember);
             findBoard.setComment(comment);
             commentRepository.save(comment);
 
@@ -109,7 +110,7 @@ class CommentRepositoryTest {
         @Test
         void updateCommentContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard, saveMember);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
 
@@ -126,7 +127,7 @@ class CommentRepositoryTest {
         @Test
         void deleteCommentByContent() {
             Board findBoard = boardRepository.findBoardByTitle("test1").get();
-            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard);
+            Comment comment = new Comment("맛있는 레시피네요!", 0, 0, findBoard, saveMember);
             findBoard.setComment(comment);
             Comment saveComment = commentRepository.save(comment);
 
@@ -152,9 +153,9 @@ class CommentRepositoryTest {
 
         Board findBoardByTitle = boardRepository.findBoardByTitle(title.get(0)).get();
 
-        Comment comment1 = new Comment("1빠", 0, 0, findBoardByTitle);
-        Comment comment2 = new Comment("2빠", 0, 0, findBoardByTitle);
-        Comment comment3 = new Comment("3빠", 0, 0, findBoardByTitle);
+        Comment comment1 = new Comment("1빠", 0, 0, findBoardByTitle, saveMember);
+        Comment comment2 = new Comment("2빠", 0, 0, findBoardByTitle, saveMember);
+        Comment comment3 = new Comment("3빠", 0, 0, findBoardByTitle, saveMember);
 
         comments.add(comment1);
         comments.add(comment2);

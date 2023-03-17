@@ -1,4 +1,4 @@
-package sejong.foodsns.dto.board;
+package sejong.foodsns.dto.reply;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -19,14 +19,12 @@ public class ReplyRequestDto {
     private Long id;
     @Schema(description = "대댓글 내용", example = "댓글 믿고 레시피 감사인사 남겨요.")
     private String content;
-    @Schema(description = "대댓글 달린 댓글", example = "이거 레시피 좋네요.")
-    private CommentRequestDto commentRequestDto;
-    private BoardRequestDto boardRequestDto;
+    @Schema(description = "댓글 id")
+    private Long commentId;
 
     @Builder
-    public ReplyRequestDto(String content, BoardRequestDto boardRequestDto, CommentRequestDto commentRequestDto) {
+    public ReplyRequestDto(String content, Long commentId) {
         this.content = content;
-        this.commentRequestDto = commentRequestDto;
-        this.boardRequestDto = boardRequestDto;
+        this.commentId = commentId;
     }
 }

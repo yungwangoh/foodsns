@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.CommentResponseDto;
+import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 import sejong.foodsns.dto.board.update.CommentUpdateContentDto;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
@@ -31,7 +31,8 @@ public class CommentController {
      */
     @PostMapping("/comment")
     public ResponseEntity<CommentResponseDto> commentCreate(@RequestBody @Valid CommentRequestDto commentRequestDto) {
-        ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService.commentCreate(commentRequestDto);
+        ResponseEntity<Optional<CommentResponseDto>> commentCreate =
+                commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
         return new ResponseEntity<>(getComment(commentCreate), commentCreate.getStatusCode());
     }
@@ -94,10 +95,10 @@ public class CommentController {
      * @param commentRequestDto
      * @return 게시물 삭제 완료, OK
      */
-    @DeleteMapping("/comment")
-    public ResponseEntity<String> commentDelete(@RequestBody @Valid CommentRequestDto commentRequestDto) {
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<String> commentDelete(@PathVariable Long commentId) {
 
-        ResponseEntity<Optional<CommentResponseDto>> commentDelete = commentCrudService.commentDelete(commentRequestDto);
+        ResponseEntity<Optional<CommentResponseDto>> commentDelete = commentCrudService.commentDelete(commentId);
 
         return new ResponseEntity<>(COMMENT_DELETE_SUCCESS, commentDelete.getStatusCode());
     }

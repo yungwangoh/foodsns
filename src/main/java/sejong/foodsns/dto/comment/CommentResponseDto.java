@@ -1,4 +1,4 @@
-package sejong.foodsns.dto.board;
+package sejong.foodsns.dto.comment;
 
 import lombok.*;
 import sejong.foodsns.domain.board.Board;
@@ -6,6 +6,7 @@ import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
+import sejong.foodsns.dto.board.BoardResponseDto;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -34,7 +35,6 @@ public class CommentResponseDto {
         this.content = comment.getContent();
         this.recommCount = comment.getRecommCount();
         this.reportCount = comment.getReportCount();
-        this.reply = comment.getReply();
         this.boardResponseDto = new BoardResponseDto(comment.getBoard());
     }
 }

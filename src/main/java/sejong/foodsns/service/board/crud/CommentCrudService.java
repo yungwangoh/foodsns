@@ -1,19 +1,19 @@
 package sejong.foodsns.service.board.crud;
 
 import org.springframework.http.ResponseEntity;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.CommentResponseDto;
+import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CommentCrudService {
 
-    ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto);
+    ResponseEntity<Optional<CommentResponseDto>> commentCreate(String content, Long boardId, String email);
 
     ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate(String title, String updateContent, String orderContent);
 
-    ResponseEntity<Optional<CommentResponseDto>> commentDelete(CommentRequestDto commentRequestDto);
+    ResponseEntity<Optional<CommentResponseDto>> commentDelete(Long commentId);
 
     ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content);
 

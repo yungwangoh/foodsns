@@ -4,16 +4,13 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberRank;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.CommentResponseDto;
+import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
@@ -66,12 +63,12 @@ public class CommentCrudServiceImplTest {
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
 
             //when
-            ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService.commentCreate(commentRequestDto);
+            ResponseEntity<Optional<CommentResponseDto>> commentCreate = commentCrudService
+                    .commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
             //then
             assertThat(commentCreate.getStatusCode()).isEqualTo(CREATED);
             assertThat(getBody(commentCreate).getContent()).isEqualTo(commentRequestDto.getContent());
-            assertThat(getBody(commentCreate).getBoardResponseDto().getTitle()).isEqualTo(commentRequestDto.getBoardRequestDto().getTitle()); // Response / Request
         }
 
         @Test
@@ -82,7 +79,7 @@ public class CommentCrudServiceImplTest {
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-            commentCrudService.commentCreate(commentRequestDto);
+            commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
             // when
             ResponseEntity<Optional<CommentResponseDto>> findComment = commentCrudService.findComment(board.getTitle(), commentRequestDto.getContent());
@@ -99,9 +96,12 @@ public class CommentCrudServiceImplTest {
             Member member = memberRepository.findMemberByUsername("하윤").get();
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
+            CommentRequestDto commentRequestDto1 = getCommentRequestDto(1, member, board);
+            CommentRequestDto commentRequestDto2 = getCommentRequestDto(2, member, board);
+
             List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+            list.add(commentCrudService.commentCreate(commentRequestDto1.getContent(), commentRequestDto1.getBoardId(), commentRequestDto1.getEmail()));
+            list.add(commentCrudService.commentCreate(commentRequestDto2.getContent(), commentRequestDto2.getBoardId(), commentRequestDto2.getEmail()));
 
             // when
             ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.allCommentList();
@@ -119,9 +119,12 @@ public class CommentCrudServiceImplTest {
             Member member = memberRepository.findMemberByUsername("하윤").get();
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
+            CommentRequestDto commentRequestDto1 = getCommentRequestDto(1, member, board);
+            CommentRequestDto commentRequestDto2 = getCommentRequestDto(2, member, board);
+
             List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+            list.add(commentCrudService.commentCreate(commentRequestDto1.getContent(), commentRequestDto1.getBoardId(), commentRequestDto1.getEmail()));
+            list.add(commentCrudService.commentCreate(commentRequestDto2.getContent(), commentRequestDto2.getBoardId(), commentRequestDto2.getEmail()));
 
             // when
             ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(member.getUsername());
@@ -139,9 +142,12 @@ public class CommentCrudServiceImplTest {
             Member member = memberRepository.findMemberByUsername("하윤").get();
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
+            CommentRequestDto commentRequestDto1 = getCommentRequestDto(1, member, board);
+            CommentRequestDto commentRequestDto2 = getCommentRequestDto(2, member, board);
+
             List<ResponseEntity<Optional<CommentResponseDto>>> list = new ArrayList<>();
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(1, member, board)));
-            list.add(commentCrudService.commentCreate(getCommentRequestDto(2, member, board)));
+            list.add(commentCrudService.commentCreate(commentRequestDto1.getContent(), commentRequestDto1.getBoardId(), commentRequestDto1.getEmail()));
+            list.add(commentCrudService.commentCreate(commentRequestDto2.getContent(), commentRequestDto2.getBoardId(), commentRequestDto2.getEmail()));
 
             // when
             ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(board.getTitle());
@@ -164,7 +170,7 @@ public class CommentCrudServiceImplTest {
 
             String updateContent = "레시피가 업데이트 됐네요?";
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-            commentCrudService.commentCreate(commentRequestDto);
+            commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
             ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate =
                     commentCrudService.commentContentUpdate(board.getTitle(), updateContent, commentRequestDto.getContent());
@@ -183,10 +189,11 @@ public class CommentCrudServiceImplTest {
             Board board = boardRepository.findBoardByTitle("레시피1").get();
 
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
-            commentCrudService.commentCreate(commentRequestDto);
+            ResponseEntity<Optional<CommentResponseDto>> commentCreate =
+                    commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
             // when
-            commentCrudService.commentDelete(commentRequestDto);
+            commentCrudService.commentDelete(getBody(commentCreate).getId());
 
             // then
             // 찾으려는 댓글이 없어야한다.
@@ -220,7 +227,7 @@ public class CommentCrudServiceImplTest {
             CommentRequestDto commentRequestDto = getCommentRequestDto(1, member, board);
 
             // when
-            commentCrudService.commentCreate(commentRequestDto);
+            commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
             // then
             assertThatThrownBy(() -> commentCrudService.findComment(board.getTitle(), getCommentRequestDto(2, member, board).getContent()))
@@ -237,20 +244,17 @@ public class CommentCrudServiceImplTest {
 
     private CommentRequestDto getCommentRequestDto(int idx, Member member, Board board) {
 
-        MemberRequestDto memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
-        BoardRequestDto boardRequestDto = new BoardRequestDto(board.getId(), board.getTitle(), board.getContent(), memberRequestDto);
-
         if (idx == 1) {
             return CommentRequestDto.builder()
                     .content("맛있네요")
-                    .boardRequestDto(boardRequestDto)
-                    .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
+                    .boardId(board.getId())
+                    .email(member.getEmail())
                     .build();
         }
         return CommentRequestDto.builder()
                 .content("맛없네요")
-                .boardRequestDto(boardRequestDto)
-                .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
+                .boardId(board.getId())
+                .email(member.getEmail())
                 .build();
     }
 

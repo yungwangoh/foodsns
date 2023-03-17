@@ -1,11 +1,8 @@
-package sejong.foodsns.dto.board;
+package sejong.foodsns.dto.reply;
 
 import lombok.*;
-import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

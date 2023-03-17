@@ -8,9 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.dto.board.BoardRequestDto;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.CommentResponseDto;
+import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchCommentException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
@@ -36,19 +35,19 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     /**
      * 댓글 생성 -> 성공 ?, 실패 ?
-     * @param commentRequestDto
+     * @param content 댓글 내용
+     * @param boardId 게시물 아이디
+     * @param email 유저 이메일
      * @return 댓글 DTO
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<CommentResponseDto>> commentCreate(CommentRequestDto commentRequestDto) {
-        Comment comment = commentClassCreated(
-                commentRequestDto.getContent(),
-                commentRequestDto.getBoardRequestDto().getId(),
-                commentRequestDto.getMemberRequestDto().getEmail()
-        );
+    public ResponseEntity<Optional<CommentResponseDto>> commentCreate(String content, Long boardId, String email) {
+
+        Comment comment = commentClassCreated(content, boardId, email);
 
         Comment saveComment = commentRepository.save(comment);
+
         return new ResponseEntity<>(of(new CommentResponseDto(saveComment)), CREATED);
     }
 
@@ -58,8 +57,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      * @return 댓글, HTTP OK
      */
     @Override
-    public ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content) {
-        Optional<Comment> comment = commentRepository.findByBoardTitleAndContainingContent(title, content);
+    public ResponseEntity<Optional<CommentResponseDto>> findComment(String boardTitle, String content) {
+        Optional<Comment> comment = commentRepository.findByBoardTitleAndContainingContent(boardTitle, content);
 
         return new ResponseEntity<>(of(new CommentResponseDto(getComment(comment))), OK);
     }
@@ -139,12 +138,11 @@ public class CommentCrudServiceImpl implements CommentCrudService {
 
     @Override
     @Transactional
-    public ResponseEntity<Optional<CommentResponseDto>> commentDelete(CommentRequestDto commentRequestDto) {
-        Optional<CommentResponseDto> comment = findComment(commentRequestDto.getBoardRequestDto().getTitle(), commentRequestDto.getContent()).getBody();
-        Optional<Comment> findComment = getCommentReturnByCommentId(comment.get().getId());
+    public ResponseEntity<Optional<CommentResponseDto>> commentDelete(Long commentId) {
+        Optional<Comment> comment = commentRepository.findById(commentId);
 
         //Token으로 할 것이므로 JPA delete 작동하는지만 임시 확인.
-        commentRepository.delete(getComment(findComment));
+        commentRepository.delete(comment.get());
 
         return new ResponseEntity<>(NO_CONTENT);
     }

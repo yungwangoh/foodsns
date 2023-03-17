@@ -1,15 +1,18 @@
 package sejong.foodsns.service.board.crud.impl;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.member.Member;
-import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.board.BoardRequestDto;
-import sejong.foodsns.dto.board.CommentRequestDto;
-import sejong.foodsns.dto.board.ReplyRequestDto;
+import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
+import sejong.foodsns.dto.reply.ReplyRequestDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
+import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.board.ReplyRepository;
@@ -21,8 +24,9 @@ import sejong.foodsns.service.board.crud.ReplyCrudService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static sejong.foodsns.domain.member.MemberType.*;
 
 @SpringBootTest
@@ -47,6 +51,7 @@ class ReplyCrudServiceImplTest {
     private MemberRequestDto memberRequestDto;
     private BoardRequestDto boardRequestDto;
     private CommentRequestDto commentRequestDto;
+    private ResponseEntity<Optional<CommentResponseDto>> commentCreate;
 
     @BeforeEach
     void init() throws IOException {
@@ -68,7 +73,7 @@ class ReplyCrudServiceImplTest {
 
         // comment
         commentRequestDto = new CommentRequestDto("좋아요", memberRequestDto, boardRequestDto);
-        commentCrudService.commentCreate(commentRequestDto);
+        commentCreate = commentCrudService.commentCreate(commentRequestDto);
     }
 
     @Nested
@@ -82,13 +87,15 @@ class ReplyCrudServiceImplTest {
         void replyCreate() {
             // given
             String content = "좋아";
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, boardRequestDto, commentRequestDto);
+
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId());
 
             // when
-            replyCrudService.replyCreate()
+            ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId());
 
             // then
-
+            assertThat(getReplyResponseDto(replyCreate).getContent()).isEqualTo(content);
         }
 
         @AfterEach
@@ -98,6 +105,14 @@ class ReplyCrudServiceImplTest {
             boardRepository.deleteAll();
             memberRepository.deleteAll();
         }
+    }
+
+    private static ReplyResponseDto getReplyResponseDto(ResponseEntity<Optional<ReplyResponseDto>> replyCreate) {
+        return replyCreate.getBody().get();
+    }
+
+    private CommentResponseDto getCommentResponseDto() {
+        return commentCreate.getBody().get();
     }
 
     @Nested
