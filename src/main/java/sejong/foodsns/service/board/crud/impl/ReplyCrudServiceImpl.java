@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchReplyException;
 import sejong.foodsns.repository.board.BoardRepository;
@@ -40,9 +41,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId) {
+    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId, String username) {
 
-        Reply reply = replyClassCreated(content, commentId);
+        Reply reply = replyClassCreated(content, commentId, username);
         Reply saveReply = replyRepository.save(reply);
 
         return new ResponseEntity<>(of(new ReplyResponseDto(saveReply)), CREATED);
@@ -159,15 +160,17 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @param replyRequestDto
      * @return 대댓글
      */
-    private Reply replyClassCreated(String content, Long commentId) {
+    private Reply replyClassCreated(String content, Long commentId, String username) {
 
         Optional<Comment> comment = commentRepository.findById(commentId);
+        Optional<Member> member = memberRepository.findMemberByUsername(username);
 
         return Reply.builder()
                 .content(content)
                 .recommCount(0)
                 .reportCount(0)
                 .comment(comment.get())
+                .member(member.get())
                 .build();
     }
 

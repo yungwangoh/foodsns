@@ -5,6 +5,7 @@ import lombok.*;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.member.MemberRequestDto;
 
 import javax.validation.constraints.NotBlank;
@@ -22,9 +23,13 @@ public class ReplyRequestDto {
     @Schema(description = "댓글 id")
     private Long commentId;
 
+    @Schema(description = "닉네임 (유저 이름)")
+    private String username;
+
     @Builder
-    public ReplyRequestDto(String content, Long commentId) {
+    public ReplyRequestDto(String content, Long commentId, String username) {
         this.content = content;
         this.commentId = commentId;
+        this.username = username;
     }
 }

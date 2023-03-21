@@ -2,7 +2,9 @@ package sejong.foodsns.dto.reply;
 
 import lombok.*;
 import sejong.foodsns.domain.board.Reply;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.comment.CommentResponseDto;
+import sejong.foodsns.dto.member.MemberResponseDto;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,7 +15,7 @@ public class ReplyResponseDto {
     private String content;
     private int recommCount;
     private int reportCount;
-    private CommentResponseDto commentResponseDto;
+    private MemberResponseDto memberResponseDto;
 
     @Builder
     public ReplyResponseDto(Reply reply) {
@@ -21,6 +23,6 @@ public class ReplyResponseDto {
         this.content = reply.getContent();
         this.recommCount = reply.getRecommCount();
         this.reportCount = reply.getReportCount();
-        this.commentResponseDto = new CommentResponseDto(reply.getComment());
+        this.memberResponseDto = new MemberResponseDto(reply.getMember());
     }
 }

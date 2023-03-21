@@ -54,6 +54,9 @@ class ReplyCrudServiceImplTest {
     private CommentRequestDto commentRequestDto;
     private ResponseEntity<Optional<CommentResponseDto>> commentCreate;
 
+    private Member saveMember;
+    private Member saveMember1;
+
     @BeforeEach
     void init() throws IOException {
 
@@ -62,10 +65,10 @@ class ReplyCrudServiceImplTest {
 
         // member
         Member member = new Member("윤광오", "qkfks1234@daum.net", "qwer1234!A", NORMAL);
-        Member saveMember = memberRepository.save(member);
+        saveMember = memberRepository.save(member);
 
         Member member1 = new Member("하윤", "swager253@daum.net", "qwer1234!A", NORMAL);
-        Member saveMember1 = memberRepository.save(member1);
+        saveMember1 = memberRepository.save(member1);
         memberRequestDto = new MemberRequestDto(saveMember1.getUsername(), saveMember1.getEmail(), saveMember1.getPassword());
 
         // board
@@ -89,11 +92,11 @@ class ReplyCrudServiceImplTest {
             // given
             String content = "좋아";
 
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId());
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
 
             // when
             ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
-                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId());
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
 
             // then
             assertThat(getReplyResponseDto(replyCreate).getContent()).isEqualTo(content);
@@ -106,10 +109,10 @@ class ReplyCrudServiceImplTest {
             // given
             String content = "좋아";
 
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId());
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
 
             ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
-                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId());
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
 
             // when
             ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());
@@ -119,15 +122,21 @@ class ReplyCrudServiceImplTest {
         }
 
         @Test
-        @Order(3)
-        @DisplayName("댓글에 달린 대댓글 리스트 출력")
-        void replyList() {
+        @Order(2)
+        @DisplayName("대댓글을 작성한 유저 확인")
+        void CheckTheUserWhoWroteTheReply() {
             // given
+            String content = "좋아";
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
+
+            ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
 
             // when
+            ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());
 
             // then
-
+            assertThat(getReplyResponseDto(replyCreate).getMemberResponseDto()).isEqualTo(getReplyResponseDto(reply).getMemberResponseDto());
         }
 
         @AfterEach
