@@ -1,4 +1,4 @@
-package sejong.foodsns.controller.board;
+package sejong.foodsns.controller.board.comment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
