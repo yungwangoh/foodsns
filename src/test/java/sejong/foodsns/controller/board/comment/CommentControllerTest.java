@@ -1,4 +1,4 @@
-package sejong.foodsns.controller.board;
+package sejong.foodsns.controller.board.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;

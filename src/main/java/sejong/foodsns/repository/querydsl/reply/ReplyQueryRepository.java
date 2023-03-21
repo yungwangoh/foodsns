@@ -4,7 +4,7 @@ import sejong.foodsns.domain.board.Reply;
 
 import java.util.List;
 
-public interface ReplyQueryDslRepository {
+public interface ReplyQueryRepository {
 
     List<Reply> searchReplies(String content);
     List<Reply> searchRepliesUserName(String username);

@@ -1,10 +1,8 @@
 package sejong.foodsns.controller.board.reply;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.foodsns.dto.reply.ReplyRequestDto;
@@ -15,8 +13,6 @@ import sejong.foodsns.service.board.crud.ReplyCrudService;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Optional.*;
 
 @RestController
 @RequiredArgsConstructor

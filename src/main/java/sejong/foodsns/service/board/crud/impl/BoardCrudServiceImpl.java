@@ -3,7 +3,6 @@ package sejong.foodsns.service.board.crud.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,9 +15,8 @@ import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
-import sejong.foodsns.repository.file.BoardFileRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.repository.querydsl.board.BoardQueryDslRepository;
+import sejong.foodsns.repository.querydsl.board.BoardQueryRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 import sejong.foodsns.service.board.crud.BoardFileCrudService;
 
@@ -38,7 +36,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final BoardQueryDslRepository boardQueryDslRepository;
+    private final BoardQueryRepository boardQueryDslRepository;
     private final BoardFileCrudService boardFileCrudService;
 
     /**

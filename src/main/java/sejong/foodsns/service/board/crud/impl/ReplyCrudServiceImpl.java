@@ -10,20 +10,16 @@ import sejong.foodsns.domain.board.Reply;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.exception.http.board.NoSearchReplyException;
-import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.board.ReplyRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.repository.querydsl.comment.CommentQueryDslRepository;
-import sejong.foodsns.repository.querydsl.reply.ReplyQueryDslRepository;
+import sejong.foodsns.repository.querydsl.reply.ReplyQueryRepository;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
-import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -36,7 +32,7 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final MemberRepository memberRepository;
-    private final ReplyQueryDslRepository replyQueryDslRepository;
+    private final ReplyQueryRepository replyQueryDslRepository;
 
     /**
      * 대댓글 생성 -> 성공 401, 실패 404

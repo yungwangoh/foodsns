@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.board.Reply;
-import sejong.foodsns.repository.querydsl.reply.ReplyQueryDslRepository;
+import sejong.foodsns.repository.querydsl.reply.ReplyQueryRepository;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import static sejong.foodsns.domain.board.QReply.*;
 
 @Repository
 @RequiredArgsConstructor
-public class ReplyQueryDslRepositoryImpl implements ReplyQueryDslRepository {
+public class ReplyQueryDslRepositoryImpl implements ReplyQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 

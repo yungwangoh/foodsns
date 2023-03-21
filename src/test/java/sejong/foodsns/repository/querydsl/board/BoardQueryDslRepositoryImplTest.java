@@ -12,7 +12,6 @@ import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.repository.querydsl.board.impl.BoardQueryDslRepositoryImpl;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -30,7 +29,7 @@ public class BoardQueryDslRepositoryImplTest {
     @Autowired
     private BoardRepository boardRepository;
     @Autowired
-    private BoardQueryDslRepository boardQueryDslRepository;
+    private BoardQueryRepository boardQueryDslRepository;
 
     private JPAQueryFactory jpaQueryFactory;
 

@@ -4,8 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.board.Comment;
-import sejong.foodsns.domain.board.QComment;
-import sejong.foodsns.repository.querydsl.comment.CommentQueryDslRepository;
+import sejong.foodsns.repository.querydsl.comment.CommentQueryRepository;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import static sejong.foodsns.domain.board.QComment.*;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentQueryDslRepositoryImpl implements CommentQueryDslRepository {
+public class CommentQueryDslRepositoryImpl implements CommentQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 

@@ -5,9 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
-import sejong.foodsns.repository.querydsl.board.BoardQueryDslRepository;
+import sejong.foodsns.repository.querydsl.board.BoardQueryRepository;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static sejong.foodsns.domain.board.QBoard.board;
@@ -15,7 +14,7 @@ import static sejong.foodsns.log.util.querydsl.search.QueryDslSearchUtil.searchO
 
 @Repository
 @RequiredArgsConstructor
-public class BoardQueryDslRepositoryImpl implements BoardQueryDslRepository {
+public class BoardQueryDslRepositoryImpl implements BoardQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
