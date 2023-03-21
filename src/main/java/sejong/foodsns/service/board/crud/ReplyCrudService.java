@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ReplyCrudService {
 
-    ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId, String username);
+    ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId, String email);
 
     ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdate(String title, String updateContent, String orderContent);
 

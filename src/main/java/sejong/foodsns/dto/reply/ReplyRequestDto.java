@@ -24,12 +24,12 @@ public class ReplyRequestDto {
     private Long commentId;
 
     @Schema(description = "닉네임 (유저 이름)")
-    private String username;
+    private String email;
 
     @Builder
-    public ReplyRequestDto(String content, Long commentId, String username) {
+    public ReplyRequestDto(String content, Long commentId, String email) {
         this.content = content;
         this.commentId = commentId;
-        this.username = username;
+        this.email = email;
     }
 }

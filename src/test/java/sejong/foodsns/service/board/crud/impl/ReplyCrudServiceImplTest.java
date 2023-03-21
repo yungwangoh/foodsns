@@ -92,11 +92,11 @@ class ReplyCrudServiceImplTest {
             // given
             String content = "좋아";
 
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
 
             // when
             ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
-                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getEmail());
 
             // then
             assertThat(getReplyResponseDto(replyCreate).getContent()).isEqualTo(content);
@@ -109,10 +109,10 @@ class ReplyCrudServiceImplTest {
             // given
             String content = "좋아";
 
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
 
             ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
-                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getEmail());
 
             // when
             ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());
@@ -127,10 +127,10 @@ class ReplyCrudServiceImplTest {
         void CheckTheUserWhoWroteTheReply() {
             // given
             String content = "좋아";
-            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getUsername());
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
 
             ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
-                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getUsername());
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getEmail());
 
             // when
             ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());

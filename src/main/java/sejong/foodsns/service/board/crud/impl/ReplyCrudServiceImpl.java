@@ -41,9 +41,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId, String username) {
+    public ResponseEntity<Optional<ReplyResponseDto>> replyCreate(String content, Long commentId, String email) {
 
-        Reply reply = replyClassCreated(content, commentId, username);
+        Reply reply = replyClassCreated(content, commentId, email);
         Reply saveReply = replyRepository.save(reply);
 
         return new ResponseEntity<>(of(new ReplyResponseDto(saveReply)), CREATED);
@@ -160,10 +160,10 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      * @param replyRequestDto
      * @return 대댓글
      */
-    private Reply replyClassCreated(String content, Long commentId, String username) {
+    private Reply replyClassCreated(String content, Long commentId, String email) {
 
         Optional<Comment> comment = commentRepository.findById(commentId);
-        Optional<Member> member = memberRepository.findMemberByUsername(username);
+        Optional<Member> member = memberRepository.findMemberByEmail(email);
 
         return Reply.builder()
                 .content(content)
