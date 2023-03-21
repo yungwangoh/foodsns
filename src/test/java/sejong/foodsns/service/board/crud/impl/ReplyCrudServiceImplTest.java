@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.member.Member;
@@ -25,9 +26,11 @@ import sejong.foodsns.service.board.crud.ReplyCrudService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.*;
 
 @SpringBootTest
@@ -137,6 +140,49 @@ class ReplyCrudServiceImplTest {
 
             // then
             assertThat(getReplyResponseDto(replyCreate).getMemberResponseDto()).isEqualTo(getReplyResponseDto(reply).getMemberResponseDto());
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("대댓글 내용 변경")
+        void replyContentUpdateNewReply() {
+            // given
+            String content = "좋아";
+            String newContent = "좋아요!";
+
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
+
+            ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getEmail());
+
+            // when
+            ResponseEntity<Optional<ReplyResponseDto>> contentUpdateById =
+                    replyCrudService.replyContentUpdateById(getReplyResponseDto(replyCreate).getId(), newContent);
+
+            // then
+            assertThat(getReplyResponseDto(contentUpdateById).getContent()).isEqualTo(newContent);
+        }
+
+        @Test
+        @Order(4)
+        @DisplayName("대댓글 삭제")
+        void replyDelete() {
+            // given
+            String content = "좋아";
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
+
+            ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), saveMember.getEmail());
+
+            // when
+            ResponseEntity<Optional<ReplyResponseDto>> replyDelete = replyCrudService.replyDelete(getReplyResponseDto(replyCreate).getId());
+
+            // then
+            assertThatThrownBy(() -> {
+                replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());
+            }).isInstanceOf(NoSuchElementException.class);
+
+            assertThat(replyDelete.getStatusCode()).isEqualTo(NO_CONTENT);
         }
 
         @AfterEach

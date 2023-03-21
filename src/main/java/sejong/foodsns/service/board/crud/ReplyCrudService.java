@@ -12,6 +12,8 @@ public interface ReplyCrudService {
 
     ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdate(String title, String updateContent, String orderContent);
 
+    ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdateById(Long replyId, String updateContent);
+
     ResponseEntity<Optional<ReplyResponseDto>> replyDelete(Long replyId);
 
     ResponseEntity<Optional<ReplyResponseDto>> findReply(String title, String content);

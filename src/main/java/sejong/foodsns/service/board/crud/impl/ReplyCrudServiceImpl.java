@@ -36,7 +36,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
     /**
      * 대댓글 생성 -> 성공 401, 실패 404
-     * @param replyRequestDto
+     * @param content 내용
+     * @param commentId 댓글 id
+     * @param email 유저 이메일
      * @return 대댓글 DTO
      */
     @Override
@@ -66,9 +68,19 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
         return new ResponseEntity<>(of(new ReplyResponseDto(updateReply)), OK);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdateById(Long replyId, String updateContent) {
+        Optional<Reply> reply = replyRepository.findReplyById(replyId);
+
+        Reply updateReply = getReply(reply).replyContentUpdate(updateContent);
+
+        return new ResponseEntity<>(of(new ReplyResponseDto(updateReply)), OK);
+    }
+
     /**
      * 대댓글 삭제 -> 성공 200, 실패 404
-     * @param replyRequestDto
+     * @param replyId 대댓글 id
      * @return HTTP OK
      */
     @Override
@@ -157,7 +169,9 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
     /**
      * 대댓글 객체 생성
-     * @param replyRequestDto
+     * @param content 내용
+     * @param commentId 댓글 id
+     * @param email 유저 이메일
      * @return 대댓글
      */
     private Reply replyClassCreated(String content, Long commentId, String email) {
