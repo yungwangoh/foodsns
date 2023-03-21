@@ -19,6 +19,8 @@ public interface CommentCrudService {
 
     ResponseEntity<Optional<List<CommentResponseDto>>> allCommentList();
 
+    ResponseEntity<Optional<List<CommentResponseDto>>> findCommentsByContent(String content);
+
     ResponseEntity<Optional<List<CommentResponseDto>>> commentListByUsername(String username);
 
     ResponseEntity<Optional<List<CommentResponseDto>>> commentListByBoardTitle(String title);

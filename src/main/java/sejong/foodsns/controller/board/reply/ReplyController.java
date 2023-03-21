@@ -13,6 +13,7 @@ import sejong.foodsns.dto.reply.ReplyUpdateDto;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.*;
@@ -25,6 +26,11 @@ public class ReplyController {
 
     private final ReplyCrudService replyCrudService;
 
+    /**
+     * 대댓글 등록
+     * @param replyRequestDto 대댯글 등록 dto : content, commentId, user email
+     * @return 대댓글 응답 dto
+     */
     @PostMapping("/reply")
     ResponseEntity<ReplyResponseDto> replyCreate(@RequestBody @Valid ReplyRequestDto replyRequestDto) {
 
@@ -34,6 +40,11 @@ public class ReplyController {
         return new ResponseEntity<>(getReplyResponseDto(replyCreate), replyCreate.getStatusCode());
     }
 
+    /**
+     * 대댓글 수정
+     * @param replyUpdateDto 대댓글 수정 dto : replyId, updateContent
+     * @return 대댓글 응답 dto
+     */
     @PatchMapping("/reply")
     ResponseEntity<ReplyResponseDto> replyUpdate(@RequestBody @Valid ReplyUpdateDto replyUpdateDto) {
 
@@ -43,6 +54,11 @@ public class ReplyController {
         return new ResponseEntity<>(getReplyResponseDto(replyUpdate), replyUpdate.getStatusCode());
     }
 
+    /**
+     * 대댓글 삭제
+     * @param replyId 대댓글 id
+     * @return NO_CONTENT
+     */
     @DeleteMapping("/reply/{replyId}")
     ResponseEntity<ReplyResponseDto> replyDelete(@PathVariable Long replyId) {
 
@@ -51,12 +67,31 @@ public class ReplyController {
         return new ResponseEntity<>(getReplyResponseDto(replyDelete), replyDelete.getStatusCode());
     }
 
+    /**
+     * 대댓글 검색 id를 통하여
+     * @param replyId 대댓글 id
+     * @return 대댓글 응답 dto
+     */
     @GetMapping("/reply/{replyId}")
     ResponseEntity<ReplyResponseDto> replySearch(@PathVariable Long replyId) {
 
         ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(replyId);
 
         return new ResponseEntity<>(getReplyResponseDto(reply), reply.getStatusCode());
+    }
+
+    /**
+     * 대댓글 내용으로 검색하여 리스트 출력 (한글자라도 포함하면..)
+     * @param content 대댓글 내용
+     * @return 대댓글 응답 리스트
+     */
+    @GetMapping("/replies/content")
+    ResponseEntity<List<ReplyResponseDto>> replySearchByContent(@RequestParam("content") String content) {
+
+        ResponseEntity<Optional<List<ReplyResponseDto>>> repliesByContent =
+                replyCrudService.findRepliesByContent(content);
+
+        return new ResponseEntity<>(repliesByContent.getBody().get(), repliesByContent.getStatusCode());
     }
 
     private static ReplyResponseDto getReplyResponseDto(ResponseEntity<Optional<ReplyResponseDto>> replyCreate) {

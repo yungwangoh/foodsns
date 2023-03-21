@@ -14,12 +14,15 @@ import sejong.foodsns.exception.http.board.NoSearchCommentException;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.member.MemberRepository;
+import sejong.foodsns.repository.querydsl.comment.CommentQueryDslRepository;
 import sejong.foodsns.service.board.crud.CommentCrudService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -32,6 +35,7 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final CommentQueryDslRepository commentQueryDslRepository;
 
     /**
      * 댓글 생성 -> 성공 ?, 실패 ?
@@ -92,6 +96,18 @@ public class CommentCrudServiceImpl implements CommentCrudService {
                 .collect(toList()));
 
         return new ResponseEntity<>(collect, OK);
+    }
+
+    @Override
+    public ResponseEntity<Optional<List<CommentResponseDto>>> findCommentsByContent(String content) {
+
+        List<Comment> comments = commentQueryDslRepository.searchComments(content);
+
+        Optional<List<CommentResponseDto>> commentResponseDtos = of(comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(toList()));
+
+        return new ResponseEntity<>(commentResponseDtos, OK);
     }
 
     /**

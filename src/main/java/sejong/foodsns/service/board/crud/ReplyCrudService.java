@@ -20,6 +20,8 @@ public interface ReplyCrudService {
 
     ResponseEntity<Optional<ReplyResponseDto>> findReplyById(Long replyId);
 
+    ResponseEntity<Optional<List<ReplyResponseDto>>> findRepliesByContent(String content);
+
     ResponseEntity<Optional<List<ReplyResponseDto>>> allReplyList();
 
     ResponseEntity<Optional<List<ReplyResponseDto>>> replyListByUsername(String username);

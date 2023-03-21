@@ -14,12 +14,16 @@ import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.board.ReplyRepository;
 import sejong.foodsns.repository.member.MemberRepository;
+import sejong.foodsns.repository.querydsl.comment.CommentQueryDslRepository;
+import sejong.foodsns.repository.querydsl.reply.ReplyQueryDslRepository;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.of;
+import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
@@ -31,8 +35,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
 
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final ReplyQueryDslRepository replyQueryDslRepository;
 
     /**
      * 대댓글 생성 -> 성공 401, 실패 404
@@ -128,6 +132,17 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
                 .map(ReplyResponseDto::new)
                 .collect(toList()));
         return new ResponseEntity<>(replyList, OK);
+    }
+
+    @Override
+    public ResponseEntity<Optional<List<ReplyResponseDto>>> findRepliesByContent(String content) {
+        List<Reply> replies = replyQueryDslRepository.searchReplies(content);
+
+        Optional<List<ReplyResponseDto>> replyResponseDtos = of(replies.stream()
+                .map(ReplyResponseDto::new)
+                .collect(toList()));
+
+        return new ResponseEntity<>(replyResponseDtos, OK);
     }
 
     /**

@@ -76,6 +76,20 @@ public class CommentController {
     }
 
     /**
+     * 내용으로 댓글 리스트 출력
+     * @param content 내용
+     * @return 댓글 리스트
+     */
+    @GetMapping("/comments/content")
+    ResponseEntity<List<CommentResponseDto>> commentSearchByContent(@RequestParam("content") String content) {
+
+        ResponseEntity<Optional<List<CommentResponseDto>>> commentsByContent =
+                commentCrudService.findCommentsByContent(content);
+
+        return new ResponseEntity<>(getCommentResponseDtos(commentsByContent), commentsByContent.getStatusCode());
+    }
+
+    /**
      * 댓글 내용 수정
      * @param commentUpdateContentDto
      * @return 댓글 내용 수정 완료, OK
@@ -92,7 +106,7 @@ public class CommentController {
 
     /**
      * 댓글 삭제
-     * @param commentRequestDto
+     * @param commentId 댓글 id
      * @return 게시물 삭제 완료, OK
      */
     @DeleteMapping("/comment/{commentId}")
