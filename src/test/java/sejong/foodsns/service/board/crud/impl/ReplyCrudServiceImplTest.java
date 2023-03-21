@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
+import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.comment.CommentRequestDto;
 import sejong.foodsns.dto.comment.CommentResponseDto;
 import sejong.foodsns.dto.reply.ReplyRequestDto;
@@ -69,11 +70,11 @@ class ReplyCrudServiceImplTest {
 
         // board
         boardRequestDto = new BoardRequestDto("김치찌개 레시피", "김치찌개 굳", saveMember);
-        boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
         // comment
-        commentRequestDto = new CommentRequestDto("좋아요", memberRequestDto, boardRequestDto);
-        commentCreate = commentCrudService.commentCreate(commentRequestDto);
+        commentRequestDto = new CommentRequestDto("좋아요", saveMember1.getEmail(), getBoardResponseDto(boardCreate).getId());
+        commentCreate = commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
     }
 
     @Nested
@@ -98,6 +99,37 @@ class ReplyCrudServiceImplTest {
             assertThat(getReplyResponseDto(replyCreate).getContent()).isEqualTo(content);
         }
 
+        @Test
+        @Order(1)
+        @DisplayName("대댓글 찾기 성공 id를 통해서")
+        void replySearch() {
+            // given
+            String content = "좋아";
+
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId());
+
+            ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
+                    replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId());
+
+            // when
+            ResponseEntity<Optional<ReplyResponseDto>> reply = replyCrudService.findReplyById(getReplyResponseDto(replyCreate).getId());
+
+            // then
+            assertThat(getReplyResponseDto(reply).getContent()).isEqualTo(content);
+        }
+
+        @Test
+        @Order(3)
+        @DisplayName("댓글에 달린 대댓글 리스트 출력")
+        void replyList() {
+            // given
+
+            // when
+
+            // then
+
+        }
+
         @AfterEach
         void dbInit() {
             replyRepository.deleteAll();
@@ -113,6 +145,10 @@ class ReplyCrudServiceImplTest {
 
     private CommentResponseDto getCommentResponseDto() {
         return commentCreate.getBody().get();
+    }
+
+    private static BoardResponseDto getBoardResponseDto(ResponseEntity<Optional<BoardResponseDto>> boardCreate) {
+        return boardCreate.getBody().get();
     }
 
     @Nested
