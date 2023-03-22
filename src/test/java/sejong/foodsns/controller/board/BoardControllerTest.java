@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +30,7 @@ import sejong.foodsns.service.board.crud.BoardCrudService;
 import sejong.foodsns.service.member.crud.MemberCrudService;
 
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,14 +52,14 @@ public class BoardControllerTest {
     private MemberRequestDto memberRequestDto;
 
     @BeforeEach
-    public void initBoard() {
+    void initBoard() {
         Member member = new Member("윤광오", "swager253@naver.com", "qwer1234@A", MemberType.NORMAL);
         Member saveMember = memberRepository.save(member);
 
         memberRequestDto = MemberRequestDto.builder()
                 .username("윤광오")
                 .email("swager253@naver.com")
-                .password("rhkddh77@A")
+                .password("qwer1234@A")
                 .build();
 
         boardRequestDto = BoardRequestDto.builder()
@@ -78,10 +80,13 @@ public class BoardControllerTest {
     void registerBoard() throws Exception {
 
         String s = objectMapper.writeValueAsString(boardRequestDto);
-        ResultActions resultActions = mockMvc.perform(post("/board")
-                .content(s)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+
+        MockMultipartFile file = new MockMultipartFile("image", "image", "mul")
+        MockMultipartFile request =
+                new MockMultipartFile("board", "board", "application/json", s.getBytes(StandardCharsets.UTF_8));
+
+        ResultActions resultActions = mockMvc.perform(multipart("/board")
+                .file(request));
 
         MvcResult mvcResult = resultActions.andReturn();
         System.out.println("result : " + mvcResult.getResponse().getContentAsString());
@@ -131,7 +136,7 @@ public class BoardControllerTest {
         String name = "image";
         String originalFileName = "test.jpeg";
         String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
 
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
         mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
@@ -169,7 +174,7 @@ public class BoardControllerTest {
         String name = "image";
         String originalFileName = "test.jpeg";
         String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
 
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
         mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
@@ -201,7 +206,7 @@ public class BoardControllerTest {
         String name = "image";
         String originalFileName = "test.jpeg";
         String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
 
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
         mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
@@ -233,7 +238,7 @@ public class BoardControllerTest {
         String name = "image";
         String originalFileName = "test.jpeg";
         String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file";
+        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
 
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
         mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
