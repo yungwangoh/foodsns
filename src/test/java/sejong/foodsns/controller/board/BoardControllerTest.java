@@ -81,11 +81,14 @@ public class BoardControllerTest {
 
         String s = objectMapper.writeValueAsString(boardRequestDto);
 
-        MockMultipartFile file = new MockMultipartFile("image", "image", "mul")
-        MockMultipartFile request =
+        MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("board", "board", "application/json", s.getBytes(StandardCharsets.UTF_8));
 
+        MockMultipartFile request =
+                new MockMultipartFile("image", "test.jpeg", "image/jpeg", new FileInputStream("/Users/yungwang-o/Documents/test.jpeg"));
+
         ResultActions resultActions = mockMvc.perform(multipart("/board")
+                .file(mockMultipartFile)
                 .file(request));
 
         MvcResult mvcResult = resultActions.andReturn();

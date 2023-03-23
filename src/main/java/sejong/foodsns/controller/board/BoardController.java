@@ -47,7 +47,7 @@ public class BoardController {
      */
     @PostMapping("/board")
     public ResponseEntity<BoardResponseDto> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
-                                                        @RequestPart(value = "image-file", required = false) List<MultipartFile> multipartFiles) throws IOException {
+                                                        @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
 
         ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
