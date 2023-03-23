@@ -75,7 +75,7 @@ class ReplyCrudServiceImplTest {
         memberRequestDto = new MemberRequestDto(saveMember1.getUsername(), saveMember1.getEmail(), saveMember1.getPassword());
 
         // board
-        boardRequestDto = new BoardRequestDto("김치찌개 레시피", "김치찌개 굳", saveMember);
+        boardRequestDto = new BoardRequestDto("김치찌개 레시피", "김치찌개 굳", saveMember.getUsername());
         ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
         // comment

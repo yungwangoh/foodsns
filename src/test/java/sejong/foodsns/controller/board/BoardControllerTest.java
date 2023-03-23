@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -21,6 +22,8 @@ import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.board.BoardRequestDto;
+import sejong.foodsns.dto.board.BoardResponseDto;
+import sejong.foodsns.dto.board.delete.BoardDeleteDto;
 import sejong.foodsns.dto.board.update.BoardUpdateTitleDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.update.MemberUpdateUserNameDto;
@@ -33,6 +36,7 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -65,8 +69,7 @@ public class BoardControllerTest {
         boardRequestDto = BoardRequestDto.builder()
                 .title("test1")
                 .content("hi")
-                .memberRequestDto(new MemberRequestDto(saveMember.getUsername(),
-                        saveMember.getEmail(), saveMember.getPassword()))
+                .username(saveMember.getUsername())
                 .build();
     }
 
@@ -79,13 +82,14 @@ public class BoardControllerTest {
     @DisplayName("게시물 등록 컨트롤러")
     void registerBoard() throws Exception {
 
+        String fileUrl = "/Users/yungwang-o/Documents/test.jpeg";
         String s = objectMapper.writeValueAsString(boardRequestDto);
 
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("board", "board", "application/json", s.getBytes(StandardCharsets.UTF_8));
 
         MockMultipartFile request =
-                new MockMultipartFile("image", "test.jpeg", "image/jpeg", new FileInputStream("/Users/yungwang-o/Documents/test.jpeg"));
+                new MockMultipartFile("image", "test.jpeg", "image/jpeg", new FileInputStream(fileUrl));
 
         ResultActions resultActions = mockMvc.perform(multipart("/board")
                 .file(mockMultipartFile)
@@ -97,58 +101,17 @@ public class BoardControllerTest {
                 .andDo(print());
     }
 
-    /**
-     * 게시물 제목 중복으로 인한 등록 실패
-     * @return 게시물, BADREQUEST
-     */
-    @Test
-    @Order(1)
-    @DisplayName("게시물 제목중복으로 인한 등록실패 컨트롤러")
-    void registerBoardBadRequest() throws Exception {
-
-        String save = objectMapper.writeValueAsString(boardRequestDto);
-        MvcResult mvcResult = mockMvc.perform(post("/board")
-                        .content(save)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        System.out.println("result : " + mvcResult.getResponse().getContentAsString());
-
-        BoardRequestDto boardRequestDtoTmp = BoardRequestDto.builder()
-                .title("test1")
-                .content("anything you can cook recipe")
-                .memberRequestDto(memberRequestDto)
-                .build();
-
-        String s = objectMapper.writeValueAsString(boardRequestDtoTmp);
-        ResultActions resultActions = mockMvc.perform(post("/board")
-                .content(s)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        resultActions.andExpect(status().isBadRequest())
-                .andDo(print());
-    }
-
     @Test
     @Order(2)
     @DisplayName("게시물 찾기 OK")
     void boardSearchOK() throws Exception {
         // given
-        String name = "image";
-        String originalFileName = "test.jpeg";
-        String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
-
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
-        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
 
-        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
-        String title = "test1";
+        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/board/{title}", title));
+        ResultActions resultActions = mockMvc.perform(get("/board/{id}", getBoardResponseDto(boardCreate).getId()));
 
         // then
         resultActions.andExpect(status().isOk())
@@ -171,54 +134,24 @@ public class BoardControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("게시물 제목 수정 실패")
+    @DisplayName("게시물 제목 수정 성공")
     void memberNameUpdateFailed() throws Exception {
         // given
+        String username = "윤광오";
         String name = "image";
         String originalFileName = "test.jpeg";
         String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
+        String fileUrl = "/Users/yungwang-o/Documents/test.jpeg";
 
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
-        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
+        //mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
 
-        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
-
-        BoardUpdateTitleDto boardUpdateTitleDto = BoardUpdateTitleDto.builder()
-                .updateTitle("test2sadjfklasjfkl;dsjfkl;adjsfkl;jdsaklf;ajsdkl;fjsdaklfjsdalkfjasdkl;fjdaskl;jfkalds;fjdkls;ajfa")
-                .orderTitle("test1")
-                .build();
-
-        String updateTitle = objectMapper.writeValueAsString(boardUpdateTitleDto);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(patch("/board/title")
-                .content(updateTitle)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        // then
-        resultActions.andExpect(status().isNotModified())
-                .andDo(print());
-    }
-    @Test
-    @Order(5)
-    @DisplayName("게시물 제목 수정 성공 OK")
-    void memberNameUpdate() throws Exception {
-        // given
-        String name = "image";
-        String originalFileName = "test.jpeg";
-        String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
-
-        List<MultipartFile> mockMultipartFiles = new ArrayList<>();
-        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
-
-        boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
+        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
 
         BoardUpdateTitleDto boardUpdateTitleDto = BoardUpdateTitleDto.builder()
-                .updateTitle("test2")
-                .orderTitle("test1")
+                .id(getBoardResponseDto(boardCreate).getId())
+                .username(username)
+                .updateTitle("하이용!!")
                 .build();
 
         String updateTitle = objectMapper.writeValueAsString(boardUpdateTitleDto);
@@ -238,13 +171,7 @@ public class BoardControllerTest {
     @DisplayName("검색 옵션을 통한 게시물 API 테스트")
     void searchOptionBoardApiTest() throws Exception{
         // given
-        String name = "image";
-        String originalFileName = "test.jpeg";
-        String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file/";
-
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
-        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
 
         boardCrudService.boardCreate(boardRequestDto, mockMultipartFiles);
         String content = "test";
@@ -252,10 +179,32 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mockMvc
-                .perform(get("/board/{search-option}/{content}", SearchOption.ALL, content));
+                .perform(get("/board/{search-option}/{content}", SearchOption.ALL, content1));
 
         // then
         resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 성공")
+    void boardDeleteControllerOK() throws Exception {
+        // given
+        List<MultipartFile> multipartFiles = new ArrayList<>();
+
+        ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+        BoardDeleteDto boardDeleteDto = new BoardDeleteDto(getBoardResponseDto(boardCreate).getId(), "윤광오");
+        String s = objectMapper.writeValueAsString(boardDeleteDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/board")
+                .content(s)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        resultActions.andExpect(status().isNoContent())
                 .andDo(print());
     }
 
@@ -263,5 +212,9 @@ public class BoardControllerTest {
     void deleteAll() {
         boardRepository.deleteAll();
         memberRepository.deleteAll();
+    }
+
+    private static BoardResponseDto getBoardResponseDto(ResponseEntity<Optional<BoardResponseDto>> boardCreate) {
+        return boardCreate.getBody().get();
     }
 }

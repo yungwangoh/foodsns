@@ -65,7 +65,7 @@ public class CommentControllerTest {
 
         boardRequestDto = BoardRequestDto.builder()
                 .title("자취 레시피 공유합니다.")
-                .memberRequestDto(new MemberRequestDto(savePostMember.getUsername(), savePostMember.getEmail(), savePostMember.getPassword()))
+                .username(savePostMember.getUsername())
                 .content("김치찌개 레시피 1....")
                 .build();
 

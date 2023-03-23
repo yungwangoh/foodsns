@@ -15,6 +15,7 @@ import sejong.foodsns.domain.file.util.BoardFileStorage;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
+import sejong.foodsns.dto.board.delete.BoardDeleteDto;
 import sejong.foodsns.dto.board.querydsl.SearchOptionDto;
 import sejong.foodsns.dto.board.update.BoardUpdateTitleDto;
 import sejong.foodsns.service.board.crud.BoardCrudService;
@@ -77,9 +78,11 @@ public class BoardController {
     public ResponseEntity<String> boardUpdateTitle(@RequestBody @Valid BoardUpdateTitleDto boardUpdateTitleDto) {
 
         ResponseEntity<Optional<BoardResponseDto>> titleUpdate =
-                boardCrudService.boardTitleUpdate(boardUpdateTitleDto.getId(),
-                        boardUpdateTitleDto.getMemberRequestDto().getUsername(),
-                        boardUpdateTitleDto.getUpdateTitle());
+                boardCrudService.boardTitleUpdate(
+                        boardUpdateTitleDto.getId(),
+                        boardUpdateTitleDto.getUsername(),
+                        boardUpdateTitleDto.getUpdateTitle()
+                );
 
         return new ResponseEntity<>(BOARD_TITLE_UPDATE_SUCCESS, titleUpdate.getStatusCode());
     }
@@ -116,10 +119,10 @@ public class BoardController {
      * @return 게시물 삭제 완료, OK
      */
     @DeleteMapping("/board")
-    public ResponseEntity<String> boardDelete(@RequestBody @Valid BoardRequestDto boardRequestDto) {
+    public ResponseEntity<String> boardDelete(@RequestBody @Valid BoardDeleteDto boardRequestDto) {
 
         ResponseEntity<Optional<BoardResponseDto>> boardDelete =
-                boardCrudService.boardDelete(boardRequestDto.getId(), boardRequestDto.getMemberRequestDto().getUsername());
+                boardCrudService.boardDelete(boardRequestDto.getBoardId(), boardRequestDto.getUsername());
 
         return new ResponseEntity<>(BOARD_DELETE_SUCCESS, boardDelete.getStatusCode());
     }

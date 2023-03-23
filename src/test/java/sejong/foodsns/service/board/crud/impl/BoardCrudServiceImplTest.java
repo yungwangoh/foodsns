@@ -70,7 +70,7 @@ public class BoardCrudServiceImplTest {
             assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
             assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
             assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
-            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
+            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getUsername()); // Response / Request
             assertThat(getBody(boardCreate).getMemberResponseDto().getMemberRank()).isEqualTo(boardResponseDto.getMemberResponseDto().getMemberRank());
         }
 
@@ -183,7 +183,7 @@ public class BoardCrudServiceImplTest {
             assertThat(boardCreate.getStatusCode()).isEqualTo(CREATED);
             assertThat(getBody(boardCreate).getTitle()).isEqualTo(boardResponseDto.getTitle());
             assertThat(getBody(boardCreate).getContent()).isEqualTo(boardResponseDto.getContent());
-            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getMemberRequestDto().getUsername()); // Response / Request
+            assertThat(getBody(boardCreate).getMemberResponseDto().getUsername()).isEqualTo(boardRequestDto.getUsername()); // Response / Request
             assertThat(getBody(boardCreate).getMemberResponseDto().getMemberRank()).isEqualTo(boardResponseDto.getMemberResponseDto().getMemberRank());
         }
 
@@ -273,13 +273,13 @@ public class BoardCrudServiceImplTest {
             return BoardRequestDto.builder()
                     .title("레시피1")
                     .content("콩나물무침")
-                    .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
+                    .username(member.getUsername())
                     .build();
         }
         return BoardRequestDto.builder()
                 .title("레시피2")
                 .content("시금치무침")
-                .memberRequestDto(new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword()))
+                .username(member.getUsername())
                 .build();
     }
 

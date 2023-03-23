@@ -48,9 +48,10 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     @Transactional
     public ResponseEntity<Optional<BoardResponseDto>> boardCreate(BoardRequestDto boardRequestDto, List<MultipartFile> multipartFiles) throws IOException {
 
-        duplicatedCheckBoardTitle(boardRequestDto);
+        // 게시물 제목은 중복을 허용함.
+        //duplicatedCheckBoardTitle(boardRequestDto);
 
-        Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getMemberRequestDto().getUsername()).get();
+        Member findMember = memberRepository.findMemberByUsername(boardRequestDto.getUsername()).get();
         Board board = boardClassCreated(boardRequestDto, findMember);
 
         // 게시물 파일 추가

@@ -14,7 +14,6 @@ import javax.validation.constraints.Pattern;
 public class BoardUpdateTitleDto {
 
     private Long id;
-    private MemberRequestDto memberRequestDto;
-    private String orderTitle;
+    private String username;
     private String updateTitle;
 }

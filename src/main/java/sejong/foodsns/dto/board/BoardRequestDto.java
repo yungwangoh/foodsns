@@ -31,13 +31,14 @@ public class BoardRequestDto {
     private String title;
     @Schema(description = "게시물 내용", example = "김치찌개 레시피 메뉴얼")
     private String content;
+
     @Schema(description = "게시물 작성자", example = "하윤")
-    private MemberRequestDto memberRequestDto;
+    private String username;
 
     @Builder
-    public BoardRequestDto(String title, String content, Member member) {
+    public BoardRequestDto(String title, String content, String username) {
         this.title = title;
         this.content = content;
-        this.memberRequestDto = new MemberRequestDto(member.getUsername(), member.getEmail(), member.getPassword());
+        this.username = username;
     }
 }
