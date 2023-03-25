@@ -17,6 +17,7 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 @RestControllerAdvice("sejong.foodsns.controller.board")
 public class BoardException {
+
     /**
      * 중복된 제목 예외 처리
      * @param e
@@ -28,6 +29,7 @@ public class BoardException {
         log.info("[duplicated exception]", e);
         return getErrorResultResponseEntity(BAD_REQUEST, e);
     }
+
     /**
      * 제목 글자수 제한
      * @param e

@@ -9,13 +9,12 @@ import sejong.foodsns.dto.reply.ReplyRequestDto;
 import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.dto.reply.ReplyUpdateDto;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
-import sejong.foodsns.service.board.crud.message.ReplySuccessOrFailedMessage;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static sejong.foodsns.service.board.crud.message.ReplySuccessOrFailedMessage.*;
+import static sejong.foodsns.service.board.crud.message.ReplySuccessOrFailedMessage.REPLY_SUCCESS_DELETE;
 
 @RestController
 @RequiredArgsConstructor
@@ -102,7 +101,7 @@ public class ReplyController {
         return new ResponseEntity<>(replyListByUsername.getBody().get(), replyListByUsername.getStatusCode());
     }
 
-    private static ReplyResponseDto getReplyResponseDto(ResponseEntity<Optional<ReplyResponseDto>> replyCreate) {
-        return replyCreate.getBody().get();
+    private static ReplyResponseDto getReplyResponseDto(ResponseEntity<Optional<ReplyResponseDto>> reply) {
+        return reply.getBody().get();
     }
 }

@@ -50,8 +50,21 @@ public class CommentController {
     }
 
     /**
+     * 댓글 id로 검색
+     * @param commentId 댓글 id
+     * @return 댓글, OK
+     */
+    @GetMapping("/comment/{commentId}")
+    public ResponseEntity<CommentResponseDto> commentSearchById(@PathVariable Long commentId) {
+
+        ResponseEntity<Optional<CommentResponseDto>> comment = commentCrudService.findCommentById(commentId);
+
+        return new ResponseEntity<>(getComment(comment), comment.getStatusCode());
+    }
+
+    /**
      * 회원명으로 댓글 목록 검색
-     * @param username
+     * @param username 닉네임
      * @return 댓글 목록, OK
      */
     @GetMapping("/comment/{username}")

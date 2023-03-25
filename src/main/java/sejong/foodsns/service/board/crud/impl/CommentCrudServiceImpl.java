@@ -81,6 +81,18 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     }
 
     /**
+     * 댓글 찾기
+     * @param commentId 댓글 id
+     * @return 댓글, HTTP OK
+     */
+    @Override
+    public ResponseEntity<Optional<CommentResponseDto>> findCommentById(Long commentId) {
+        Optional<Comment> comment = getCommentReturnByCommentId(commentId);
+
+        return new ResponseEntity<>(of(new CommentResponseDto(comment.get())), OK);
+    }
+
+    /**
      * 회원이 작성한 댓글 목록 -> 성공 ?
      * @return 회원이 작성한 댓글 리스트, HTTP OK
      */
@@ -153,9 +165,8 @@ public class CommentCrudServiceImpl implements CommentCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<CommentResponseDto>> commentDelete(Long commentId) {
-        Optional<Comment> comment = commentRepository.findById(commentId);
+        Optional<Comment> comment = getCommentReturnByCommentId(commentId);
 
-        //Token으로 할 것이므로 JPA delete 작동하는지만 임시 확인.
         commentRepository.delete(comment.get());
 
         return new ResponseEntity<>(NO_CONTENT);

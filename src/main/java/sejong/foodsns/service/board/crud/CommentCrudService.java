@@ -13,6 +13,8 @@ public interface CommentCrudService {
 
     ResponseEntity<Optional<CommentResponseDto>> commentContentUpdate(String title, String updateContent, String orderContent);
 
+    ResponseEntity<Optional<CommentResponseDto>> findCommentById(Long commentId);
+
     ResponseEntity<Optional<CommentResponseDto>> commentDelete(Long commentId);
 
     ResponseEntity<Optional<CommentResponseDto>> findComment(String title, String content);

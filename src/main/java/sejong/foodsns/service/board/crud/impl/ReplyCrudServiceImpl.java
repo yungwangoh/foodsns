@@ -61,7 +61,8 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdate(String title, String updateContent, String orderContent) {
-        Optional<Reply> findReply = getReplyReturnByOptionalReply(title, orderContent);
+        Optional<Reply> findReply = of(getReplyReturnByOptionalReply(title, orderContent)
+                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다.")));
 
         Reply updateReply = getReply(findReply).replyContentUpdate(updateContent);
 
@@ -71,7 +72,7 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
     @Override
     @Transactional
     public ResponseEntity<Optional<ReplyResponseDto>> replyContentUpdateById(Long replyId, String updateContent) {
-        Optional<Reply> reply = replyRepository.findReplyById(replyId);
+        Optional<Reply> reply = getReplyReturnByReplyId(replyId);
 
         Reply updateReply = getReply(reply).replyContentUpdate(updateContent);
 
@@ -100,7 +101,10 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     public ResponseEntity<Optional<ReplyResponseDto>> findReply(String title, String content) {
-        Optional<Reply> reply = replyRepository.findByBoardTitleAndContainingContent(title, content);
+
+        Optional<Reply> reply = of(replyRepository.findByBoardTitleAndContainingContent(title, content)
+                .orElseThrow(() -> new IllegalArgumentException("대댓글을 찾을 수 없습니다.")));
+
         return new ResponseEntity<>(of(new ReplyResponseDto(getReply(reply))), OK);
 
     }
@@ -112,7 +116,7 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     public ResponseEntity<Optional<ReplyResponseDto>> findReplyById(Long replyId) {
-        Optional<Reply> reply = replyRepository.findReplyById(replyId);
+        Optional<Reply> reply = getReplyReturnByReplyId(replyId);
 
         return ResponseEntity.status(OK).body(of(new ReplyResponseDto(getReply(reply))));
     }
@@ -124,9 +128,11 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
     @Override
     public ResponseEntity<Optional<List<ReplyResponseDto>>> allReplyList() {
         List<Reply> replies = replyRepository.findAll();
+
         Optional<List<ReplyResponseDto>> replyList = of(replies.stream()
                 .map(ReplyResponseDto::new)
                 .collect(toList()));
+
         return new ResponseEntity<>(replyList, OK);
     }
 
@@ -147,11 +153,13 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     @Override
     public ResponseEntity<Optional<List<ReplyResponseDto>>> replyListByUsername(String username) {
+
         List<Reply> replies = replyRepository.findRepliesByUsername(username);
 
         Optional<List<ReplyResponseDto>> replyList = of(replies.stream()
                 .map(ReplyResponseDto::new)
                 .collect(toList()));
+
         return new ResponseEntity<>(replyList, OK);
     }
 
@@ -187,8 +195,11 @@ public class ReplyCrudServiceImpl implements ReplyCrudService {
      */
     private Reply replyClassCreated(String content, Long commentId, String email) {
 
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        Optional<Member> member = memberRepository.findMemberByEmail(email);
+        Optional<Comment> comment = of(commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다.")));
+
+        Optional<Member> member = of(memberRepository.findMemberByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다.")));
 
         return Reply.builder()
                 .content(content)
