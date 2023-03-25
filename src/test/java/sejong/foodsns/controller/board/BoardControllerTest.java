@@ -179,7 +179,9 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mockMvc
-                .perform(get("/board/{search-option}/{content}", SearchOption.ALL, content1));
+                .perform(get("/board/search")
+                        .param("search-option", String.valueOf(SearchOption.ALL))
+                        .param("content", content1));
 
         // then
         resultActions.andExpect(status().isOk())

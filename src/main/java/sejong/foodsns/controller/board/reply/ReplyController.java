@@ -9,10 +9,13 @@ import sejong.foodsns.dto.reply.ReplyRequestDto;
 import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.dto.reply.ReplyUpdateDto;
 import sejong.foodsns.service.board.crud.ReplyCrudService;
+import sejong.foodsns.service.board.crud.message.ReplySuccessOrFailedMessage;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+
+import static sejong.foodsns.service.board.crud.message.ReplySuccessOrFailedMessage.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,11 +59,11 @@ public class ReplyController {
      * @return NO_CONTENT
      */
     @DeleteMapping("/reply/{replyId}")
-    ResponseEntity<ReplyResponseDto> replyDelete(@PathVariable Long replyId) {
+    ResponseEntity<String> replyDelete(@PathVariable Long replyId) {
 
         ResponseEntity<Optional<ReplyResponseDto>> replyDelete = replyCrudService.replyDelete(replyId);
 
-        return new ResponseEntity<>(getReplyResponseDto(replyDelete), replyDelete.getStatusCode());
+        return new ResponseEntity<>(REPLY_SUCCESS_DELETE, replyDelete.getStatusCode());
     }
 
     /**
@@ -88,6 +91,15 @@ public class ReplyController {
                 replyCrudService.findRepliesByContent(content);
 
         return new ResponseEntity<>(repliesByContent.getBody().get(), repliesByContent.getStatusCode());
+    }
+
+    @GetMapping("/replies/username")
+    ResponseEntity<List<ReplyResponseDto>> replySearchByUserName(@RequestParam("username") String username) {
+
+        ResponseEntity<Optional<List<ReplyResponseDto>>> replyListByUsername =
+                replyCrudService.replyListByUsername(username);
+
+        return new ResponseEntity<>(replyListByUsername.getBody().get(), replyListByUsername.getStatusCode());
     }
 
     private static ReplyResponseDto getReplyResponseDto(ResponseEntity<Optional<ReplyResponseDto>> replyCreate) {

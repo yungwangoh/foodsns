@@ -106,9 +106,9 @@ public class BoardController {
      * @param content 검색할 문자열
      * @return 게시물 리스트
      */
-    @GetMapping("/board/{search-option}/{content}")
-    public ResponseEntity<List<BoardResponseDto>> searchOptionBoard(@PathVariable("search-option") SearchOption searchOption,
-                                                                    @PathVariable("content") String content) {
+    @GetMapping("/board/search")
+    public ResponseEntity<List<BoardResponseDto>> searchOptionBoard(@RequestParam("search-option") SearchOption searchOption,
+                                                                    @RequestParam("content") String content) {
         return boardCrudService.search(searchOption, content);
     }
 
