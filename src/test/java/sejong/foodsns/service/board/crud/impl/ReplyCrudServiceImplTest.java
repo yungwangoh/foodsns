@@ -185,6 +185,26 @@ class ReplyCrudServiceImplTest {
             assertThat(replyDelete.getStatusCode()).isEqualTo(NO_CONTENT);
         }
 
+        @Test
+        @Order(5)
+        @DisplayName("유저가 쓴 대댓글 리스트 테스트")
+        void testTheListOfReplyWrittenByUsers() {
+            // given
+            String content = "ㅎㅇ";
+            String content1 = "ㅎㅇ!!";
+            ReplyRequestDto replyRequestDto = new ReplyRequestDto(content, getCommentResponseDto().getId(), saveMember.getEmail());
+            ReplyRequestDto replyRequestDto1 = new ReplyRequestDto(content1, getCommentResponseDto().getId(), saveMember.getEmail());
+
+            replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), replyRequestDto.getEmail());
+            replyCrudService.replyCreate(replyRequestDto1.getContent(), replyRequestDto1.getCommentId(), replyRequestDto1.getEmail());
+
+            // when
+            ResponseEntity<Optional<List<ReplyResponseDto>>> replyListByUsername = replyCrudService.replyListByUsername(saveMember.getUsername());
+
+            // then
+            assertThat(replyListByUsername.getBody().get().size()).isEqualTo(2);
+        }
+
         @AfterEach
         void dbInit() {
             replyRepository.deleteAll();
