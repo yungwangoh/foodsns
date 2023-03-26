@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-@RequestMapping("/integrate")
+@RequestMapping("/integration")
 public class IntegratedSearchController {
 
     private final IntegratedSearchService integratedSearchService;
