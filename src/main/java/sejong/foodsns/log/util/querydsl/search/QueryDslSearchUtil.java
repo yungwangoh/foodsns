@@ -4,15 +4,19 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import sejong.foodsns.domain.board.QBoard;
+import sejong.foodsns.domain.board.QComment;
+import sejong.foodsns.domain.board.QReply;
 import sejong.foodsns.domain.board.SearchOption;
 
 import java.util.function.Supplier;
 
 import static sejong.foodsns.domain.board.QBoard.*;
+import static sejong.foodsns.domain.board.QComment.*;
+import static sejong.foodsns.domain.board.QReply.*;
 
 public class QueryDslSearchUtil {
 
-    static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> booleanExpressionSupplier) {
+    private static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> booleanExpressionSupplier) {
         try {
             return new BooleanBuilder(booleanExpressionSupplier.get());
         } catch (Exception e) {
@@ -20,12 +24,44 @@ public class QueryDslSearchUtil {
         }
     }
 
-    static BooleanBuilder titleSearch(String title) {
+    private static BooleanBuilder boardWriteUser(String username) {
+        return nullSafeBuilder(() -> board.member.username.contains(username));
+    }
+
+    private static BooleanBuilder titleSearch(String title) {
         return nullSafeBuilder(() -> board.title.contains(title));
     }
 
-    static BooleanBuilder contentSearch(String content) {
+    private static BooleanBuilder contentSearch(String content) {
         return nullSafeBuilder(() -> board.content.contains(content));
+    }
+
+    private static BooleanBuilder commentWriteUser(String username) {
+        return nullSafeBuilder(() -> comment.member.username.contains(username));
+    }
+
+    private static BooleanBuilder commentContentSearch(String content) {
+        return nullSafeBuilder(() -> comment.content.contains(content));
+    }
+
+    private static BooleanBuilder replyWriteUser(String username) {
+        return nullSafeBuilder(() -> reply.member.username.contains(username));
+    }
+
+    private static BooleanBuilder replyContentSearch(String content) {
+        return nullSafeBuilder(() -> reply.content.contains(content));
+    }
+
+    public static BooleanBuilder boardIntegratedSearch(String content) {
+        return titleSearch(content).or(contentSearch(content)).or(boardWriteUser(content));
+    }
+
+    public static BooleanBuilder commentIntegratedSearch(String content) {
+        return commentWriteUser(content).or(commentContentSearch(content));
+    }
+
+    public static BooleanBuilder replyIntegratedSearch(String content) {
+        return replyWriteUser(content).or(replyContentSearch(content));
     }
 
     public static BooleanBuilder searchOptionCheck(SearchOption searchOption, String content) {
@@ -36,5 +72,11 @@ public class QueryDslSearchUtil {
         } else {
             return titleSearch(content).or(contentSearch(content));
         }
+    }
+
+    public static BooleanBuilder integratedSearch(String contents) {
+        return boardIntegratedSearch(contents)
+                .or(commentIntegratedSearch(contents))
+                .or(replyIntegratedSearch(contents));
     }
 }

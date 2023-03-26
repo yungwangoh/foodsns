@@ -67,8 +67,8 @@ public class CommentController {
      * @param username 닉네임
      * @return 댓글 목록, OK
      */
-    @GetMapping("/comment/{username}")
-    public ResponseEntity<List<CommentResponseDto>> commentsSearchByUsername(@PathVariable String username) {
+    @GetMapping("/comment/search/username")
+    public ResponseEntity<List<CommentResponseDto>> commentsSearchByUsername(@RequestParam("username") String username) {
 
         ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByUsername(username);
 
@@ -80,8 +80,8 @@ public class CommentController {
      * @param title
      * @return 댓글 목록, OK
      */
-    @GetMapping("/comment/{title}")
-    public ResponseEntity<List<CommentResponseDto>> commentsSearchByTitle(@PathVariable String title) {
+    @GetMapping("/comment/search/board-title")
+    public ResponseEntity<List<CommentResponseDto>> commentsSearchByTitle(@RequestParam("board-title") String title) {
 
         ResponseEntity<Optional<List<CommentResponseDto>>> commentList = commentCrudService.commentListByBoardTitle(title);
 
@@ -93,7 +93,7 @@ public class CommentController {
      * @param content 내용
      * @return 댓글 리스트
      */
-    @GetMapping("/comments/content")
+    @GetMapping("/comments/search/content")
     ResponseEntity<List<CommentResponseDto>> commentSearchByContent(@RequestParam("content") String content) {
 
         ResponseEntity<Optional<List<CommentResponseDto>>> commentsByContent =

@@ -96,7 +96,6 @@ public class CommentCrudServiceImpl implements CommentCrudService {
      * 회원이 작성한 댓글 목록 -> 성공 ?
      * @return 회원이 작성한 댓글 리스트, HTTP OK
      */
-
     @Override
     public ResponseEntity<Optional<List<CommentResponseDto>>> commentListByUsername(String username) {
         List<Comment> comments = commentRepository.findCommentsByUsername(username);

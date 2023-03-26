@@ -16,6 +16,7 @@ import sejong.foodsns.domain.member.MemberType;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.comment.CommentRequestDto;
+import sejong.foodsns.dto.comment.CommentResponseDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
@@ -55,13 +56,7 @@ public class CommentControllerTest {
         Member commentMember = new Member("하윤", "gkdbssla97@naver.com", "asdf1997@BA", MemberType.NORMAL);
         Member saveCommentMember = memberRepository.save(commentMember);
 
-        String name = "image";
-        String originalFileName = "test.jpeg";
-        String contentType = "image/jpeg";
-        String fileUrl = "/Users/yungwang-o/Documents/board_file";
-
         List<MultipartFile> mockMultipartFiles = new ArrayList<>();
-        mockMultipartFiles.add(new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl)));
 
         boardRequestDto = BoardRequestDto.builder()
                 .title("자취 레시피 공유합니다.")
@@ -108,14 +103,15 @@ public class CommentControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("멤버이름으로 댓글 목록 조회 OK")
-    void findAllCommentsByUsername() throws Exception {
+    @DisplayName("유저 이름으로 댓글 목록 조회 OK")
+    void userNameCommentOK() throws Exception {
         // given
         commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
         String username = "하윤";
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/comment/{username}", username));
+        ResultActions resultActions = mockMvc.perform(get("/comment/search/username")
+                .param("username", username));
 
         // then
         resultActions.andExpect(status().isOk())
@@ -124,18 +120,36 @@ public class CommentControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("게시물 제목으로 댓글 목록 조회 OK")
-    void boardSearchOK() throws Exception {
+    @DisplayName("댓글 조회 id로 통해서")
+    void commentSearchByCommentId() throws Exception {
         // given
-        commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
-        String username = "하윤";
+        ResponseEntity<Optional<CommentResponseDto>> commentCreate =
+                commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/comment/{username}", username));
+        ResultActions resultActions =
+                mockMvc.perform(get("/comment/{commentId}", getCommentResponseDto(commentCreate).getId()));
 
         // then
         resultActions.andExpect(status().isOk())
                 .andDo(print());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("내용으로 댓글 목록 검색")
+    void contentSearchCommentList() {
+        // given
+
+
+        // when
+
+        // then
+
+    }
+
+    private static CommentResponseDto getCommentResponseDto(ResponseEntity<Optional<CommentResponseDto>> commentCreate) {
+        return commentCreate.getBody().get();
     }
 
     private static BoardResponseDto getBoardResponseDto(ResponseEntity<Optional<BoardResponseDto>> boardCreate) {
