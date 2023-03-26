@@ -2,17 +2,13 @@ package sejong.foodsns.log.util.querydsl.search;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import lombok.RequiredArgsConstructor;
-import sejong.foodsns.domain.board.QBoard;
-import sejong.foodsns.domain.board.QComment;
-import sejong.foodsns.domain.board.QReply;
 import sejong.foodsns.domain.board.SearchOption;
 
 import java.util.function.Supplier;
 
-import static sejong.foodsns.domain.board.QBoard.*;
-import static sejong.foodsns.domain.board.QComment.*;
-import static sejong.foodsns.domain.board.QReply.*;
+import static sejong.foodsns.domain.board.QBoard.board;
+import static sejong.foodsns.domain.board.QComment.comment;
+import static sejong.foodsns.domain.board.QReply.reply;
 
 public class QueryDslSearchUtil {
 

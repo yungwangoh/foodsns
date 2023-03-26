@@ -1,5 +1,6 @@
 package sejong.foodsns.repository.querydsl.board;
 
+import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.SearchOption;
 

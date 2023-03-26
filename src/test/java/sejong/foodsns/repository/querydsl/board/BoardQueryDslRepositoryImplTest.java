@@ -1,11 +1,13 @@
 package sejong.foodsns.repository.querydsl.board;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.QBoard;
 import sejong.foodsns.domain.board.SearchOption;
@@ -19,7 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
 
-@DataJpaTest
+@SpringBootTest
 public class BoardQueryDslRepositoryImplTest {
 
     @Autowired
@@ -76,21 +78,21 @@ public class BoardQueryDslRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("게시물 제목으로 조회하여 몇개의 게시물이 나오는지 확인 테스트")
-    void boardTitleCountBoardCheck() {
+    @DisplayName("게시물 내용으로 조회하여 몇개의 게시물이 나오는지 확인 테스트")
+    void boardContentCountBoardCheck() {
         // given
-        String title = "안녕하세요";
+        String content = "안녕하세요";
         QBoard qBoard = new QBoard("b");
 
         // when
         List<Board> boards = jpaQueryFactory.selectFrom(qBoard)
-                .where(qBoard.title.eq(title))
+                .where(qBoard.content.eq(content))
                 .fetch();
 
         // then
         assertThat(boards.size()).isEqualTo(3);
         boards.forEach(board -> {
-            assertThat(board.getTitle()).isEqualTo(title);
+            assertThat(board.getContent()).isEqualTo(content);
         });
     }
 
@@ -133,5 +135,11 @@ public class BoardQueryDslRepositoryImplTest {
         assertThat(boards.size()).isEqualTo(3);
         assertThat(boards1.size()).isEqualTo(3);
         assertThat(boards2.size()).isEqualTo(1);
+    }
+
+    @AfterEach
+    void dbInit() {
+        boardRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 }
