@@ -1,7 +1,6 @@
 package sejong.foodsns.service.search.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sejong.foodsns.domain.board.Board;
@@ -15,10 +14,9 @@ import sejong.foodsns.repository.querydsl.search.IntegratedSearchRepository;
 import sejong.foodsns.service.search.IntegratedSearchService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
-import static org.springframework.http.HttpStatus.*;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @RequiredArgsConstructor
