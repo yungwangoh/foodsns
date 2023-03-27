@@ -6,29 +6,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberType;
-import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.repository.board.BoardRepository;
 import sejong.foodsns.repository.board.CommentRepository;
 import sejong.foodsns.repository.board.ReplyRepository;
 import sejong.foodsns.repository.member.MemberRepository;
-import sejong.foodsns.service.board.crud.BoardCrudService;
-import sejong.foodsns.service.board.crud.CommentCrudService;
-import sejong.foodsns.service.board.crud.ReplyCrudService;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
