@@ -55,7 +55,7 @@ class IntegratedSearchControllerTest {
 
     @Test
     @Order(0)
-    @DisplayName("게시물 통합 검색 API 테스트")
+    @DisplayName("게시물 통합 검색 API 테스트 (유저 이름으로 검색)")
     void boardIntegratedSearchApiTest() throws Exception {
         // given
         String username = "윤";
@@ -72,7 +72,7 @@ class IntegratedSearchControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("댓글 통합 검색 API 테스트")
+    @DisplayName("댓글 통합 검색 API 테스트 (유저 이름으로 검색)")
     void commentIntegratedSearchApiTest() throws Exception {
         // given
         String username = "윤";
@@ -89,7 +89,7 @@ class IntegratedSearchControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("대댓글 통합 검색 API 테스트")
+    @DisplayName("대댓글 통합 검색 API 테스트 (유저 이름으로 검색)")
     void replyIntegratedSearchApiTest() throws Exception {
         // given
         String username = "윤";
@@ -106,7 +106,7 @@ class IntegratedSearchControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("통합 검색 API 테스트")
+    @DisplayName("통합 검색 API 테스트 (유저 이름으로 검색)")
     void integratedSearchApiTest() throws Exception {
         // given
         String username = "윤";
@@ -115,6 +115,23 @@ class IntegratedSearchControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(get("/integration/search")
                 .param("content", username));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("통합 검색 API 테스트 (컨텐츠 -> 내용으로 검색)")
+    void integratedSearchFromContentApiTest() throws Exception {
+        // given
+        String username = "윤";
+        String content = "김";
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/integration/search")
+                .param("content", content));
 
         // then
         resultActions.andExpect(status().isOk())
