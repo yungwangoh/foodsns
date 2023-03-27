@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import sejong.foodsns.domain.board.Board;
 import sejong.foodsns.domain.board.Comment;
 import sejong.foodsns.domain.board.Reply;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.comment.CommentResponseDto;
+import sejong.foodsns.dto.member.MemberResponseDto;
 import sejong.foodsns.dto.reply.ReplyResponseDto;
 import sejong.foodsns.dto.search.IntegratedSearchResponseDto;
 import sejong.foodsns.repository.querydsl.search.IntegratedSearchRepository;
@@ -27,15 +29,18 @@ public class IntegratedSearchServiceImpl implements IntegratedSearchService {
     @Override
     public ResponseEntity<IntegratedSearchResponseDto> integratedSearch(String content) {
 
+        List<Member> members = integratedSearchRepository.memberIntegratedSearch(content);
         List<Board> boards = integratedSearchRepository.boardIntegratedSearch(content);
         List<Comment> comments = integratedSearchRepository.commentIntegratedSearch(content);
         List<Reply> replies = integratedSearchRepository.replyIntegratedSearch(content);
 
+        List<MemberResponseDto> memberResponseDtos = members.stream().map(MemberResponseDto::new).collect(toList());
         List<BoardResponseDto> boardResponseDtos = boards.stream().map(BoardResponseDto::new).collect(toList());
         List<CommentResponseDto> commentResponseDtos = comments.stream().map(CommentResponseDto::new).collect(toList());
         List<ReplyResponseDto> replyResponseDtos = replies.stream().map(ReplyResponseDto::new).collect(toList());
 
         IntegratedSearchResponseDto integratedSearchResponseDto = new IntegratedSearchResponseDto(
+                memberResponseDtos,
                 boardResponseDtos,
                 commentResponseDtos,
                 replyResponseDtos

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class IntegratedSearchResponseDto {
 
+    private List<MemberResponseDto> memberResponseDtos;
     private List<BoardResponseDto> boardResponseDtos;
     private List<CommentResponseDto> commentResponseDtos;
     private List<ReplyResponseDto> replyResponseDtos;

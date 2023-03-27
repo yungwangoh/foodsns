@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sejong.foodsns.domain.board.*;
+import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.QMember;
 import sejong.foodsns.log.util.querydsl.search.QueryDslSearchUtil;
 import sejong.foodsns.repository.querydsl.search.IntegratedSearchRepository;
@@ -46,6 +47,13 @@ public class IntegratedSearchRepositoryImpl implements IntegratedSearchRepositor
                 .join(reply.comment, comment).fetchJoin()
                 .join(reply.member, member).fetchJoin()
                 .where(QueryDslSearchUtil.replyIntegratedSearch(content))
+                .fetch();
+    }
+
+    @Override
+    public List<Member> memberIntegratedSearch(String content) {
+        return jpaQueryFactory.selectFrom(member)
+                .where(member.username.contains(content))
                 .fetch();
     }
 }
