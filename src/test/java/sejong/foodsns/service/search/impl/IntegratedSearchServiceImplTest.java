@@ -91,7 +91,7 @@ class IntegratedSearchServiceImplTest {
         assertThat(commentIntegratedSearch.getBody().size()).isEqualTo(1);
         commentIntegratedSearch.getBody().forEach(commentResponseDto -> {
             assertThat(commentResponseDto.getContent()).isEqualTo("맛있어요!");
-            assertThat(commentResponseDto.getBoardResponseDto().getMemberResponseDto().getUsername())
+            assertThat(commentResponseDto.getMemberResponseDto().getUsername())
                     .isEqualTo("윤광오");
         });
     }
