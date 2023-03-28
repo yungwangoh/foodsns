@@ -22,16 +22,12 @@ import static sejong.foodsns.domain.member.MemberType.NORMAL;
 @Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class BoardRequestDto {
 
-    @Schema(description = "게시물 id")
-    private Long id;
     @Schema(description = "게시물 제목", example = "김치찌개 레시피")
     private String title;
     @Schema(description = "게시물 내용", example = "김치찌개 레시피 메뉴얼")
     private String content;
-
     @Schema(description = "게시물 작성자", example = "하윤")
     private String username;
 

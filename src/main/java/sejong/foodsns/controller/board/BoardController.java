@@ -1,5 +1,11 @@
 package sejong.foodsns.controller.board;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -38,14 +44,17 @@ import static sejong.foodsns.service.board.crud.message.BoardSuccessOrFailedMess
 public class BoardController {
 
     private final BoardCrudService boardCrudService;
-    private final BoardFileStorage boardFileStorage;
+
 
     /**
      * 게시물 등록
-     *
      * @param boardRequestDto
      * @return 게시물, CREATE
      */
+    @Operation(summary = "게시물 등록", description = "게시물을 등록 한다.")
+    @ApiResponses(
+            @ApiResponse(responseCode = "201", description = "게시물 등록 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
+    )
     @PostMapping("/board")
     public ResponseEntity<BoardResponseDto> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
                                                         @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
@@ -60,6 +69,10 @@ public class BoardController {
      * @param id 게시물 id
      * @return 게시물 정보, 성공 - OK, - 실패 - NOT_FOUND
      */
+    @Operation(summary = "게시물 검색", description = "게시물을 게시물 id로 검색한다.")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "게시물 검색 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
+    )
     @GetMapping("/board/{id}")
     public ResponseEntity<BoardResponseDto> boardSearchById(@PathVariable Long id) {
 
@@ -74,6 +87,10 @@ public class BoardController {
      * @param boardUpdateTitleDto
      * @return 게시물 제목 수정 완료, OK
      */
+    @Operation(summary = "게시물 제목 수정", description = "게시물 제목을 수정한다.")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "게시물 제목 수정 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    )
     @PatchMapping("/board/title")
     public ResponseEntity<String> boardUpdateTitle(@RequestBody @Valid BoardUpdateTitleDto boardUpdateTitleDto) {
 
@@ -92,6 +109,10 @@ public class BoardController {
      *
      * @return 회원 목록, OK
      */
+    @Operation(summary = "게시물 목록 조회")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "게시물 목록 조회 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
+    )
     @GetMapping("/boards")
     public ResponseEntity<List<BoardResponseDto>> boards() {
 
@@ -106,6 +127,10 @@ public class BoardController {
      * @param content 검색할 문자열
      * @return 게시물 리스트
      */
+    @Operation(summary = "검색 옵션을 통해 게시물 조회")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "검색 옵션을 통해서 게시물 조회 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
+    )
     @GetMapping("/board/search")
     public ResponseEntity<List<BoardResponseDto>> searchOptionBoard(@RequestParam("search-option") SearchOption searchOption,
                                                                     @RequestParam("content") String content) {
@@ -118,6 +143,10 @@ public class BoardController {
      * @param boardRequestDto
      * @return 게시물 삭제 완료, OK
      */
+    @Operation(summary = "게시물 삭제")
+    @ApiResponses(
+            @ApiResponse(responseCode = "204", description = "게시물 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    )
     @DeleteMapping("/board")
     public ResponseEntity<String> boardDelete(@RequestBody @Valid BoardDeleteDto boardRequestDto) {
 
