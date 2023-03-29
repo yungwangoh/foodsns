@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 import static sejong.foodsns.service.board.crud.message.BoardSuccessOrFailedMessage.*;
 
 @RestController
@@ -55,7 +57,7 @@ public class BoardController {
     @ApiResponses(
             @ApiResponse(responseCode = "201", description = "게시물 등록 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
     )
-    @PostMapping("/board")
+    @PostMapping(value = "/board", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<BoardResponseDto> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
                                                         @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
 

@@ -7,12 +7,17 @@ import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.file.BoardFileType;
 import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.domain.member.MemberRank;
+import sejong.foodsns.dto.file.BoardFileResponseDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,8 +30,7 @@ public class BoardResponseDto {
     private Long check;
     private int recommCount;
     private MemberResponseDto memberResponseDto;
-    private List<BoardFile> boardFiles;
-
+    private List<BoardFileResponseDto> boardFileResponseDtos;
 
     @Builder
     public BoardResponseDto(Board board) {
@@ -36,6 +40,16 @@ public class BoardResponseDto {
         this.memberResponseDto = new MemberResponseDto(board.getMember());
         this.check = board.getCheck();
         this.recommCount = board.getRecommCount();
-        this.boardFiles = board.getBoardFiles();
+        this.boardFileResponseDtos = getBoardFileResponseDtos(board);
+    }
+
+    /**
+     * 게시물 파일 리스트 -> 게시물 파일 응답 Dto Convert
+     * @param board 게시물 Object
+     * @return 게시물 파일 Dto List
+     */
+    private static List<BoardFileResponseDto> getBoardFileResponseDtos(Board board) {
+        return board.getBoardFiles().stream().map(BoardFileResponseDto::new)
+                .collect(toList());
     }
 }
