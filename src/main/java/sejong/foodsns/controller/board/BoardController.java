@@ -51,19 +51,21 @@ public class BoardController {
     /**
      * 게시물 등록
      * @param boardRequestDto
-     * @return 게시물, CREATE
+     * @return 게시물 id
      */
     @Operation(summary = "게시물 등록", description = "게시물을 등록 한다.")
     @ApiResponses(
-            @ApiResponse(responseCode = "201", description = "게시물 등록 성공", content = @Content(schema = @Schema(implementation = BoardResponseDto.class)))
+            @ApiResponse(responseCode = "201", description = "게시물 등록 성공", content = @Content(schema = @Schema(implementation = Long.class)))
     )
-    @PostMapping(value = "/board", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<BoardResponseDto> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
+    @PostMapping("/board")
+    public ResponseEntity<Long> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
                                                         @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
+
+        log.info("게시물 : {}, 파일 : {}", boardRequestDto, multipartFiles);
 
         ResponseEntity<Optional<BoardResponseDto>> boardCreate = boardCrudService.boardCreate(boardRequestDto, multipartFiles);
 
-        return new ResponseEntity<>(getBoard(boardCreate), boardCreate.getStatusCode());
+        return new ResponseEntity<>(getBoard(boardCreate).getId(), boardCreate.getStatusCode());
     }
 
     /**
@@ -164,6 +166,7 @@ public class BoardController {
      * @param boardRequestDto
      * @return 중복을 찾는데에 성공하면 True 와 OK, 실패하면 False 와 NOT_FOUND
      */
+    @Operation(summary = "안씀")
     @PostMapping("/board/duplicated/title")
     public ResponseEntity<String> boardDuplicatedTitleCheck(@RequestBody @Valid BoardRequestDto boardRequestDto) {
 

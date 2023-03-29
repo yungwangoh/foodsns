@@ -36,14 +36,14 @@ public class CommentController {
      */
     @Operation(summary = "댓글 등록", description = "댓글을 등록한다.")
     @ApiResponses(
-            @ApiResponse(responseCode = "201", description = "댓글 등록에 성공하였습니다.", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+            @ApiResponse(responseCode = "201", description = "댓글 등록에 성공하였습니다.", content = @Content(schema = @Schema(implementation = Long.class)))
     )
     @PostMapping("/comment")
-    public ResponseEntity<CommentResponseDto> commentCreate(@RequestBody @Valid CommentRequestDto commentRequestDto) {
+    public ResponseEntity<Long> commentCreate(@RequestBody @Valid CommentRequestDto commentRequestDto) {
         ResponseEntity<Optional<CommentResponseDto>> commentCreate =
                 commentCrudService.commentCreate(commentRequestDto.getContent(), commentRequestDto.getBoardId(), commentRequestDto.getEmail());
 
-        return new ResponseEntity<>(getComment(commentCreate), commentCreate.getStatusCode());
+        return new ResponseEntity<>(getComment(commentCreate).getId(), commentCreate.getStatusCode());
     }
 
     /**

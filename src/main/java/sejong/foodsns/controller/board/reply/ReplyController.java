@@ -37,15 +37,15 @@ public class ReplyController {
      */
     @Operation(summary = "대댓글 등록")
     @ApiResponses(
-            @ApiResponse(responseCode = "201", description = "대댓글 등록 성공", content = @Content(schema = @Schema(implementation = ReplyResponseDto.class)))
+            @ApiResponse(responseCode = "201", description = "대댓글 등록 성공", content = @Content(schema = @Schema(implementation = Long.class)))
     )
     @PostMapping("/reply")
-    ResponseEntity<ReplyResponseDto> replyCreate(@RequestBody @Valid ReplyRequestDto replyRequestDto) {
+    ResponseEntity<Long> replyCreate(@RequestBody @Valid ReplyRequestDto replyRequestDto) {
 
         ResponseEntity<Optional<ReplyResponseDto>> replyCreate =
                 replyCrudService.replyCreate(replyRequestDto.getContent(), replyRequestDto.getCommentId(), replyRequestDto.getEmail());
 
-        return new ResponseEntity<>(getReplyResponseDto(replyCreate), replyCreate.getStatusCode());
+        return new ResponseEntity<>(getReplyResponseDto(replyCreate).getId(), replyCreate.getStatusCode());
     }
 
     /**
