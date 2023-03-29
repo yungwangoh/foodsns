@@ -1,5 +1,10 @@
 package sejong.foodsns.controller.search;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,10 @@ public class IntegratedSearchController {
 
     private final IntegratedSearchService integratedSearchService;
 
+    @Operation(summary = "통합 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
+    )
     @GetMapping("/search")
     ResponseEntity<IntegratedSearchResponseDto> integratedSearchController(@RequestParam("content") String content) {
 
@@ -33,6 +42,10 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(integratedSearch.getBody(), integratedSearch.getStatusCode());
     }
 
+    @Operation(summary = "게시물 통합 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "게시물 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
+    )
     @GetMapping("/search/board")
     ResponseEntity<List<BoardResponseDto>> boardIntegratedSearchController(@RequestParam("content") String content) {
 
@@ -41,6 +54,10 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(boardIntegratedSearch.getBody(), boardIntegratedSearch.getStatusCode());
     }
 
+    @Operation(summary = "댓글 통합 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
+    )
     @GetMapping("/search/comment")
     ResponseEntity<List<CommentResponseDto>> commentIntegratedSearchController(@RequestParam("content") String content) {
 
@@ -49,6 +66,10 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(commentIntegratedSearch.getBody(), commentIntegratedSearch.getStatusCode());
     }
 
+    @Operation(summary = "대댓글 통합 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "대댓글 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
+    )
     @GetMapping("/search/reply")
     ResponseEntity<List<ReplyResponseDto>> replyIntegratedSearchController(@RequestParam("content") String content) {
 

@@ -1,5 +1,10 @@
 package sejong.foodsns.controller.board.comment;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +34,10 @@ public class CommentController {
      * @param commentRequestDto
      * @return 댓글, CREATE
      */
+    @Operation(summary = "댓글 등록", description = "댓글을 등록한다.")
+    @ApiResponses(
+            @ApiResponse(responseCode = "201", description = "댓글 등록에 성공하였습니다.", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @PostMapping("/comment")
     public ResponseEntity<CommentResponseDto> commentCreate(@RequestBody @Valid CommentRequestDto commentRequestDto) {
         ResponseEntity<Optional<CommentResponseDto>> commentCreate =
@@ -41,6 +50,10 @@ public class CommentController {
      * 전체 댓글 목록 조회
      * @return 댓글 목록, OK
      */
+    @Operation(summary = "댓글 목록 조회", description = "댓글 목록을 조회한다.")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 목록 조회 성공", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @GetMapping("/comments")
     public ResponseEntity<List<CommentResponseDto>> boards() {
 
@@ -54,6 +67,10 @@ public class CommentController {
      * @param commentId 댓글 id
      * @return 댓글, OK
      */
+    @Operation(summary = "댓글 id로 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 검색 성공", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @GetMapping("/comment/{commentId}")
     public ResponseEntity<CommentResponseDto> commentSearchById(@PathVariable Long commentId) {
 
@@ -67,6 +84,10 @@ public class CommentController {
      * @param username 닉네임
      * @return 댓글 목록, OK
      */
+    @Operation(summary = "회원명으로 댓글 목록 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 검색 성공", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @GetMapping("/comment/search/username")
     public ResponseEntity<List<CommentResponseDto>> commentsSearchByUsername(@RequestParam("username") String username) {
 
@@ -80,6 +101,10 @@ public class CommentController {
      * @param title
      * @return 댓글 목록, OK
      */
+    @Operation(summary = "게시물 제목으로 댓글 목록 검색")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 검색 성공", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @GetMapping("/comment/search/board-title")
     public ResponseEntity<List<CommentResponseDto>> commentsSearchByTitle(@RequestParam("board-title") String title) {
 
@@ -93,6 +118,10 @@ public class CommentController {
      * @param content 내용
      * @return 댓글 리스트
      */
+    @Operation(summary = "내용으로 댓글 리스트 출력")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 리스트 출력 성공", content = @Content(schema = @Schema(implementation = CommentResponseDto.class)))
+    )
     @GetMapping("/comments/search/content")
     ResponseEntity<List<CommentResponseDto>> commentSearchByContent(@RequestParam("content") String content) {
 
@@ -107,6 +136,10 @@ public class CommentController {
      * @param commentUpdateContentDto
      * @return 댓글 내용 수정 완료, OK
      */
+    @Operation(summary = "댓글 내용 수정")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "댓글 수정 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    )
     @PatchMapping("/comment")
     public ResponseEntity<String> commentUpdateContent(@RequestBody @Valid CommentUpdateContentDto commentUpdateContentDto) {
 
@@ -122,6 +155,10 @@ public class CommentController {
      * @param commentId 댓글 id
      * @return 게시물 삭제 완료, OK
      */
+    @Operation(summary = "댓글 삭제")
+    @ApiResponses(
+            @ApiResponse(responseCode = "204", description = "댓글 삭제 성공", content = @Content(schema = @Schema(implementation = String.class)))
+    )
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> commentDelete(@PathVariable Long commentId) {
 
