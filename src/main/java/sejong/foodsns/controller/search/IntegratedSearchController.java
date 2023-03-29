@@ -30,6 +30,11 @@ public class IntegratedSearchController {
 
     private final IntegratedSearchService integratedSearchService;
 
+    /**
+     * 통합 검색
+     * @param content 검색 내용
+     * @return 게시물, 댓글, 회원, 대댓글 리스트
+     */
     @Operation(summary = "통합 검색")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
@@ -42,6 +47,11 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(integratedSearch.getBody(), integratedSearch.getStatusCode());
     }
 
+    /**
+     * 게시물 통합 검색
+     * @param content 검색 내용
+     * @return 게시물 리스트
+     */
     @Operation(summary = "게시물 통합 검색")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "게시물 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
@@ -54,6 +64,11 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(boardIntegratedSearch.getBody(), boardIntegratedSearch.getStatusCode());
     }
 
+    /**
+     * 댓글 통합 검색
+     * @param content 검색 내용
+     * @return 댓글 리스트
+     */
     @Operation(summary = "댓글 통합 검색")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "댓글 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
@@ -66,6 +81,11 @@ public class IntegratedSearchController {
         return new ResponseEntity<>(commentIntegratedSearch.getBody(), commentIntegratedSearch.getStatusCode());
     }
 
+    /**
+     * 대댓글 통합 검색
+     * @param content 검색 내용
+     * @return 대댓글 리스트
+     */
     @Operation(summary = "대댓글 통합 검색")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "대댓글 통합 검색 성공", content = @Content(schema = @Schema(implementation = IntegratedSearchResponseDto.class)))
