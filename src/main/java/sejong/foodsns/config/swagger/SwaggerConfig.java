@@ -30,6 +30,7 @@ public class SwaggerConfig {
                 .title("Food SNS API")
                 .version("3.0")
                 .description("Food SNS API Documents")
+                .license("ygo foodSns")
                 .build();
     }
 }
