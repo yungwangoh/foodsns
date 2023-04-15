@@ -27,12 +27,12 @@ public class JwtServiceInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        log.info("[Http Request token] = {}", request.getHeader("X-AUTH-TOKEN"));
+        log.info("[Http Request token] = {}", request.getHeader("Authorization"));
 
-        String accessToken = request.getHeader("X-AUTH-TOKEN");
+        String accessToken = request.getHeader("Authorization");
 
         if(accessToken != null) {
-            String token = jwtProvider.getFormatToken(accessToken);
+            String token = JwtProvider.getFormatToken(accessToken);
             return jwtProvider.isValidTokenCheck(token);
         }
 
