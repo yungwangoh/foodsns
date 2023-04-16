@@ -7,7 +7,7 @@ spring:
   file:
     dir: /Users/hayoon/foodsns/src/main/resources/static/post_upload\
   datasource:
-    url: jdbc:h2:tcp://localhost/~/food
+    url: jdbc:h2:mem:test
     username: sa
     password:
     driver-class-name: org.h2.Driver
