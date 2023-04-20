@@ -13,7 +13,9 @@ import sejong.foodsns.domain.member.Member;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
+import sejong.foodsns.exception.http.board.NoSearchBoardException;
 import sejong.foodsns.repository.board.BoardRepository;
+import sejong.foodsns.repository.board.RecommendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
 
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 import static sejong.foodsns.domain.member.MemberType.NORMAL;
@@ -32,18 +35,21 @@ public class BoardCrudServiceImplTest {
     @Autowired private BoardCrudService boardCrudService;
     @Autowired private BoardRepository boardRepository;
     @Autowired private MemberRepository memberRepository;
+    @Autowired private RecommendRepository recommendRepository;
 
     private BoardResponseDto boardResponseDto;
 
     @BeforeEach
     void initMember() {
-        Member member = new Member("하윤", "swager253@naver.com", "rhkddh77@A", NORMAL);
-        Member saveMember = memberRepository.save(member);
+        Member member = new Member("하윤", "swager253@naver.com", "qwer1234@A", NORMAL);
+        Member member1 = new Member("윤광오", "qwer1234@naver.com", "qwer1234@A", NORMAL);
+        memberRepository.save(member);
+        memberRepository.save(member1);
     }
 
     @Nested
     @DisplayName("서비스 성공")
-    @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class ServiceSuccess {
 
         @Test
@@ -157,7 +163,7 @@ public class BoardCrudServiceImplTest {
                         boardCrudService.findBoardById(getBody(boardCreate).getId());
 
                 assertThat(board.getStatusCode()).isEqualTo(NO_CONTENT);
-            }).isInstanceOf(NoSuchElementException.class);
+            }).isInstanceOf(NoSearchBoardException.class);
         }
 
         @Test
@@ -208,8 +214,56 @@ public class BoardCrudServiceImplTest {
             assertThat(boards.getBody().size()).isEqualTo(1);
         }
 
+        @Test
+        @DisplayName("추천 수 증가 테스트")
+        void recommendUpTest() throws IOException {
+            // given
+            String username = "하윤";
+            Member findMember = memberRepository.findMemberByUsername(username).get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate =
+                    boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+            // when
+            boardCrudService.boardRecommendUp(username, getBody(boardCreate).getId());
+
+            ResponseEntity<Optional<BoardResponseDto>> board =
+                    boardCrudService.findBoardById(getBody(boardCreate).getId());
+
+            // then
+            // 추천 수 0에서 1로 증가 기댓값 1.
+            assertThat(getBody(board).getRecommCount()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("추천 수 감소 테스트")
+        void recommendDownTest() throws IOException {
+            // given
+            String username = "하윤";
+            Member findMember = memberRepository.findMemberByUsername(username).get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate =
+                    boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+            // when
+            // 1이 올라가고 다시 1 내려감 디폴트 값은 0이며 1 증가 1 감소로 기댓값은 0이다.
+            boardCrudService.boardRecommendUp(username, getBody(boardCreate).getId());
+            boardCrudService.boardRecommendDown(username, getBody(boardCreate).getId());
+
+            ResponseEntity<Optional<BoardResponseDto>> board =
+                    boardCrudService.findBoardById(getBody(boardCreate).getId());
+
+            // then
+            assertThat(getBody(board).getRecommCount()).isEqualTo(0);
+        }
+
         @AfterEach
         void deleteInit() {
+            recommendRepository.deleteAll();
             boardRepository.deleteAll();
             memberRepository.deleteAll();
         }
@@ -258,11 +312,55 @@ public class BoardCrudServiceImplTest {
 
             // then
             assertThatThrownBy(() -> boardCrudService.findBoardById(0L))
-                    .isInstanceOf(NoSuchElementException.class);
+                    .isInstanceOf(NoSearchBoardException.class);
+        }
+
+        @Test
+        @DisplayName("추천 중복 검증 같은 회원이 한 게시물에 중복으로 추천하지 못한다.")
+        @Order(2)
+        void recommendDuplicatedCheck() throws IOException {
+            // given
+            String username = "하윤";
+            Member findMember = memberRepository.findMemberByUsername(username).get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate =
+                    boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+            // when
+            boardCrudService.boardRecommendUp(username, getBody(boardCreate).getId());
+
+            assertThatThrownBy(() -> boardCrudService.boardRecommendUp(username, getBody(boardCreate).getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("추천 다른 회원이 추천 증가 or 감소를 하지 못한다. 오직 같은 회원만 증가 or 감소 가능")
+        @Order(3)
+        void recommendDownOtherMemberNotDown() throws IOException {
+            // given
+            String username = "하윤";
+            String username1 = "윤광오";
+            Member findMember = memberRepository.findMemberByUsername(username).get();
+            BoardRequestDto boardRequestDto = getBoardRequestDto(1, findMember);
+            List<MultipartFile> multipartFiles = getMultipartFiles();
+
+            ResponseEntity<Optional<BoardResponseDto>> boardCreate =
+                    boardCrudService.boardCreate(boardRequestDto, multipartFiles);
+
+            // when
+            boardCrudService.boardRecommendUp(username, getBody(boardCreate).getId());
+
+            // then
+            assertThatThrownBy(() -> boardCrudService.boardRecommendDown(username1, getBody(boardCreate).getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @AfterEach
         void deleteInit() {
+            recommendRepository.deleteAll();
+            boardRepository.deleteAll();
             memberRepository.deleteAll();
         }
     }

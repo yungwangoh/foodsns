@@ -186,6 +186,12 @@ public class BoardCrudServiceImpl implements BoardCrudService {
             throw new DuplicatedException("중복된 제목입니다.");
     }
 
+    /**
+     * 추천 수 증가
+     * @param username 회원 닉네임
+     * @param boardId 게시물 id
+     * @return 게시물
+     */
     @Override
     @Transactional
     public ResponseEntity<BoardResponseDto> boardRecommendUp(String username, Long boardId) {
@@ -193,6 +199,9 @@ public class BoardCrudServiceImpl implements BoardCrudService {
         Optional<Board> board = getBoardReturnByOptionalBoardId(boardId);
 
         Optional<Member> member = getMemberReturnByOptionalUsername(username);
+
+        if(checkRecommendSaveBoardAndMember(member.get(), board.get()))
+            throw new IllegalArgumentException("이미 추천을 눌렀습니다.");
 
         boardQueryDslRepository.recommendUp(board.get());
 
@@ -206,6 +215,12 @@ public class BoardCrudServiceImpl implements BoardCrudService {
         return new ResponseEntity<>(new BoardResponseDto(board.get()), OK);
     }
 
+    /**
+     * 추천 수 감소
+     * @param username 회원 닉네임
+     * @param boardId 게시물 id
+     * @return 게시물
+     */
     @Override
     @Transactional
     public ResponseEntity<BoardResponseDto> boardRecommendDown(String username, Long boardId) {
@@ -280,7 +295,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     }
 
     /**
-     * 추천 레포지토리에 회원과 게시물이 있는지 확인. -> 좋아요 검증 -> 게시물에 어떤 회원이 좋아요 눌렀는지 확인.
+     * 추천 레포지토리에 회원과 게시물이 있는지 확인. -> 추천 검증 -> 게시물에 어떤 회원이 추천 눌렀는지 확인.
      * @param member 회원
      * @param board 게시물
      * @return 어떤 회원이 게시물 눌렀는지 확인 맞으면 true 아니면 false

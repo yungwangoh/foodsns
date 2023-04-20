@@ -77,12 +77,10 @@ public class BoardQueryDslRepositoryImpl implements BoardQueryRepository {
 
     @Override
     public boolean checkRecommendMemberAndBoard(Member m, Board b) {
-        List<Recommend> list = jpaQueryFactory.selectFrom(recommend)
-                .join(recommend.board, board).fetchJoin()
-                .join(recommend.member, member).fetchJoin()
-                .where(recommend.board.eq(b).and(recommend.member.eq(m)))
+        List<Recommend> recommends = jpaQueryFactory.selectFrom(recommend)
+                .where(recommend.member.eq(m).and(recommend.board.eq(b)))
                 .fetch();
 
-        return list.size() > 0;
+        return recommends.size() > 0;
     }
 }

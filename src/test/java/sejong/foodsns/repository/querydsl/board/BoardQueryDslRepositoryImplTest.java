@@ -137,6 +137,22 @@ public class BoardQueryDslRepositoryImplTest {
         assertThat(boards2.size()).isEqualTo(1);
     }
 
+    @Test
+    @DisplayName("추천 수 증가")
+    void recommendUp() {
+        // given
+        String title = "안녕";
+        List<Board> boards = boardQueryDslRepository.search(SearchOption.ALL, title);
+
+        // when
+        boardQueryDslRepository.recommendUp(boards.get(0));
+
+        List<Board> boards1 = boardQueryDslRepository.search(SearchOption.ALL, title);
+
+        // then
+        assertThat(boards1.get(0).getRecommCount()).isEqualTo(21);
+    }
+
     @AfterEach
     void dbInit() {
         boardRepository.deleteAll();
