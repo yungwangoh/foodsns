@@ -27,7 +27,7 @@ public class JwtServiceInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        log.info("[Http Request token] = {}", request.getHeader("Authorization"));
+        log.info("[Http Request Token] = {}", request.getHeader("Authorization"));
 
         String accessToken = request.getHeader("Authorization");
 

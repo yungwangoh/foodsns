@@ -3,13 +3,20 @@ package sejong.foodsns.repository.querydsl.board.impl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.board.QRecommend;
+import sejong.foodsns.domain.board.Recommend;
 import sejong.foodsns.domain.board.SearchOption;
+import sejong.foodsns.domain.member.Member;
+import sejong.foodsns.domain.member.QMember;
 import sejong.foodsns.repository.querydsl.board.BoardQueryRepository;
 
 import java.util.List;
 
 import static sejong.foodsns.domain.board.QBoard.board;
+import static sejong.foodsns.domain.board.QRecommend.*;
+import static sejong.foodsns.domain.member.QMember.*;
 import static sejong.foodsns.log.util.querydsl.search.QueryDslSearchUtil.searchOptionCheck;
 
 @Repository
@@ -48,5 +55,34 @@ public class BoardQueryDslRepositoryImpl implements BoardQueryRepository {
                 .where(board.comments.size().goe(1))
                 .orderBy(board.recommCount.desc())
                 .fetch();
+    }
+
+    @Override
+    @Transactional
+    public void recommendUp(Board b) {
+        jpaQueryFactory.update(board)
+                .set(board.recommCount, board.recommCount.add(1))
+                .where(board.eq(b))
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public void recommendDown(Board b) {
+        jpaQueryFactory.update(board)
+                .set(board.recommCount, board.recommCount.subtract(1))
+                .where(board.eq(b))
+                .execute();
+    }
+
+    @Override
+    public boolean checkRecommendMemberAndBoard(Member m, Board b) {
+        List<Recommend> list = jpaQueryFactory.selectFrom(recommend)
+                .join(recommend.board, board).fetchJoin()
+                .join(recommend.member, member).fetchJoin()
+                .where(recommend.board.eq(b).and(recommend.member.eq(m)))
+                .fetch();
+
+        return list.size() > 0;
     }
 }

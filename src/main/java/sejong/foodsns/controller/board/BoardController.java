@@ -59,7 +59,7 @@ public class BoardController {
     )
     @PostMapping("/board")
     public ResponseEntity<Long> boardCreate(@RequestPart(value = "board") @Valid BoardRequestDto boardRequestDto,
-                                                        @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
+                                            @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles) throws IOException {
 
         log.info("게시물 : {}, 파일 : {}", boardRequestDto, multipartFiles);
 

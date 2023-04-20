@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
+import sejong.foodsns.dto.board.recommend.BoardRecommendDownDto;
+import sejong.foodsns.dto.board.recommend.BoardRecommendUpDto;
 import sejong.foodsns.dto.member.MemberRequestDto;
 import sejong.foodsns.dto.member.MemberResponseDto;
 
@@ -27,6 +29,8 @@ public interface BoardCrudService {
 
     ResponseEntity<Optional<List<BoardResponseDto>>> boardList();
 
-    Boolean boardTitleExistValidation(BoardRequestDto boardRequestDto);
+    ResponseEntity<BoardResponseDto> boardRecommendUp(String username, Long boardId);
+    ResponseEntity<BoardResponseDto> boardRecommendDown(String username, Long boardId);
 
+    Boolean boardTitleExistValidation(BoardRequestDto boardRequestDto);
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.foodsns.domain.board.Board;
+import sejong.foodsns.domain.board.Recommend;
 import sejong.foodsns.domain.board.SearchOption;
 import sejong.foodsns.domain.file.BoardFile;
 import sejong.foodsns.domain.member.Member;
@@ -14,7 +15,9 @@ import sejong.foodsns.dto.board.BoardRequestDto;
 import sejong.foodsns.dto.board.BoardResponseDto;
 import sejong.foodsns.exception.http.DuplicatedException;
 import sejong.foodsns.exception.http.board.NoSearchBoardException;
+import sejong.foodsns.exception.http.member.NoSearchMemberException;
 import sejong.foodsns.repository.board.BoardRepository;
+import sejong.foodsns.repository.board.RecommendRepository;
 import sejong.foodsns.repository.member.MemberRepository;
 import sejong.foodsns.repository.querydsl.board.BoardQueryRepository;
 import sejong.foodsns.service.board.crud.BoardCrudService;
@@ -38,6 +41,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     private final MemberRepository memberRepository;
     private final BoardQueryRepository boardQueryDslRepository;
     private final BoardFileCrudService boardFileCrudService;
+    private final RecommendRepository recommendRepository;
 
     /**
      * 게시물 생성 -> 성공 201, 실패 404
@@ -118,7 +122,7 @@ public class BoardCrudServiceImpl implements BoardCrudService {
      */
     @Override
     public ResponseEntity<Optional<BoardResponseDto>> findBoardById(Long id) {
-        Optional<Board> board = getBoardOptionalById(id);
+        Optional<Board> board = getBoardReturnByOptionalBoardId(id);
 
         return new ResponseEntity<>(of(new BoardResponseDto(getBoard(board))), OK);
     }
@@ -182,6 +186,49 @@ public class BoardCrudServiceImpl implements BoardCrudService {
             throw new DuplicatedException("중복된 제목입니다.");
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<BoardResponseDto> boardRecommendUp(String username, Long boardId) {
+
+        Optional<Board> board = getBoardReturnByOptionalBoardId(boardId);
+
+        Optional<Member> member = getMemberReturnByOptionalUsername(username);
+
+        boardQueryDslRepository.recommendUp(board.get());
+
+        Recommend recommend = Recommend.builder()
+                .board(board.get())
+                .member(member.get())
+                .build();
+
+        recommendRepository.save(recommend);
+
+        return new ResponseEntity<>(new BoardResponseDto(board.get()), OK);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<BoardResponseDto> boardRecommendDown(String username, Long boardId) {
+
+        Optional<Board> board = getBoardReturnByOptionalBoardId(boardId);
+
+        Optional<Member> member = getMemberReturnByOptionalUsername(username);
+
+        if(checkRecommendSaveBoardAndMember(member.get(), board.get())) {
+
+            boardQueryDslRepository.recommendDown(board.get());
+
+            Recommend recommend = getRecommend(board, member);
+
+            recommendRepository.delete(recommend);
+
+        } else {
+            throw new IllegalArgumentException("좋아요 누른 회원이 아니거나 게시물이 아닙니다.");
+        }
+
+        return new ResponseEntity<>(new BoardResponseDto(board.get()), OK);
+    }
+
     /**
      * 게시물 객체 생성
      * @param boardRequestDto
@@ -210,12 +257,36 @@ public class BoardCrudServiceImpl implements BoardCrudService {
     }
 
     /**
-     * 게시물 반환하는 로직 Optional
-     * @param id 게시물 id
-     * @return 게시물 존재 X -> Exception
+     * 추천 객체를 생성한다.
+     * @param board 게시물
+     * @param member 회원
+     * @return 추천 객체
      */
-    private Optional<Board> getBoardOptionalById(Long id) {
-        return of(boardRepository.findById(id))
-                .orElseThrow(() -> new NoSearchBoardException("게시물이 존재하지 않습니다,"));
+    private static Recommend getRecommend(Optional<Board> board, Optional<Member> member) {
+        return Recommend.builder()
+                .member(member.get())
+                .board(board.get())
+                .build();
+    }
+
+    /**
+     * 회원 이름으로 찾기 -> Optional 반환
+     * @param username 회원 닉네임 (이름)
+     * @return Optional Member.
+     */
+    private Optional<Member> getMemberReturnByOptionalUsername(String username) {
+        return of(memberRepository.findMemberByUsername(username))
+                .orElseThrow(() -> new NoSearchMemberException("회원이 존재하지 않습니다."));
+    }
+
+    /**
+     * 추천 레포지토리에 회원과 게시물이 있는지 확인. -> 좋아요 검증 -> 게시물에 어떤 회원이 좋아요 눌렀는지 확인.
+     * @param member 회원
+     * @param board 게시물
+     * @return 어떤 회원이 게시물 눌렀는지 확인 맞으면 true 아니면 false
+     */
+    private boolean checkRecommendSaveBoardAndMember(Member member, Board board) {
+
+        return boardQueryDslRepository.checkRecommendMemberAndBoard(member, board);
     }
 }

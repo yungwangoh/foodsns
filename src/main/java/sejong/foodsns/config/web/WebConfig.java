@@ -18,6 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
 //        registry.addInterceptor(new JwtServiceInterceptor(jwtProvider))
 //                .order(1)
 //                .addPathPatterns("/**")
-//                .excludePathPatterns("/member/**", "/boards");
+//                .excludePathPatterns("/member/**", "/board/**", "/comment/**", "/reply/**");
     }
 }
